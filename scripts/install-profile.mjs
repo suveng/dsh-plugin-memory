@@ -1,26 +1,31 @@
 #!/usr/bin/env node
 /**
- * Link this checkout into a DSH profile.
+ * Install this checkout into a DSH profile.
  *
  * This repository is a self-maintained fork whose packages are renamed to the
  * `dsh-plugin-memory-*` convention, so they are not on npm. A profile install
  * therefore has to resolve every workspace package from this checkout:
  *
  *   1. `pnpm -r build` (the profile loads `lib/`, not `src/`)
- *   2. every package is added to the profile as a `link:` dependency
+ *   2. the root package is packed to a tarball and installed as a `file:`
+ *      dependency, so pnpm installs its dependencies like any published package
  *   3. `overrides:` in the profile's `pnpm-workspace.yaml` redirects the
- *      sub-package ranges the root package declares to the same links, so pnpm
- *      never asks the registry for `dsh-plugin-memory-*`
+ *      sub-package ranges the root package declares to `link:` paths in this
+ *      checkout, so pnpm never asks the registry for `dsh-plugin-memory-*`
  *   4. the root package is appended to `dsh.profile.bundles`
+ *
+ * Sub-packages must stay *transitive* dependencies of the root tarball: a direct
+ * dependency also shows up as its own card on the Settings > Plugins page, which
+ * is exactly what the Memory System should not do.
  *
  * Usage:
  *   node scripts/install-profile.mjs [--profile web] [--repo <path>] [--dry-run] [--skip-build]
  */
 
 import { spawnSync } from 'node:child_process'
-import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
-import { dirname, join, resolve } from 'node:path'
+import { basename, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const args = process.argv.slice(2)
@@ -49,7 +54,14 @@ const plugins = readdirSync(pluginsDir)
   .filter(name => existsSync(join(pluginsDir, name, 'package.json')))
   .map(name => ({ dir: join(pluginsDir, name), pkg: readJson(join(pluginsDir, name, 'package.json')) }))
 
-const linked = new Map([[rootPackage.name, `link:${repo}`]])
+const buildDir = join(homedir(), '.local', 'share', 'dsh-plugin-builds')
+// Each build gets its own tarball name: pnpm caches a `file:` dependency by
+// specifier, so reusing one name makes the install a no-op even after a rebuild.
+const stamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 12)
+const tarball = join(buildDir, `${rootPackage.name}-${rootPackage.version}-${stamp}.tgz`)
+
+/** Sub-packages, redirected to this checkout by pnpm overrides. */
+const linked = new Map()
 for (const plugin of plugins) linked.set(plugin.pkg.name, `link:${plugin.dir}`)
 
 if (!dryRun && !flag('--skip-build')) {
@@ -58,11 +70,34 @@ if (!dryRun && !flag('--skip-build')) {
   if (build.status !== 0) process.exit(build.status ?? 1)
 }
 
+if (!dryRun) {
+  console.log('install-profile: packing the root package')
+  const pack = spawnSync('pnpm', ['pack', '--pack-destination', buildDir], { cwd: repo, stdio: 'inherit' })
+  if (pack.status !== 0) process.exit(pack.status ?? 1)
+  // `pnpm pack` names the file after the package version; give it the stamped
+  // name so pnpm treats this build as a new `file:` specifier.
+  const packed = join(buildDir, `${rootPackage.name}-${rootPackage.version}.tgz`)
+  if (!existsSync(packed)) {
+    console.error(`install-profile: pnpm pack did not produce ${packed}`)
+    process.exit(1)
+  }
+  renameSync(packed, tarball)
+  // Keep the four newest tarballs around; they are only install sources.
+  const packs = readdirSync(buildDir)
+    .filter(name => name.startsWith(`${rootPackage.name}-${rootPackage.version}-`) && name.endsWith('.tgz'))
+    .sort()
+    .slice(0, -4)
+  for (const name of packs) rmSync(join(buildDir, name), { force: true })
+}
+
 // 1. profile dependencies + bundles
 const profilePackagePath = join(profileDir, 'package.json')
 const profilePackage = readJson(profilePackagePath)
 profilePackage.dependencies ??= {}
-for (const [name, spec] of linked) profilePackage.dependencies[name] = spec
+// Drop direct sub-package dependencies: they are transitive through the root
+// tarball, and as direct dependencies each one gets its own plugin-page card.
+for (const name of linked.keys()) delete profilePackage.dependencies[name]
+profilePackage.dependencies[rootPackage.name] = `file:${tarball}`
 
 const bundleList = profilePackage.dsh?.profile?.bundles
 if (Array.isArray(bundleList)) {
@@ -86,26 +121,40 @@ for (const line of workspaceText.split('\n')) {
   }
   if (insideOverrides && /^\S/.test(line)) insideOverrides = false
   if (insideOverrides) {
-    const name = line.trim().split(':')[0]
-    if (linked.has(name)) continue
+    const name = line.trim().split(':')[0].replace(/^["']|["']$/g, '')
+    // The root package must resolve from its tarball, never from a link override:
+    // a linked root does not get its dependencies installed.
+    if (name === rootPackage.name || linked.has(name)) continue
   }
   kept.push(line)
+}
+// A link: value for a managed package outside `overrides:` silently redirects it
+// back to this checkout (for example a stray line left in `allowBuilds`), which
+// would re-link the root and skip installing its dependencies.
+const managed = [rootPackage.name, ...linked.keys()]
+const stray = kept.find(line => /^\s+[^\s:#]+:/.test(line) && /\blink:\S+/.test(line)
+  && managed.includes(line.trim().split(':')[0].replace(/^["']|["']$/g, '')))
+if (stray !== undefined) {
+  console.error(`install-profile: ${workspacePath} has a stray link outside overrides:\n  ${stray.trim()}\nRemove it (use \`${stray.trim().split(':')[0]}: true\` under allowBuilds) and rerun.`)
+  process.exit(1)
 }
 const overrides = [...linked].map(([name, spec]) => `  ${name}: ${spec}`)
 const workspaceOut = `${kept.join('\n').replace(/\s*$/, '')}\noverrides:\n${overrides.join('\n')}\n`
 
 if (dryRun) {
-  console.log('install-profile: would link')
-  for (const [name, spec] of linked) console.log(`  ${name} -> ${spec}`)
+  console.log(`install-profile: would install ${rootPackage.name} from file:${tarball}`)
+  for (const [name, spec] of linked) console.log(`  override ${name} -> ${spec}`)
   console.log(`install-profile: would write ${profilePackagePath} and ${workspacePath}`)
   process.exit(0)
 }
 
 writeJson(profilePackagePath, profilePackage)
 writeFileSync(workspacePath, workspaceOut)
-console.log(`install-profile: linked ${linked.size} packages into ${profileDir}`)
+console.log(`install-profile: installed ${rootPackage.name} (${tarball}) with ${linked.size} linked sub-packages`)
 
-const install = spawnSync('pnpm', ['install', '--no-frozen-lockfile'], { cwd: profileDir, stdio: 'inherit' })
+// The root package ships a prebuilt `lib/`, so its install scripts never need to
+// run; pnpm 11 fails the whole install on "ignored build scripts" otherwise.
+const install = spawnSync('pnpm', ['install', '--no-frozen-lockfile', '--config.dangerouslyAllowAllBuilds=true'], { cwd: profileDir, stdio: 'inherit' })
 if (install.status !== 0) process.exit(install.status ?? 1)
 
 console.log(`install-profile: done.

@@ -76,21 +76,28 @@
         # in the Memory System and nothing joins a model View.
         - id: memory-source-skills
           name: dsh-plugin-memory-source-skills
-        - id: memory-strategy-default-three-tier
-          name: dsh-plugin-memory-strategy-default-three-tier
-        # A second main Strategy; memoryView.strategyTypeId selects which one
-        # composes the View. It stays off until selected.
-        - id: memory-strategy-general
-          name: dsh-plugin-memory-strategy-general
-          disabled: true
-        # v0.5 ships these narrowly scoped enhancements with the Starter so the
-        # Settings switches are always available. They remain opt-in.
-        - id: memory-strategy-auto-capture
-          name: dsh-plugin-memory-strategy-auto-capture
-          disabled: true
-        - id: memory-strategy-light-context
-          name: dsh-plugin-memory-strategy-light-context
-          disabled: true
-        - id: memory-strategy-scoped
-          name: dsh-plugin-memory-strategy-scoped
-          disabled: true
+        # Strategies are part of the Memory System, not plugins of their own, so
+        # a nested group keeps them out of the plugin inventory while their
+        # Entry ids stay addressable from overrides and memoryView.strategyTypeId.
+        - id: memory-strategies
+          name: cordis:group
+          group: true
+          config:
+            - id: memory-strategy-default-three-tier
+              name: dsh-plugin-memory-strategy-default-three-tier
+            # A second main Strategy; memoryView.strategyTypeId selects which
+            # one composes the View. It stays off until selected.
+            - id: memory-strategy-general
+              name: dsh-plugin-memory-strategy-general
+              disabled: true
+            # v0.5 ships these narrowly scoped enhancements with the Starter so
+            # the Settings switches are always available. They remain opt-in.
+            - id: memory-strategy-auto-capture
+              name: dsh-plugin-memory-strategy-auto-capture
+              disabled: true
+            - id: memory-strategy-light-context
+              name: dsh-plugin-memory-strategy-light-context
+              disabled: true
+            - id: memory-strategy-scoped
+              name: dsh-plugin-memory-strategy-scoped
+              disabled: true

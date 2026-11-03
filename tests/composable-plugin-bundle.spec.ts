@@ -51,11 +51,17 @@ describe('explicit default Starter', () => {
     expect(patch).toContain("[...loader.entries()].find(entry => entry.options.id === 'memory')")
     expect(patch).toContain('entry.evaluate(entry.options.disabled.__jsExpr)')
     expect(patch).toMatch(/        - id: memory\n          # Core\/Host/u)
-    for (const name of [runtime.name, documents.name, spaces.name, strategy.name]) {
+    for (const name of [runtime.name, documents.name, spaces.name]) {
       expect(patch).toMatch(new RegExp(`        - id: ${name.slice('dsh-plugin-'.length)}\\n          name: ${name}`, 'u'))
     }
+    // Strategies live in their own nested group so the plugin inventory lists the
+    // Memory System once instead of one card per Strategy.
+    expect(patch).toMatch(/        - id: memory-strategies\n          name: cordis:group\n          group: true\n          config:\n/u)
+    for (const name of [strategy.name]) {
+      expect(patch).toMatch(new RegExp(`            - id: ${name.slice('dsh-plugin-'.length)}\\n              name: ${name}`, 'u'))
+    }
     for (const name of [autoCapture.name, lightContext.name, scoped.name]) {
-      expect(patch).toMatch(new RegExp(`        - id: ${name.slice('dsh-plugin-'.length)}\\n          name: ${name}\\n          disabled: true`, 'u'))
+      expect(patch).toMatch(new RegExp(`            - id: ${name.slice('dsh-plugin-'.length)}\\n              name: ${name}\\n              disabled: true`, 'u'))
     }
     expect(patch).not.toContain('dsh-plugin-memory/source-')
     expect(patch).not.toContain('bundledContributions')

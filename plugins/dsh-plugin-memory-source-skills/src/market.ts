@@ -11,7 +11,7 @@ import official from '../market/official.json' with { type: 'json' }
 
 export const OFFICIAL_REGISTRY_ID = 'official'
 /** The official registry's newest copy; the package carries a snapshot for offline use. */
-export const OFFICIAL_REGISTRY_URL = 'https://raw.githubusercontent.com/omdsh-dev/dsh-plugin-memory/main/plugins/dsh-plugin-memory-source-skills/market/official.json'
+export const OFFICIAL_REGISTRY_URL = 'https://raw.githubusercontent.com/suveng/dsh-plugin-memory/main/plugins/dsh-plugin-memory-source-skills/market/official.json'
 /** The open skills index searched as the user types. */
 export const SKILLS_SH_ID = 'skills-sh'
 export const SKILLS_SH_URL = 'https://skills.sh'

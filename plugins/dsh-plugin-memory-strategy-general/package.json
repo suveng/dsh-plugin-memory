@@ -49,11 +49,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/omdsh-dev/dsh-plugin-memory.git",
+    "url": "git+https://github.com/suveng/dsh-plugin-memory.git",
     "directory": "plugins/dsh-plugin-memory-strategy-general"
   },
-  "homepage": "https://github.com/omdsh-dev/dsh-plugin-memory/tree/main/plugins/dsh-plugin-memory-strategy-general#readme",
+  "homepage": "https://github.com/suveng/dsh-plugin-memory/tree/main/plugins/dsh-plugin-memory-strategy-general#readme",
   "bugs": {
-    "url": "https://github.com/omdsh-dev/dsh-plugin-memory/issues"
+    "url": "https://github.com/suveng/dsh-plugin-memory/issues"
   }
 }

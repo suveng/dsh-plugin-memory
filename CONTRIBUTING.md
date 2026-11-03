@@ -26,7 +26,7 @@ Documentation-only PRs from external contributors are not accepted directly. Ope
 ## Quick start
 
 ```sh
-git clone https://github.com/omdsh-dev/dsh-plugin-memory.git
+git clone https://github.com/suveng/dsh-plugin-memory.git
 cd dsh-plugin-memory
 pnpm install
 pnpm run verify

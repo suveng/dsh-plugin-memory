@@ -36,11 +36,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/omdsh-dev/dsh-plugin-memory.git"
+    "url": "git+https://github.com/suveng/dsh-plugin-memory.git"
   },
-  "homepage": "https://github.com/omdsh-dev/dsh-plugin-memory#readme",
+  "homepage": "https://github.com/suveng/dsh-plugin-memory#readme",
   "bugs": {
-    "url": "https://github.com/omdsh-dev/dsh-plugin-memory/issues"
+    "url": "https://github.com/suveng/dsh-plugin-memory/issues"
   },
   "license": "MIT",
   "publishConfig": {

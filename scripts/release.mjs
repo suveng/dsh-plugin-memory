@@ -78,7 +78,7 @@ export function createReleasePlan(packages, { tag, prerelease, baseVersions } = 
       assert.equal(starter.manifest.dependencies?.[manifest.name] ?? starter.manifest.devDependencies?.[manifest.name], manifest.version,
         `${manifest.name}: Starter must pin the tested plugin version (runtime or development)`)
       if (item.directory.startsWith(root + '/')) {
-        assert.equal(manifest.repository?.url, 'git+https://github.com/omdsh-dev/dsh-plugin-memory.git', `${manifest.name}: repository URL must identify the official source`)
+        assert.equal(manifest.repository?.url, 'git+https://github.com/suveng/dsh-plugin-memory.git', `${manifest.name}: repository URL must identify the official source`)
         assert.equal(manifest.repository?.directory, relative(root, item.directory), `${manifest.name}: repository directory must identify the package source`)
       }
     }

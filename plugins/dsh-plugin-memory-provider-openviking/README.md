@@ -12,7 +12,7 @@ The adapter currently accepts text through `RememberRequest.content` and stores 
 
 For content written through this adapter, use an embedding configuration that accepts text. A text embedding model is sufficient for this input format; an existing multimodal model can remain in use if it supports text in your OpenViking deployment. This limitation alone does not require changing embedding models or rebuilding an existing index.
 
-Future image and attachment write support is tracked in [issue #453](https://github.com/omdsh-dev/dsh-plugin-memory/issues/453).
+Future image and attachment write support is tracked in [issue #453](https://github.com/omdsh-dev/dsh-mnemon/issues/453).
 
 ## Search
 
@@ -36,7 +36,7 @@ providers:
 
 This is a **Memory Spaces child module**, not a top-level Source or a complete Strategy. It registers through `dsh-plugin-memory-source-memory-spaces/provider-sdk`; each parent Source owns its child Fibers, connection settings and lifetime. Credentials stay on the Host.
 
-[Provider setup and capability matrix](https://github.com/omdsh-dev/dsh-plugin-memory/blob/main/docs/en/guides/memory-providers.md) · [中文指南](https://github.com/omdsh-dev/dsh-plugin-memory/blob/main/docs/zh-CN/guides/memory-providers.md)
+[Provider setup and capability matrix](https://github.com/suveng/dsh-plugin-memory/blob/main/docs/en/guides/memory-providers.md) · [中文指南](https://github.com/suveng/dsh-plugin-memory/blob/main/docs/zh-CN/guides/memory-providers.md)
 
 ## Develop independently
 
@@ -44,4 +44,4 @@ From a source checkout with the declared dependencies installed, run `pnpm verif
 
 To test a disposable local OpenViking service (never a personal store), run `MNEMON_OPENVIKING_TEST_ENDPOINT=http://127.0.0.1:1933 pnpm exec vitest run tests/integration.spec.ts`. Supply `MNEMON_OPENVIKING_TEST_API_KEY` when the service requires authentication. It creates one synthetic canary in the default user's namespace, reads/searches/browses it, and deletes its exact URI. Ordinary verification skips this optional integration test. Admin discovery requires a key allowed to enumerate users; ROOT keys cannot access tenant data in `api_key` mode. The user-key regression uses deterministic responses, not a live cloud account.
 
-[Plugin author guide](https://github.com/omdsh-dev/dsh-plugin-memory/blob/main/docs/en/development/extensions.md)
+[Plugin author guide](https://github.com/suveng/dsh-plugin-memory/blob/main/docs/en/development/extensions.md)

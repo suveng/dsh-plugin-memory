@@ -51,9 +51,9 @@ describe('documentation checks', () => {
     expect(fixture({ 'README.md': '[web](https://example.invalid/x#y) [mail](mailto:a@example.invalid)' }).failures).toEqual([])
   })
   it('checks current repository URLs used in npm READMEs without rewriting historical links', () => {
-    const report = fixture({ 'README.md': '[ok](https://github.com/omdsh-dev/dsh-plugin-memory/blob/main/docs/a.md#one) [missing](https://github.com/omdsh-dev/dsh-plugin-memory/tree/main/absent) [history](https://github.com/omdsh-dev/dsh-plugin-memory/blob/v0.4.0/old.md)', 'docs/a.md': '# One' })
+    const report = fixture({ 'README.md': '[ok](https://github.com/suveng/dsh-plugin-memory/blob/main/docs/a.md#one) [missing](https://github.com/suveng/dsh-plugin-memory/tree/main/absent) [history](https://github.com/suveng/dsh-plugin-memory/blob/v0.4.0/old.md)', 'docs/a.md': '# One' })
     expect(report.localLinks).toBe(2)
-    expect(report.failures).toEqual(['README.md:1: missing https://github.com/omdsh-dev/dsh-plugin-memory/tree/main/absent'])
+    expect(report.failures).toEqual(['README.md:1: missing https://github.com/suveng/dsh-plugin-memory/tree/main/absent'])
   })
   it.each([['README.md', 'en'], ['README.zh-CN.md', 'zh-CN']])('retains the centered %s header, seven badges and localized diagram', (file, language) => {
     const readme = readFileSync(new URL(`../${file}`, import.meta.url), 'utf8')
@@ -63,7 +63,7 @@ describe('documentation checks', () => {
     const images = [...header.matchAll(/<img\b[^>]*\bsrc="([^"]+)"/gu)].map(match => new URL(match[1].replaceAll('&amp;', '&')))
     const badges = images.filter(url => ['img.shields.io', 'dshfind.com'].includes(url.hostname))
     expect(badges).toHaveLength(7)
-    expect(badges.map(url => url.pathname)).toEqual(expect.arrayContaining(['/npm/v/dsh-plugin-memory', '/npm/dt/dsh-plugin-memory', '/github/v/release/omdsh-dev/dsh-plugin-memory', '/github/stars/omdsh-dev/dsh-plugin-memory', '/badge/License-MIT-yellow.svg']))
+    expect(badges.map(url => url.pathname)).toEqual(expect.arrayContaining(['/npm/v/dsh-plugin-memory', '/npm/dt/dsh-plugin-memory', '/github/v/release/suveng/dsh-plugin-memory', '/github/stars/suveng/dsh-plugin-memory', '/badge/License-MIT-yellow.svg']))
     const catalog = badges.filter(url => url.hostname === 'dshfind.com')
     expect(catalog.map(url => url.searchParams.get('lang'))).toEqual([language === 'en' ? 'en' : 'zh', language === 'en' ? 'en' : 'zh'])
     expect(catalog.some(url => url.searchParams.get('metric') === 'downloads')).toBe(true)

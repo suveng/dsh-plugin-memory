@@ -82,4 +82,4 @@ The default Starter already mounts and selects the Layered strategy. In an indep
 
 Installing an npm package is not the same as activating a contribution. From a source checkout, run `pnpm verify` with declared public peers installed; use a packed peer for unreleased SDK work.
 
-[Plugin development and independent fixtures](https://github.com/omdsh-dev/dsh-plugin-memory/blob/main/docs/en/development/extensions.md) · [中文指南](https://github.com/omdsh-dev/dsh-plugin-memory/blob/main/docs/zh-CN/development/extensions.md)
+[Plugin development and independent fixtures](https://github.com/suveng/dsh-plugin-memory/blob/main/docs/en/development/extensions.md) · [中文指南](https://github.com/suveng/dsh-plugin-memory/blob/main/docs/zh-CN/development/extensions.md)

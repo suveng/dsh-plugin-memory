@@ -9,7 +9,7 @@
     "en": "Open-source skills from their original repositories. Each installs from its upstream source; check its license there.",
     "zh-CN": "来自原始仓库的开源技能。每个技能都从上游源安装，许可证以上游为准。"
   },
-  "homepage": "https://github.com/omdsh-dev/dsh-plugin-memory/tree/main/plugins/dsh-plugin-memory-source-skills/market",
+  "homepage": "https://github.com/suveng/dsh-plugin-memory/tree/main/plugins/dsh-plugin-memory-source-skills/market",
   "categories": [
     {
       "id": "docs-writing",

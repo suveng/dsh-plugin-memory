@@ -20,10 +20,10 @@ This is a **Memory Spaces child module**, not a top-level Source or a complete S
 
 Runtime bulk archival reuses only exact content found in a readonly namespace snapshot and groups identical entries within the pending batch. It imports the remaining originals with `memory import --no-diff`, so semantic similarity cannot skip a distinct fact or replace an existing one. Import counts, source indexes and exact content must match before receipts are returned. Ordinary `remember` continues to use the CLI's normal deduplication policy. No storage format or Source/Strategy contract changes are required.
 
-[Provider setup and capability matrix](https://github.com/omdsh-dev/dsh-plugin-memory/blob/main/docs/en/guides/memory-providers.md) · [中文指南](https://github.com/omdsh-dev/dsh-plugin-memory/blob/main/docs/zh-CN/guides/memory-providers.md)
+[Provider setup and capability matrix](https://github.com/suveng/dsh-plugin-memory/blob/main/docs/en/guides/memory-providers.md) · [中文指南](https://github.com/suveng/dsh-plugin-memory/blob/main/docs/zh-CN/guides/memory-providers.md)
 
 ## Develop independently
 
 From a source checkout with the declared dependencies installed, run `pnpm verify`. Tests, build and public exports belong to this package, without importing another package's controllers or repository configuration. Use the Source's public `/testing` fixtures for child registration and driver conformance; live service tests require a separately authorized environment.
 
-[Plugin author guide](https://github.com/omdsh-dev/dsh-plugin-memory/blob/main/docs/en/development/extensions.md)
+[Plugin author guide](https://github.com/suveng/dsh-plugin-memory/blob/main/docs/en/development/extensions.md)

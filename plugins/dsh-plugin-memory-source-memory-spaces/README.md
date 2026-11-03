@@ -39,4 +39,4 @@ The optional `./client` entry owns the Source's pages, its settings on its page 
 
 `pnpm verify` checks Host behavior, real Source-backed page interactions, and Host/browser artifacts. Client tests consume the installed Core's public testing entry.
 
-[Plugin development](https://github.com/omdsh-dev/dsh-plugin-memory/blob/main/docs/en/development/extensions.md) · [中文指南](https://github.com/omdsh-dev/dsh-plugin-memory/blob/main/docs/zh-CN/development/extensions.md)
+[Plugin development](https://github.com/suveng/dsh-plugin-memory/blob/main/docs/en/development/extensions.md) · [中文指南](https://github.com/suveng/dsh-plugin-memory/blob/main/docs/zh-CN/development/extensions.md)

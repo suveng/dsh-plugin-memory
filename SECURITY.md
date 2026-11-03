@@ -9,7 +9,7 @@
 | Latest stable `dsh-plugin-memory` Starter and its pinned official plugins | Security fixes |
 | Older releases | Upgrade to the latest stable Starter |
 
-Only the latest stable release receives security fixes. Official Source, Strategy and Provider packages in this repository are in scope even when published independently; report both the Starter version and the affected package version. The Starter pins a tested combination. See the verified Host and runtime baselines in [Compatibility](https://github.com/omdsh-dev/dsh-plugin-memory/blob/main/docs/en/reference/compatibility.md).
+Only the latest stable release receives security fixes. Official Source, Strategy and Provider packages in this repository are in scope even when published independently; report both the Starter version and the affected package version. The Starter pins a tested combination. See the verified Host and runtime baselines in [Compatibility](https://github.com/suveng/dsh-plugin-memory/blob/main/docs/en/reference/compatibility.md).
 
 ## Reporting a vulnerability
 
@@ -17,7 +17,7 @@ Please **do not open a public issue** for security vulnerabilities.
 
 Report privately through one of these channels, in order of preference:
 
-1. **GitHub Security Advisories** — use the “Report a vulnerability” flow on the [Security tab](https://github.com/omdsh-dev/dsh-plugin-memory/security) of this repository (private vulnerability reporting).
+1. **GitHub Security Advisories** — use the “Report a vulnerability” flow on the [Security tab](https://github.com/suveng/dsh-plugin-memory/security) of this repository (private vulnerability reporting).
 2. **Email** — `grivn.wang@gmail.com` (maintainer). Use a subject prefix like `[dsh-plugin-memory security]`.
 
 Please include, when possible:
@@ -66,13 +66,13 @@ Out of scope:
 | 最新稳定版 `dsh-plugin-memory` Starter 及其固定的官方插件组合 | 提供安全修复 |
 | 较旧版本 | 升级到最新稳定版 Starter |
 
-仅最新稳定版本获得安全修复。本仓库的官方 Source、Strategy 和 Provider 包即使独立发布，也属于报告范围；请同时提供 Starter 与受影响包的版本。Starter 固定经过验证的组合，已验证的宿主和运行环境见[兼容性说明](https://github.com/omdsh-dev/dsh-plugin-memory/blob/main/docs/zh-CN/reference/compatibility.md)。
+仅最新稳定版本获得安全修复。本仓库的官方 Source、Strategy 和 Provider 包即使独立发布，也属于报告范围；请同时提供 Starter 与受影响包的版本。Starter 固定经过验证的组合，已验证的宿主和运行环境见[兼容性说明](https://github.com/suveng/dsh-plugin-memory/blob/main/docs/zh-CN/reference/compatibility.md)。
 
 ### 报告漏洞
 
 请**不要**为安全漏洞开公开 issue，按优先级使用以下渠道私下报告：
 
-1. **GitHub Security Advisories**：在本仓库 [Security 页](https://github.com/omdsh-dev/dsh-plugin-memory/security) 使用“Report a vulnerability”（私密漏洞报告）。
+1. **GitHub Security Advisories**：在本仓库 [Security 页](https://github.com/suveng/dsh-plugin-memory/security) 使用“Report a vulnerability”（私密漏洞报告）。
 2. **邮件**：`grivn.wang@gmail.com`（维护者），主题加 `[dsh-plugin-memory security]` 前缀。
 
 请尽量附上：受影响版本、最小复现或 PoC、是否已被公开利用、披露偏好（协调披露 / 署名 / 保密期）。

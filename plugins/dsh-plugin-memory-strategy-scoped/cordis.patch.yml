@@ -1,0 +1,6 @@
+# Installation registers the Strategy contribution. Activation remains an
+# explicit Profile choice made through Memory or the DSH Loader configuration.
+- insert:
+    - id: memory-strategy-scoped
+      name: dsh-plugin-memory-strategy-scoped
+      disabled: true

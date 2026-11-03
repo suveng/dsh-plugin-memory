@@ -1,0 +1,6 @@
+# Installation registers the Strategy contribution. Activation remains an
+# explicit Profile choice made through Memory or the DSH Loader configuration.
+- insert:
+    - id: memory-strategy-light-context
+      name: dsh-plugin-memory-strategy-light-context
+      disabled: true

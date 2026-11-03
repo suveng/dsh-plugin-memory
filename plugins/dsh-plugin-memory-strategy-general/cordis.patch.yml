@@ -1,0 +1,6 @@
+# Installation registers the main Strategy. Selecting it stays an explicit
+# choice made through Memory or the DSH Plugins page.
+- insert:
+    - id: memory-strategy-general
+      name: dsh-plugin-memory-strategy-general
+      disabled: true

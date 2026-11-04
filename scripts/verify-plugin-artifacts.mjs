@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url'
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const args = new Set(process.argv.slice(2))
 for (const arg of args) if (!['--skip-build', '--keep'].includes(arg)) throw new Error(`Unknown argument: ${arg}`)
-const names = (await readdir(join(root, 'plugins'))).filter(name => name.startsWith('dsh-plugin-memory-')).sort()
+const names = (await readdir(join(root, 'plugins'))).filter(name => name.startsWith('suveng-dsh-plugin-memory-')).sort()
 const configuredConcurrency = process.env.MNEMON_PLUGIN_VERIFY_CONCURRENCY ?? '4'
 assert.match(configuredConcurrency, /^[1-9]\d*$/, 'MNEMON_PLUGIN_VERIFY_CONCURRENCY must be a positive integer')
 const concurrency = Math.min(Number(configuredConcurrency), names.length)
@@ -172,11 +172,11 @@ try {
   if (!args.has('--skip-build')) {
     await run('pnpm', ['build'], root, 'build default distribution and public SDK')
     await Promise.all([
-      parallel(names.filter(name => name.startsWith('dsh-plugin-memory-source-')), concurrency,
+      parallel(names.filter(name => name.startsWith('suveng-dsh-plugin-memory-source-')), concurrency,
         name => run('pnpm', ['build'], join(root, 'plugins', name), `build ${name}`)),
-      run('pnpm', ['build'], join(root, 'plugins/dsh-plugin-memory-strategy-default-three-tier'), 'build Strategy-owned extension SDK'),
+      run('pnpm', ['build'], join(root, 'plugins/suveng-dsh-plugin-memory-strategy-default-three-tier'), 'build Strategy-owned extension SDK'),
     ])
-    await parallel(names.filter(name => !name.startsWith('dsh-plugin-memory-source-') && name !== 'dsh-plugin-memory-strategy-default-three-tier'), concurrency,
+    await parallel(names.filter(name => !name.startsWith('suveng-dsh-plugin-memory-source-') && name !== 'suveng-dsh-plugin-memory-strategy-default-three-tier'), concurrency,
       name => run('pnpm', ['build'], join(root, 'plugins', name), `build ${name}`))
   }
   await mkdir(join(temporary, 'tarballs'))
@@ -196,15 +196,15 @@ try {
   }
   await new Promise(resolve => registry.listen(0, '127.0.0.1', resolve))
   registryUrl = 'http://127.0.0.1:' + registry.address().port
-  const priority = name => name.startsWith('dsh-plugin-memory-source-') ? 40
-    : name.startsWith('dsh-plugin-memory-provider-') ? 30 : 20
+  const priority = name => name.startsWith('suveng-dsh-plugin-memory-source-') ? 40
+    : name.startsWith('suveng-dsh-plugin-memory-provider-') ? 30 : 20
   const checks = [
     ...names.map(name => ({ label: name, priority: priority(name), action: () => verifyIndependent(name) })),
     { label: 'external consumer', priority: 25, action: verifyConsumer },
     { label: 'real DSH Starter upgrade', priority: 10, action: () => run(process.execPath, [
       join(root, 'scripts/verify-headless-profile.mjs'),
       '--package', 'file:' + artifacts.get(manifest.name), '--registry', registryUrl,
-      '--upgrade-from', `dsh-plugin-memory@${upgradeBase}`, '--upgrade-registry', 'https://registry.npmjs.org',
+      '--upgrade-from', `suveng-dsh-plugin-memory@${upgradeBase}`, '--upgrade-registry', 'https://registry.npmjs.org',
     ], root, 'real DSH: install only the packed Starter and activate its plugins') },
     { label: 'real DSH Strategy composition', priority: 10, action: () => run(process.execPath, [
       join(root, 'scripts/verify-headless-profile.mjs'),

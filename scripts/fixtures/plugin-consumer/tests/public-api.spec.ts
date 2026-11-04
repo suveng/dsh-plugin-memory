@@ -4,21 +4,21 @@ import { existsSync, mkdirSync, mkdtempSync, readdirSync, realpathSync, rmSync, 
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, expect, expectTypeOf, it } from 'vitest'
-import * as core from 'dsh-plugin-memory/core'
-import * as sdk from 'dsh-plugin-memory/extension-sdk'
-import type { MemoryMemoryService, MemorySourceRuntime } from 'dsh-plugin-memory/extension-sdk'
-import { MemoryCompositionRunner, type MemoryTestTurn } from 'dsh-plugin-memory/testing'
-import * as providerSdk from 'dsh-plugin-memory-source-memory-spaces/provider-sdk'
-import { resolveEmbedding, resolvePersistenceStrategy, resolveRecallQuality } from 'dsh-plugin-memory-source-memory-spaces'
-import { createMemorySpaceProviderFixture, mountMemorySpaceProvider } from 'dsh-plugin-memory-source-memory-spaces/testing'
+import * as core from 'suveng-dsh-plugin-memory/core'
+import * as sdk from 'suveng-dsh-plugin-memory/extension-sdk'
+import type { MemoryMemoryService, MemorySourceRuntime } from 'suveng-dsh-plugin-memory/extension-sdk'
+import { MemoryCompositionRunner, type MemoryTestTurn } from 'suveng-dsh-plugin-memory/testing'
+import * as providerSdk from 'suveng-dsh-plugin-memory-source-memory-spaces/provider-sdk'
+import { resolveEmbedding, resolvePersistenceStrategy, resolveRecallQuality } from 'suveng-dsh-plugin-memory-source-memory-spaces'
+import { createMemorySpaceProviderFixture, mountMemorySpaceProvider } from 'suveng-dsh-plugin-memory-source-memory-spaces/testing'
 import provider, { canonicalMemorySpace, LegacyHttpProvider } from '../lib/external-provider.js'
 import { memoryPlugin, memoryStrategyConfiguration } from '../lib/external-strategy-extension.js'
 // @ts-expect-error The installed SDK must not expose Core's engine.
-import type { MemoryRuntime } from 'dsh-plugin-memory/extension-sdk'
+import type { MemoryRuntime } from 'suveng-dsh-plugin-memory/extension-sdk'
 // @ts-expect-error Installed records are not public author contracts.
-import type { InstalledMemorySource } from 'dsh-plugin-memory/contracts'
+import type { InstalledMemorySource } from 'suveng-dsh-plugin-memory/contracts'
 // @ts-expect-error The Provider SDK must not expose its Source's private host.
-import type { PrivateMemorySpaceProviderHost } from 'dsh-plugin-memory-source-memory-spaces/provider-sdk'
+import type { PrivateMemorySpaceProviderHost } from 'suveng-dsh-plugin-memory-source-memory-spaces/provider-sdk'
 
 describe('published author API', () => {
   it('resolves workspace identities through the packed SDK without writing storage', () => {
@@ -44,8 +44,8 @@ describe('published author API', () => {
     expect(resolvePersistenceStrategy({ mode: 'manual', rules: { allowedProviderIds: [] } }).rules.allowedProviderIds).toEqual(['memory-native'])
   })
   it('compiles and consumes an optional Strategy editor against packed public SDKs', () => {
-    expect(memoryPlugin).toMatchObject({ apiVersion: 'dsh-plugin-memory/plugin/v1', roles: ['strategy-extension'], requires: ['strategy.default-three-tier'] })
-    expect(memoryStrategyConfiguration.apiVersion).toBe('dsh-plugin-memory/strategy-configuration/v1')
+    expect(memoryPlugin).toMatchObject({ apiVersion: 'suveng-dsh-plugin-memory/plugin/v1', roles: ['strategy-extension'], requires: ['strategy.default-three-tier'] })
+    expect(memoryStrategyConfiguration.apiVersion).toBe('suveng-dsh-plugin-memory/strategy-configuration/v1')
     expect(memoryStrategyConfiguration.label.en).toBe('External budget')
     expect(memoryStrategyConfiguration.create({})).toMatchObject({
       plugin: memoryPlugin,

@@ -13,8 +13,8 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const execute = promisify(execFile)
 const defaultRegistry = 'https://registry.npmjs.org'
 const manifestName = 'release-manifest.json'
-const starterName = 'dsh-plugin-memory'
-const internalName = /^dsh-plugin-memory-(?:source|strategy|provider)-[a-z0-9-]+$/u
+const starterName = 'suveng-dsh-plugin-memory'
+const internalName = /^suveng-dsh-plugin-memory-(?:source|strategy|provider)-[a-z0-9-]+$/u
 const releaseVersion = /^(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-(alpha|beta|rc)\.(?:0|[1-9]\d*))?$/u
 
 function distTagForVersion(version) {
@@ -78,13 +78,13 @@ export function createReleasePlan(packages, { tag, prerelease, baseVersions } = 
       assert.equal(starter.manifest.dependencies?.[manifest.name] ?? starter.manifest.devDependencies?.[manifest.name], manifest.version,
         `${manifest.name}: Starter must pin the tested plugin version (runtime or development)`)
       if (item.directory.startsWith(root + '/')) {
-        assert.equal(manifest.repository?.url, 'git+https://github.com/suveng/dsh-plugin-memory.git', `${manifest.name}: repository URL must identify the official source`)
+        assert.equal(manifest.repository?.url, 'git+https://github.com/suveng/suveng-dsh-plugin-memory.git', `${manifest.name}: repository URL must identify the official source`)
         assert.equal(manifest.repository?.directory, relative(root, item.directory), `${manifest.name}: repository directory must identify the package source`)
       }
     }
     for (const field of ['dependencies', 'optionalDependencies', 'peerDependencies', 'devDependencies']) {
       for (const [name, range] of Object.entries(manifest[field] ?? {})) {
-        if (name !== starterName && !name.startsWith('dsh-plugin-memory-')) continue
+        if (name !== starterName && !name.startsWith('suveng-dsh-plugin-memory-')) continue
         const dependency = packagesByName.get(name)
         assert(dependency, `${manifest.name}: missing release composition package for ${name}`)
         if (item === starter && name !== starterName) {
@@ -135,7 +135,7 @@ export function createReleasePlan(packages, { tag, prerelease, baseVersions } = 
 
 export async function readReleasePackages(directory = root) {
   const names = (await readdir(join(directory, 'plugins'), { withFileTypes: true }))
-    .filter(entry => entry.isDirectory() && entry.name.startsWith('dsh-plugin-memory-')).map(entry => entry.name)
+    .filter(entry => entry.isDirectory() && entry.name.startsWith('suveng-dsh-plugin-memory-')).map(entry => entry.name)
   return Promise.all([directory, ...names.map(name => join(directory, 'plugins', name))].map(async packageDirectory => ({
     directory: packageDirectory,
     manifest: JSON.parse(await readFile(join(packageDirectory, 'package.json'), 'utf8')),
@@ -207,7 +207,7 @@ export function publicationInputsChanged(plan, paths, { ignoredPackageJson = new
   const changed = new Set()
   const rootInputs = /^(?:package\.json|cordis\.patch\.yml|README(?:\.zh-CN)?\.md|LICENSE|SECURITY\.md|THIRD_PARTY_NOTICES\.md|tsconfig(?:\.types)?\.json|tsdown\.config\.ts|scripts\/link-bundle-declarations\.mjs|bin\/|src\/|lib\/|locale\/)/u
   for (const path of paths) {
-    const plugin = /^plugins\/(dsh-plugin-memory-(?:source|strategy|provider)-[a-z0-9-]+)\/(.+)$/u.exec(path)
+    const plugin = /^plugins\/(suveng-dsh-plugin-memory-(?:source|strategy|provider)-[a-z0-9-]+)\/(.+)$/u.exec(path)
     if (plugin) {
       const [, name, packagePath] = plugin
       if (packageNames.has(name) && !(packagePath === 'package.json' && ignoredPackageJson.has(name))

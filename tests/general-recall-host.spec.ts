@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import * as general from 'dsh-plugin-memory-strategy-general'
+import * as general from 'suveng-dsh-plugin-memory-strategy-general'
 import type { HostAgent, HostContextShape, ToolDefinition } from '../src/host/dsh.ts'
 import { agentScope } from '../src/host/runtime.ts'
 import { MemorySubagentCoordinator } from '../src/host/subagent.ts'

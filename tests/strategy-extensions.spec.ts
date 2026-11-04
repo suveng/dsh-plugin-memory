@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 import type { Context } from '@deepseek-ai/cordis'
-import { COMPOSABLE_MEMORY_API_VERSION, type MemoryJsonValue, type MemorySourceDefinition, type MemoryStrategyDefinition, type MemoryStrategyExtensionDefinition } from 'dsh-plugin-memory/contracts'
-import { defineMemorySource, defineMemoryStrategy, defineMemoryStrategyExtension, installMemory, createMemoryMutationReceipt } from 'dsh-plugin-memory/extension-sdk'
-import { DEFAULT_MEMORY_VIEW_BUDGET, MemoryCompositionRunner } from 'dsh-plugin-memory/testing'
+import { COMPOSABLE_MEMORY_API_VERSION, type MemoryJsonValue, type MemorySourceDefinition, type MemoryStrategyDefinition, type MemoryStrategyExtensionDefinition } from 'suveng-dsh-plugin-memory/contracts'
+import { defineMemorySource, defineMemoryStrategy, defineMemoryStrategyExtension, installMemory, createMemoryMutationReceipt } from 'suveng-dsh-plugin-memory/extension-sdk'
+import { DEFAULT_MEMORY_VIEW_BUDGET, MemoryCompositionRunner } from 'suveng-dsh-plugin-memory/testing'
 
 function plugin(contribution: Parameters<typeof installMemory>[1]) {
   return { inject: ['memoryMemory'], apply(ctx: Context) { installMemory(ctx, contribution) } }
@@ -10,7 +10,7 @@ function plugin(contribution: Parameters<typeof installMemory>[1]) {
 
 function source(onWrite = vi.fn(), failFactory = () => false): MemorySourceDefinition {
   return defineMemorySource({
-    manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'source', typeId: 'notes', packageName: 'dsh-plugin-memory-source-notes',
+    manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'source', typeId: 'notes', packageName: 'suveng-dsh-plugin-memory-source-notes',
       role: 'notes', capabilities: ['project', 'write'], consistency: 'exact-snapshot',
       actions: [{ id: 'append', capability: 'write', description: 'Append a note.', inputSchema: { type: 'string' } }] },
     create(context) {
@@ -30,7 +30,7 @@ function source(onWrite = vi.fn(), failFactory = () => false): MemorySourceDefin
 }
 
 const base: MemoryStrategyDefinition = defineMemoryStrategy({
-  manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'strategy', typeId: 'base', packageName: 'dsh-plugin-memory-strategy-base',
+  manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'strategy', typeId: 'base', packageName: 'suveng-dsh-plugin-memory-strategy-base',
     deterministic: true, supportedSourceRoles: ['notes'], maxSources: 10, maxRoutes: 10, maxActions: 10,
     extensionSlots: ['selection', 'projection', 'guidance'] },
   compose(request, sources, contributions = []) {
@@ -50,7 +50,7 @@ const base: MemoryStrategyDefinition = defineMemoryStrategy({
 function extension(typeId: string, slot: string, value: MemoryJsonValue | (() => MemoryJsonValue), target = 'base'): MemoryStrategyExtensionDefinition {
   return defineMemoryStrategyExtension({
     manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'strategy-extension', typeId,
-      packageName: `dsh-plugin-memory-strategy-${typeId}`, strategyTypeId: target, slot, deterministic: true },
+      packageName: `suveng-dsh-plugin-memory-strategy-${typeId}`, strategyTypeId: target, slot, deterministic: true },
     contribute: typeof value === 'function' ? value : () => value,
   })
 }

@@ -20,110 +20,110 @@
       "node"
     ],
     "paths": {
-      "dsh-plugin-memory/contracts": [
+      "suveng-dsh-plugin-memory/contracts": [
         "./src/core/contracts/index.ts"
       ],
-      "dsh-plugin-memory/extension-sdk": [
+      "suveng-dsh-plugin-memory/extension-sdk": [
         "./src/sdk/index.ts"
       ],
-      "dsh-plugin-memory/testing": [
+      "suveng-dsh-plugin-memory/testing": [
         "./src/sdk/testing.ts"
       ],
-      "dsh-plugin-memory-source-memory-spaces/provider-sdk": [
-        "./plugins/dsh-plugin-memory-source-memory-spaces/src/provider-sdk.ts"
+      "suveng-dsh-plugin-memory-source-memory-spaces/provider-sdk": [
+        "./plugins/suveng-dsh-plugin-memory-source-memory-spaces/src/provider-sdk.ts"
       ],
-      "dsh-plugin-memory-source-memory-spaces/testing": [
-        "./plugins/dsh-plugin-memory-source-memory-spaces/src/testing.ts"
+      "suveng-dsh-plugin-memory-source-memory-spaces/testing": [
+        "./plugins/suveng-dsh-plugin-memory-source-memory-spaces/src/testing.ts"
       ],
-      "dsh-plugin-memory/client": [
+      "suveng-dsh-plugin-memory/client": [
         "./src/client/extension-sdk.ts"
       ],
-      "dsh-plugin-memory-source-runtime/client": [
-        "./plugins/dsh-plugin-memory-source-runtime/src/client.ts"
+      "suveng-dsh-plugin-memory-source-runtime/client": [
+        "./plugins/suveng-dsh-plugin-memory-source-runtime/src/client.ts"
       ],
-      "dsh-plugin-memory-source-documents/client": [
-        "./plugins/dsh-plugin-memory-source-documents/src/client.ts"
+      "suveng-dsh-plugin-memory-source-documents/client": [
+        "./plugins/suveng-dsh-plugin-memory-source-documents/src/client.ts"
       ],
-      "dsh-plugin-memory-source-memory-spaces/client": [
-        "./plugins/dsh-plugin-memory-source-memory-spaces/src/client.ts"
+      "suveng-dsh-plugin-memory-source-memory-spaces/client": [
+        "./plugins/suveng-dsh-plugin-memory-source-memory-spaces/src/client.ts"
       ],
-      "dsh-plugin-memory-source-runtime/contracts": [
-        "./plugins/dsh-plugin-memory-source-runtime/src/contracts.ts"
+      "suveng-dsh-plugin-memory-source-runtime/contracts": [
+        "./plugins/suveng-dsh-plugin-memory-source-runtime/src/contracts.ts"
       ],
-      "dsh-plugin-memory-source-documents/contracts": [
-        "./plugins/dsh-plugin-memory-source-documents/src/contracts.ts"
+      "suveng-dsh-plugin-memory-source-documents/contracts": [
+        "./plugins/suveng-dsh-plugin-memory-source-documents/src/contracts.ts"
       ],
-      "dsh-plugin-memory-source-memory-spaces/contracts": [
-        "./plugins/dsh-plugin-memory-source-memory-spaces/src/contracts.ts"
+      "suveng-dsh-plugin-memory-source-memory-spaces/contracts": [
+        "./plugins/suveng-dsh-plugin-memory-source-memory-spaces/src/contracts.ts"
       ],
-      "dsh-plugin-memory-source-runtime": [
-        "./plugins/dsh-plugin-memory-source-runtime/src/index.ts"
+      "suveng-dsh-plugin-memory-source-runtime": [
+        "./plugins/suveng-dsh-plugin-memory-source-runtime/src/index.ts"
       ],
-      "dsh-plugin-memory-source-documents": [
-        "./plugins/dsh-plugin-memory-source-documents/src/index.ts"
+      "suveng-dsh-plugin-memory-source-documents": [
+        "./plugins/suveng-dsh-plugin-memory-source-documents/src/index.ts"
       ],
-      "dsh-plugin-memory-source-skills/client": [
-        "./plugins/dsh-plugin-memory-source-skills/src/client.ts"
+      "suveng-dsh-plugin-memory-source-skills/client": [
+        "./plugins/suveng-dsh-plugin-memory-source-skills/src/client.ts"
       ],
-      "dsh-plugin-memory-source-skills/contracts": [
-        "./plugins/dsh-plugin-memory-source-skills/src/contracts.ts"
+      "suveng-dsh-plugin-memory-source-skills/contracts": [
+        "./plugins/suveng-dsh-plugin-memory-source-skills/src/contracts.ts"
       ],
-      "dsh-plugin-memory-source-skills": [
-        "./plugins/dsh-plugin-memory-source-skills/src/index.ts"
+      "suveng-dsh-plugin-memory-source-skills": [
+        "./plugins/suveng-dsh-plugin-memory-source-skills/src/index.ts"
       ],
-      "dsh-plugin-memory-source-memory-spaces": [
-        "./plugins/dsh-plugin-memory-source-memory-spaces/src/index.ts"
+      "suveng-dsh-plugin-memory-source-memory-spaces": [
+        "./plugins/suveng-dsh-plugin-memory-source-memory-spaces/src/index.ts"
       ],
-      "dsh-plugin-memory-strategy-default-three-tier/extension-sdk": [
-        "./plugins/dsh-plugin-memory-strategy-default-three-tier/src/extension-sdk.ts"
+      "suveng-dsh-plugin-memory-strategy-default-three-tier/extension-sdk": [
+        "./plugins/suveng-dsh-plugin-memory-strategy-default-three-tier/src/extension-sdk.ts"
       ],
-      "dsh-plugin-memory-strategy-scoped": [
-        "./plugins/dsh-plugin-memory-strategy-scoped/src/index.ts"
+      "suveng-dsh-plugin-memory-strategy-scoped": [
+        "./plugins/suveng-dsh-plugin-memory-strategy-scoped/src/index.ts"
       ],
-      "dsh-plugin-memory-strategy-light-context": [
-        "./plugins/dsh-plugin-memory-strategy-light-context/src/index.ts"
+      "suveng-dsh-plugin-memory-strategy-light-context": [
+        "./plugins/suveng-dsh-plugin-memory-strategy-light-context/src/index.ts"
       ],
-      "dsh-plugin-memory-strategy-auto-capture": [
-        "./plugins/dsh-plugin-memory-strategy-auto-capture/src/index.ts"
+      "suveng-dsh-plugin-memory-strategy-auto-capture": [
+        "./plugins/suveng-dsh-plugin-memory-strategy-auto-capture/src/index.ts"
       ],
-      "dsh-plugin-memory-strategy-default-three-tier": [
-        "./plugins/dsh-plugin-memory-strategy-default-three-tier/src/index.ts"
+      "suveng-dsh-plugin-memory-strategy-default-three-tier": [
+        "./plugins/suveng-dsh-plugin-memory-strategy-default-three-tier/src/index.ts"
       ],
-      "dsh-plugin-memory-strategy-general": [
-        "./plugins/dsh-plugin-memory-strategy-general/src/index.ts"
+      "suveng-dsh-plugin-memory-strategy-general": [
+        "./plugins/suveng-dsh-plugin-memory-strategy-general/src/index.ts"
       ],
-      "dsh-plugin-memory-provider-native": [
-        "./plugins/dsh-plugin-memory-provider-native/src/index.ts"
+      "suveng-dsh-plugin-memory-provider-native": [
+        "./plugins/suveng-dsh-plugin-memory-provider-native/src/index.ts"
       ],
-      "dsh-plugin-memory-provider-openviking": [
-        "./plugins/dsh-plugin-memory-provider-openviking/src/index.ts"
+      "suveng-dsh-plugin-memory-provider-openviking": [
+        "./plugins/suveng-dsh-plugin-memory-provider-openviking/src/index.ts"
       ],
-      "dsh-plugin-memory-provider-honcho": [
-        "./plugins/dsh-plugin-memory-provider-honcho/src/index.ts"
+      "suveng-dsh-plugin-memory-provider-honcho": [
+        "./plugins/suveng-dsh-plugin-memory-provider-honcho/src/index.ts"
       ],
-      "dsh-plugin-memory-provider-mem0": [
-        "./plugins/dsh-plugin-memory-provider-mem0/src/index.ts"
+      "suveng-dsh-plugin-memory-provider-mem0": [
+        "./plugins/suveng-dsh-plugin-memory-provider-mem0/src/index.ts"
       ],
-      "dsh-plugin-memory-provider-hindsight": [
-        "./plugins/dsh-plugin-memory-provider-hindsight/src/index.ts"
+      "suveng-dsh-plugin-memory-provider-hindsight": [
+        "./plugins/suveng-dsh-plugin-memory-provider-hindsight/src/index.ts"
       ],
-      "dsh-plugin-memory-provider-holographic": [
-        "./plugins/dsh-plugin-memory-provider-holographic/src/index.ts"
+      "suveng-dsh-plugin-memory-provider-holographic": [
+        "./plugins/suveng-dsh-plugin-memory-provider-holographic/src/index.ts"
       ],
-      "dsh-plugin-memory-provider-retaindb": [
-        "./plugins/dsh-plugin-memory-provider-retaindb/src/index.ts"
+      "suveng-dsh-plugin-memory-provider-retaindb": [
+        "./plugins/suveng-dsh-plugin-memory-provider-retaindb/src/index.ts"
       ],
-      "dsh-plugin-memory-provider-byterover": [
-        "./plugins/dsh-plugin-memory-provider-byterover/src/index.ts"
+      "suveng-dsh-plugin-memory-provider-byterover": [
+        "./plugins/suveng-dsh-plugin-memory-provider-byterover/src/index.ts"
       ],
-      "dsh-plugin-memory-provider-supermemory": [
-        "./plugins/dsh-plugin-memory-provider-supermemory/src/index.ts"
+      "suveng-dsh-plugin-memory-provider-supermemory": [
+        "./plugins/suveng-dsh-plugin-memory-provider-supermemory/src/index.ts"
       ],
-      "dsh-plugin-memory-source-memory-spaces/native-cli": [
-        "./plugins/dsh-plugin-memory-source-memory-spaces/src/native-cli.ts"
+      "suveng-dsh-plugin-memory-source-memory-spaces/native-cli": [
+        "./plugins/suveng-dsh-plugin-memory-source-memory-spaces/src/native-cli.ts"
       ],
-      "dsh-plugin-memory-source-memory-spaces/space-identity": [
-        "./plugins/dsh-plugin-memory-source-memory-spaces/src/space-identity.ts"
+      "suveng-dsh-plugin-memory-source-memory-spaces/space-identity": [
+        "./plugins/suveng-dsh-plugin-memory-source-memory-spaces/src/space-identity.ts"
       ]
     },
     "resolveJsonModule": true

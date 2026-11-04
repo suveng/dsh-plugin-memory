@@ -1,7 +1,7 @@
 import {
   HttpMemoryProvider, MEMORY_SPACE_PROVIDER_API_VERSION, NORMALIZED_RELEVANCE_SCORE, defineMemorySpaceProvider,
-} from 'dsh-plugin-memory-source-memory-spaces/provider-sdk'
-import type { MemoryBody, MemorySpace, MemorySpaceAuthority, ProviderBodyStatus, ProviderSpaceStatus } from 'dsh-plugin-memory-source-memory-spaces/provider-sdk'
+} from 'suveng-dsh-plugin-memory-source-memory-spaces/provider-sdk'
+import type { MemoryBody, MemorySpace, MemorySpaceAuthority, ProviderBodyStatus, ProviderSpaceStatus } from 'suveng-dsh-plugin-memory-source-memory-spaces/provider-sdk'
 
 /** Compile both published spellings in a consumer outside the workspace. */
 export function canonicalMemorySpace(value: MemoryBody, status: ProviderBodyStatus): { space: MemorySpace; status: ProviderSpaceStatus } {
@@ -24,7 +24,7 @@ export default defineMemorySpaceProvider<undefined>({
     host.install(ctx, {
       manifest: {
         apiVersion: MEMORY_SPACE_PROVIDER_API_VERSION, kind: 'provider', typeId: 'external-fixture',
-        packageName: 'dsh-plugin-memory-provider-external-fixture', version: '1.0.0', label: 'External fixture', summary: 'Isolated in-memory test Provider.',
+        packageName: 'suveng-dsh-plugin-memory-provider-external-fixture', version: '1.0.0', label: 'External fixture', summary: 'Isolated in-memory test Provider.',
         origin: 'third-party', locality: 'remote', workspaceBinding: 'provider-global',
         capabilities: { search: true, browse: true, graph: false, entities: false, related: false, remember: true, link: false, forget: false,
           writeMode: 'exact', deletionMode: 'unsupported' },

@@ -6,10 +6,10 @@ import { createViewHandler } from '../src/host/view-rpc.ts'
 import { createRuntimeGraph, LiveMemoryRuntime } from '../src/host/runtime.ts'
 import type { MemoryViewConfigurationRequest, MemoryViewPreferences } from '../src/host/view-protocol.ts'
 import { viewManagementFixture } from './fixtures/view-management.ts'
-import type { RuntimeMemorySnapshot } from 'dsh-plugin-memory-source-runtime/contracts'
+import type { RuntimeMemorySnapshot } from 'suveng-dsh-plugin-memory-source-runtime/contracts'
 import type { Context } from '@deepseek-ai/cordis'
-import { COMPOSABLE_MEMORY_API_VERSION } from 'dsh-plugin-memory/contracts'
-import { defineMemoryStrategy, defineMemoryStrategyConfiguration, installMemory } from 'dsh-plugin-memory/extension-sdk'
+import { COMPOSABLE_MEMORY_API_VERSION } from 'suveng-dsh-plugin-memory/contracts'
+import { defineMemoryStrategy, defineMemoryStrategyConfiguration, installMemory } from 'suveng-dsh-plugin-memory/extension-sdk'
 import { sessionLog } from './fixtures/session-log.ts'
 
 const fixtures: Awaited<ReturnType<typeof viewManagementFixture>>[] = []
@@ -126,7 +126,7 @@ describe('View configuration with the real pinned DSH Cordis Loader', () => {
 
   it('selects another complete Strategy and can return without uninstalling the previous composition', async () => {
     const f = await fixture()
-    const name = 'dsh-plugin-memory-strategy-empty-view'
+    const name = 'suveng-dsh-plugin-memory-strategy-empty-view'
     const descriptor = defineMemoryStrategyConfiguration({ kind: 'strategy', typeId: 'empty-view', fields: [],
       label: { en: 'Empty view', 'zh-CN': '空视图' }, description: { en: 'Test-only complete Strategy.', 'zh-CN': '测试策略。' },
       create: () => ({ strategies: [defineMemoryStrategy({ manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'strategy', typeId: 'empty-view', packageName: name,
@@ -292,7 +292,7 @@ describe('View configuration with the real pinned DSH Cordis Loader', () => {
 
   it('keeps other editors and the real snapshot available when an optional module is broken', async () => {
     const f = await fixture()
-    f.modules['dsh-plugin-memory-strategy-light-context'] = { memoryStrategyConfiguration: { apiVersion: 'dsh-plugin-memory/strategy-configuration/v1', create: () => ({}), fields: null } }
+    f.modules['suveng-dsh-plugin-memory-strategy-light-context'] = { memoryStrategyConfiguration: { apiVersion: 'suveng-dsh-plugin-memory/strategy-configuration/v1', create: () => ({}), fields: null } }
     const catalog = await f.management.catalog()
     expect(catalog.diagnostics.join(' ')).toContain('light: Invalid plugin configuration descriptor')
     expect(catalog.entries.filter(entry => entry.roles.includes('strategy') || entry.roles.includes('strategy-extension')).map(entry => entry.entryId)).toEqual(['memory-strategy-default-three-tier', 'capture', 'scoped'])
@@ -326,16 +326,16 @@ describe('View configuration with the real pinned DSH Cordis Loader', () => {
   it('keeps plugin inspection read-only and requires confirmation before DSH installation', async () => {
     const f = await fixture()
     const installation = {
-      environment: () => ({ supported: true, profileName: 'web', suggestions: ['dsh-plugin-memory-strategy-focus'] }),
+      environment: () => ({ supported: true, profileName: 'web', suggestions: ['suveng-dsh-plugin-memory-strategy-focus'] }),
       registered: () => [],
-      inspect: vi.fn(async () => ({ packageName: 'dsh-plugin-memory-strategy-focus', version: '0.5.0-beta.4', kind: 'strategy', memoryPeerRange: '^0.5.0', installed: false })),
-      install: vi.fn(async () => ({ packageName: 'dsh-plugin-memory-strategy-focus', version: '0.5.0-beta.4', profileName: 'web', installed: true, restartRequired: true })),
+      inspect: vi.fn(async () => ({ packageName: 'suveng-dsh-plugin-memory-strategy-focus', version: '0.5.0-beta.4', kind: 'strategy', memoryPeerRange: '^0.5.0', installed: false })),
+      install: vi.fn(async () => ({ packageName: 'suveng-dsh-plugin-memory-strategy-focus', version: '0.5.0-beta.4', profileName: 'web', installed: true, restartRequired: true })),
     }
     const reader = createViewHandler(f.live, f.engine, f.management, 'read', undefined, installation as never)
     const writer = createViewHandler(f.live, f.engine, f.management, 'write', undefined, installation as never)
-    await expect(reader('inspect-plugin', { packageName: 'dsh-plugin-memory-strategy-focus' })).resolves.toMatchObject({ ok: true, value: { kind: 'strategy' } })
-    await expect(writer('install-plugin', { packageName: 'dsh-plugin-memory-strategy-focus', version: '0.5.0-beta.4' })).resolves.toMatchObject({ ok: false, error: { message: expect.stringContaining('confirmation') } })
-    await expect(writer('install-plugin', { packageName: 'dsh-plugin-memory-strategy-focus', version: '0.5.0-beta.4', confirmed: true })).resolves.toMatchObject({ ok: true, value: { restartRequired: true } })
+    await expect(reader('inspect-plugin', { packageName: 'suveng-dsh-plugin-memory-strategy-focus' })).resolves.toMatchObject({ ok: true, value: { kind: 'strategy' } })
+    await expect(writer('install-plugin', { packageName: 'suveng-dsh-plugin-memory-strategy-focus', version: '0.5.0-beta.4' })).resolves.toMatchObject({ ok: false, error: { message: expect.stringContaining('confirmation') } })
+    await expect(writer('install-plugin', { packageName: 'suveng-dsh-plugin-memory-strategy-focus', version: '0.5.0-beta.4', confirmed: true })).resolves.toMatchObject({ ok: true, value: { restartRequired: true } })
     expect(installation.install).toHaveBeenCalledOnce()
     await expect(reader('dashboard', {})).resolves.toMatchObject({ ok: true, value: { pluginInstallation: { supported: true, profileName: 'web' } } })
   })

@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
-import { COMPOSABLE_MEMORY_API_VERSION } from 'dsh-plugin-memory/contracts'
-import { defineMemoryStrategy, defineMemoryStrategyConfiguration, type MemoryStrategyConfiguration } from 'dsh-plugin-memory/extension-sdk'
+import { COMPOSABLE_MEMORY_API_VERSION } from 'suveng-dsh-plugin-memory/contracts'
+import { defineMemoryStrategy, defineMemoryStrategyConfiguration, type MemoryStrategyConfiguration } from 'suveng-dsh-plugin-memory/extension-sdk'
 
 const label = { en: 'Test', 'zh-CN': '测试' }
 const strategy = defineMemoryStrategy({
-  manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'strategy', typeId: 'test', packageName: 'dsh-plugin-memory-strategy-test',
+  manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'strategy', typeId: 'test', packageName: 'suveng-dsh-plugin-memory-strategy-test',
     deterministic: true, supportedSourceRoles: ['working-context'], maxSources: 1, maxRoutes: 1, maxActions: 1 },
   compose: () => ({ strategyTypeId: 'test', explanation: 'Test configuration.', sources: [] }),
 })

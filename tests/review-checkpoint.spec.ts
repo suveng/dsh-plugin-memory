@@ -29,9 +29,9 @@ describe('bounded review checkpoint', () => {
     const events = [
       event(0, 'Remember the explicit SQLite project decision.', { kind: 'user', rpcId: 'synthetic-rpc' }),
       event(1, 'Do not write this checkpoint to memory. 不记录本轮的临时诊断信息。', { kind: 'user' }),
-      event(2, 'Injected runtime snapshot.', { kind: 'dsh-plugin-memory', form: 'recall' }),
-      event(3, 'Old plugin wrapper.', { kind: 'plugin', plugin: 'dsh-plugin-memory' }),
-      event(4, 'Namespaced plugin wrapper.', { kind: 'plugin:dsh-plugin-memory' }),
+      event(2, 'Injected runtime snapshot.', { kind: 'suveng-dsh-plugin-memory', form: 'recall' }),
+      event(3, 'Old plugin wrapper.', { kind: 'plugin', plugin: 'suveng-dsh-plugin-memory' }),
+      event(4, 'Namespaced plugin wrapper.', { kind: 'plugin:suveng-dsh-plugin-memory' }),
       event(5, 'Runtime policy.', { kind: 'runtime-context' }),
       event(6, 'Compacted summary.', { kind: 'summary' }),
       event(7, 'No known source.'),

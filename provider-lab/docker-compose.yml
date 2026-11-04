@@ -1,4 +1,4 @@
-name: dsh-plugin-memory-provider-lab
+name: suveng-dsh-plugin-memory-provider-lab
 
 services:
   openviking:

@@ -73,7 +73,7 @@ interface ManagedPlugin {
   value: MemoryPluginEntryView
 }
 
-const PACKAGE = /^(?:@[a-z0-9._-]+\/)?dsh-plugin-memory-(source|strategy)-[a-z0-9._-]+$/u
+const PACKAGE = /^(?:@[a-z0-9._-]+\/)?suveng-dsh-plugin-memory-(source|strategy)-[a-z0-9._-]+$/u
 const hash = (value: unknown) => createHash('sha256').update(canonicalMemoryJson(value)).digest('hex')
 const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T
 
@@ -149,7 +149,7 @@ function orderPlugins(values: MemoryPluginEntryView[]): MemoryPluginEntryView[] 
 }
 
 /**
- * Profile-local plugin graph overlay. Every dsh-plugin-memory Source or Strategy Entry
+ * Profile-local plugin graph overlay. Every suveng-dsh-plugin-memory Source or Strategy Entry
  * is one peer node; activation, configuration, dependency checks and rollback
  * use one transaction. Contribution roles do not create separate managers.
  */

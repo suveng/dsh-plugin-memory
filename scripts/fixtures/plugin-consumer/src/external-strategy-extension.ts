@@ -1,8 +1,8 @@
 import type { Context } from '@deepseek-ai/cordis'
-import { defineMemoryPlugin, installMemory, defineMemoryStrategyConfiguration } from 'dsh-plugin-memory/extension-sdk'
-import { defineThreeTierExtension } from 'dsh-plugin-memory-strategy-default-three-tier/extension-sdk'
+import { defineMemoryPlugin, installMemory, defineMemoryStrategyConfiguration } from 'suveng-dsh-plugin-memory/extension-sdk'
+import { defineThreeTierExtension } from 'suveng-dsh-plugin-memory-strategy-default-three-tier/extension-sdk'
 
-export const name = 'dsh-plugin-memory-strategy-external-budget'
+export const name = 'suveng-dsh-plugin-memory-strategy-external-budget'
 export const inject = ['memoryMemory']
 export const memoryPlugin = defineMemoryPlugin({
   packageName: name,

@@ -4,11 +4,11 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { HostAgent, HostContextShape, HostSubagentStartRequest, HostSubagentsService, ToolDefinition, ToolExecution } from "../src/host/dsh.ts"
-import type { RememberRequest, MemorySpaceCatalog, SearchRequest, Insight, MemoryPlacementCandidate, PreparedMemoryPlacement } from 'dsh-plugin-memory-source-memory-spaces/contracts'
-import type { DocumentMutationResult, DocumentView, DocumentMutation } from 'dsh-plugin-memory-source-documents/contracts'
-import type { RuntimeMemoryMaintenancePlan, RuntimeMemoryMutation, RuntimeMemoryMutationResult, RuntimeMemorySnapshot } from 'dsh-plugin-memory-source-runtime/contracts'
-import type { MemoryEvidence, MemoryJsonValue } from 'dsh-plugin-memory/contracts'
-import type { MemoryTestManagementClient } from 'dsh-plugin-memory/testing'
+import type { RememberRequest, MemorySpaceCatalog, SearchRequest, Insight, MemoryPlacementCandidate, PreparedMemoryPlacement } from 'suveng-dsh-plugin-memory-source-memory-spaces/contracts'
+import type { DocumentMutationResult, DocumentView, DocumentMutation } from 'suveng-dsh-plugin-memory-source-documents/contracts'
+import type { RuntimeMemoryMaintenancePlan, RuntimeMemoryMutation, RuntimeMemoryMutationResult, RuntimeMemorySnapshot } from 'suveng-dsh-plugin-memory-source-runtime/contracts'
+import type { MemoryEvidence, MemoryJsonValue } from 'suveng-dsh-plugin-memory/contracts'
+import type { MemoryTestManagementClient } from 'suveng-dsh-plugin-memory/testing'
 import type { MemoryAgentRuntimeSource, MemoryRuntimeGraph } from '../src/host/runtime.ts'
 import { agentScope } from '../src/host/runtime.ts'
 import { AgentMemoryTurn } from '../src/host/agent-memory-turn.ts'
@@ -19,7 +19,7 @@ import { sourceFixture } from './fixtures/sources.ts'
 import { compositionFixture } from './fixtures/composition.ts'
 import { assertDshOutputSchema, MemorySubagentCoordinator, spaceWriteGuard, type RuntimeMaintenanceTaskRunner } from "../src/host/subagent.ts"
 import { CONTINUATION_TEXT } from '../src/host/continuation-turn.ts'
-import { DEFAULT_THREE_TIER_VIEW_STRATEGY } from 'dsh-plugin-memory-strategy-default-three-tier'
+import { DEFAULT_THREE_TIER_VIEW_STRATEGY } from 'suveng-dsh-plugin-memory-strategy-default-three-tier'
 import { registerTools } from "../src/host/tools.ts"
 import { resolveConfig } from "../src/host/config.ts"
 import { sessionLog } from './fixtures/session-log.ts'
@@ -267,7 +267,7 @@ function pinnedTurn(turnId: string, viewId: string, memoryBodyIds: string[] = ['
     { sourceInstanceKey: 'source:memory-source-runtime', sourceActionId: 'mutate' },
     { sourceInstanceKey: 'source:memory-source-documents', sourceActionId: 'create' },
   ], readGrants: [{
-    id: 'space-grant', sourceInstanceKey: 'source:memory-source-memory-spaces', schema: 'dsh-plugin-memory.memory-spaces/v1', value: { memoryBodyIds },
+    id: 'space-grant', sourceInstanceKey: 'source:memory-source-memory-spaces', schema: 'suveng-dsh-plugin-memory.memory-spaces/v1', value: { memoryBodyIds },
   }] } } as unknown as ComposableMemoryTurn
 }
 function managedSession(client: MemoryTestManagementClient) {
@@ -352,7 +352,7 @@ function runtimeSource(
     mutateResult: async (...args: Parameters<SourceSession['mutate']>) => ({ revision: 'committed-revision', value: await (runtimeSession as unknown as SourceSession).mutate(...args) }),
   })
   const documentSession = documents ?? { forTurn: (turn: ComposableMemoryTurn) => ({ route: (operation: string, input: MemoryJsonValue, signal: AbortSignal) => {
-    if (!turn.view.readGrants.some(grant => grant.id === 'doc-grant')) turn.view.readGrants.push({ id: 'doc-grant', sourceInstanceKey: 'docs', schema: 'dsh-plugin-memory.documents/v1' } as never)
+    if (!turn.view.readGrants.some(grant => grant.id === 'doc-grant')) turn.view.readGrants.push({ id: 'doc-grant', sourceInstanceKey: 'docs', schema: 'suveng-dsh-plugin-memory.documents/v1' } as never)
     return policyFor(turn).query({ route: { id: 'docs/search', sourceInstanceKey: 'docs', sourceRouteId: operation, readGrantId: 'doc-grant' } as never, input, signal }, async () => ({ id: 'docs', viewId: turn.view.id, routeId: 'docs/search', sourceInstanceKey: 'docs', observedAt: 'now', items: [], truncated: false }))
   } }) }
   // The serving generation composes with the configured Strategy.
@@ -452,9 +452,9 @@ function emitSuccessfulToolResult(
 }
 
 async function documentArchiveFixture(proposal: unknown = { action: 'planned', summary: 'Preserve the release gates.', memoryBodyId: 'project' }) {
-  const workspace = mkdtempSync(join(tmpdir(), 'dsh-plugin-memory-document-archive-'))
+  const workspace = mkdtempSync(join(tmpdir(), 'suveng-dsh-plugin-memory-document-archive-'))
   temporaryDirectories.push(workspace)
-  const documents = await sourceFixture({ dataDir: join(workspace, '.dsh-plugin-memory'), workspace })
+  const documents = await sourceFixture({ dataDir: join(workspace, '.suveng-dsh-plugin-memory'), workspace })
   releases.push(documents.dispose)
   const controller = managedSession(documents.documents)
   const created = await controller.mutate<DocumentMutationResult>('mutate', { action: 'create', title: 'Release design', content: 'Canary before production. Keep the exact original.' })
@@ -473,7 +473,7 @@ describe('Memory memory subagent coordinator', () => {
     const f = await documentArchiveFixture()
     const result = await f.archive()
     const request = vi.mocked(f.spaces.rememberMany).mock.calls[0]![0][0]!
-    expect(request.content).toContain(`.dsh-plugin-memory/documents/archived/${f.document.filename}`)
+    expect(request.content).toContain(`.suveng-dsh-plugin-memory/documents/archived/${f.document.filename}`)
     expect(request.content).toContain(f.document.contentHash)
     expect(result).toMatchObject({ action: 'archived', document: { status: 'archived', content: f.document.content }, maintenance: { memoryBodyIds: ['project'] } })
     expect(result.lineage).toEqual([{
@@ -511,7 +511,7 @@ describe('Memory memory subagent coordinator', () => {
 
   it('reuses an existing exact cold index after a failed attempt without deleting it on conflict', async () => {
     const f = await documentArchiveFixture()
-    const content = `Prior archive index. .dsh-plugin-memory/documents/archived/${f.document.filename} ${f.document.contentHash}`
+    const content = `Prior archive index. .suveng-dsh-plugin-memory/documents/archived/${f.document.filename} ${f.document.contentHash}`
     vi.mocked(f.spaces.search).mockResolvedValue({ query: '', mode: 'keyword', results: [{ id: 'pre-existing', content, memoryBodyId: 'project' } as Insight] })
     vi.spyOn(f.controller, 'mutate').mockRejectedValueOnce(new Error('document revision conflict'))
     await expect(f.archive()).rejects.toThrow('document revision conflict')
@@ -1651,7 +1651,7 @@ describe('Memory memory subagent coordinator', () => {
     const signal = new AbortController().signal
     await expect(coordinator.remember(parent(), { content: 'x', memoryBodyId: 'missing' }, signal)).rejects.toThrow(
       'Memory Space "missing" does not exist. Name one by its id: "project" (项目记忆空间), "archive" (Archive, switched off), "remote" (Remote), "readonly" (Read only).')
-    await expect(coordinator.remember(parent(), { content: 'x', memoryBodyId: 'remote' }, signal)).rejects.toThrow('Memory Space "remote" uses Mem0, which is turned off on the dsh-plugin-memory page under Plugins.')
+    await expect(coordinator.remember(parent(), { content: 'x', memoryBodyId: 'remote' }, signal)).rejects.toThrow('Memory Space "remote" uses Mem0, which is turned off on the suveng-dsh-plugin-memory page under Plugins.')
     await expect(coordinator.remember(parent(), { content: 'x', memoryBodyId: 'readonly' }, signal)).rejects.toThrow('Memory Space "readonly" (OpenViking) does not take writes.')
     await expect(coordinator.remember(parent(), { content: 'x', memoryBodyId: 'archive' }, signal)).rejects.toThrow(
       'Memory Space "archive" (Archive) is switched off, and a write would switch it back on. If the user wants it back, switch it on first with memory_memory_body_update (active: true); otherwise name an active space.')
@@ -1988,7 +1988,7 @@ describe('Memory memory subagent coordinator', () => {
     expect(host.start).toHaveBeenCalledWith('fork', expect.objectContaining({
       toolFilter: { allow: expect.arrayContaining(['memory_document_search', 'memory_runtime_memory', 'memory_document_create']) },
       persona: expect.stringContaining('idle checkpoint reviewer'),
-      prompt: [{ type: 'text', text: '[dsh-plugin-memory:delegated review]\nReview the inherited completed checkpoint now.' }],
+      prompt: [{ type: 'text', text: '[suveng-dsh-plugin-memory:delegated review]\nReview the inherited completed checkpoint now.' }],
     }))
     const reviewCall = (host.start.mock.calls[0] as unknown as [string, { persona: string; toolFilter: { allow: string[] } }])[1]
     expect(reviewCall.persona).toContain('Never move a document to cold archive in this pass')
@@ -2073,9 +2073,9 @@ describe('Memory memory subagent coordinator', () => {
   })
 
   it('indexes the LRU document in Memory before moving it to cold storage', async () => {
-    const workspace = mkdtempSync(join(tmpdir(), 'dsh-plugin-memory-document-coordinator-'))
+    const workspace = mkdtempSync(join(tmpdir(), 'suveng-dsh-plugin-memory-document-coordinator-'))
     temporaryDirectories.push(workspace)
-    const documents = await sourceFixture({ dataDir: join(workspace, '.dsh-plugin-memory'), workspace, documentLimitBytes: 1_000 })
+    const documents = await sourceFixture({ dataDir: join(workspace, '.suveng-dsh-plugin-memory'), workspace, documentLimitBytes: 1_000 })
     releases.push(documents.dispose)
     const controller = managedSession(documents.documents)
     const old = await controller.mutate<DocumentMutationResult>('mutate', { action: 'create', title: 'Old architecture', content: 'a'.repeat(220) })
@@ -2110,14 +2110,14 @@ describe('Memory memory subagent coordinator', () => {
       toolFilter: { allow: ['memory_subagent_result'] },
     }))
     const archiveCall = (host.start.mock.calls[0] as unknown as [string, { prompt: Array<{ text: string }>; persona: string }])[1]
-    expect(archiveCall.prompt[0]!.text).toContain(`.dsh-plugin-memory/documents/archived/${old.document.filename}`)
+    expect(archiveCall.prompt[0]!.text).toContain(`.suveng-dsh-plugin-memory/documents/archived/${old.document.filename}`)
     expect(archiveCall.persona).not.toContain(old.document.filename)
     expect(coordinator.snapshot()).toMatchObject({ documentArchives: 1, lastOperation: 'document-archive' })
   })
 
   it('does not accept a near-match or another space as an existing document index', async () => {
     const f = await documentArchiveFixture()
-    const cold = `.dsh-plugin-memory/documents/archived/${f.document.filename}`
+    const cold = `.suveng-dsh-plugin-memory/documents/archived/${f.document.filename}`
     vi.mocked(f.spaces.search).mockResolvedValue({ query: '', mode: 'keyword', results: [
       { id: 'near-match', content: `Old revision ${cold} wrong-digest`, memoryBodyId: 'project' },
       { id: 'wrong-space', content: `${cold} ${f.document.contentHash}`, memoryBodyId: 'other' },
@@ -2208,7 +2208,7 @@ describe('Memory memory subagent coordinator', () => {
   })
 
   it('completes the dense Chinese capacity reproduction without starting a model worker', async () => {
-    const directory = mkdtempSync(join(tmpdir(), 'dsh-plugin-memory-runtime-integration-'))
+    const directory = mkdtempSync(join(tmpdir(), 'suveng-dsh-plugin-memory-runtime-integration-'))
     temporaryDirectories.push(directory)
     const sources = await sourceFixture({ dataDir: directory, workspace: directory })
     releases.push(sources.dispose)
@@ -3238,7 +3238,7 @@ describe('What delegated children read', () => {
     const content = 'Canary before production.\nKeep the exact original.'
     const document = {
       id: 'release-design', title: 'Release design', description: 'Release gates and rollbacks', status: 'active', revision: 2,
-      filename: 'release-design-0a1b2c3d.md', relativePath: '.dsh-plugin-memory/documents/active/release-design-0a1b2c3d.md', sourcePaths: ['docs/release.md', 'docs/rollback.md'],
+      filename: 'release-design-0a1b2c3d.md', relativePath: '.suveng-dsh-plugin-memory/documents/active/release-design-0a1b2c3d.md', sourcePaths: ['docs/release.md', 'docs/rollback.md'],
       content, contentHash: createHash('sha256').update(content).digest('hex'),
     } as unknown as DocumentView
     const controller = {
@@ -3287,84 +3287,164 @@ describe('What delegated children read', () => {
     read.reconcile = reconciling.start.mock.calls.map(childText)
 
     expect(read).toEqual({
-      remember: [
-        { label: 'Memory remember', persona: 'cba2a11f7bc2176256e6bd65e2b13bd4fe78e67019e357598a4756528893827d',
-          completion: '69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005', task: 'f8d70b766be3189fe1f4bbcd6dae9caef3ffbaa63ab0431e6b9401677e648c49' },
-      ],
-      'remember in a named space': [
-        { label: 'Memory remember', persona: 'cba2a11f7bc2176256e6bd65e2b13bd4fe78e67019e357598a4756528893827d',
-          completion: '69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005', task: '4d1b230f7ff9e0208f323340b19093d098336c2a81df9c57d26f7bbddab44b3e' },
-      ],
-      'supervised writeback': [
-        { label: 'Memory supervised-writeback', persona: 'af30352f70610f159c9792454cca7e6c1b1ea314e363d8ab054ff0afc8aa4e34',
-          completion: '69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005', task: '0bb68f59c07583e73f71a5162e0a042c0910579531fd2d013db3515139ae2270' },
-      ],
-      link: [
-        { label: 'Memory link', persona: '9808cb8e3fb58639688c95e2539723aa5d099ddb37b8a017dd033813388df320',
-          completion: '69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005', task: '11850698af1ed7ea1a42e98ec121b4f08eff3499e4fd61c4290917e5fd6f8af9' },
-      ],
-      forget: [
-        { label: 'Memory forget', persona: '9808cb8e3fb58639688c95e2539723aa5d099ddb37b8a017dd033813388df320',
-          completion: '69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005', task: '5d039b717c3d1f5c336eff5470224fe1cf5063585e3a295b9744ffc9e6c25825' },
-      ],
-      'create a space': [
-        { label: 'Memory create-memory-body', persona: '9808cb8e3fb58639688c95e2539723aa5d099ddb37b8a017dd033813388df320',
-          completion: '69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005', task: 'da12553c7063a39f4d3738228b1e5b349713d9fd1bd319d49c17734dbcbf290d' },
-      ],
-      'update a space': [
-        { label: 'Memory update-memory-body', persona: '9808cb8e3fb58639688c95e2539723aa5d099ddb37b8a017dd033813388df320',
-          completion: '69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005', task: '405e624c994a05c70114ecca2f916bf7933846966e22ef7427d0baa48577cd2e' },
-      ],
-      'merge spaces': [
-        { label: 'Memory merge-memory-bodies', persona: '9808cb8e3fb58639688c95e2539723aa5d099ddb37b8a017dd033813388df320',
-          completion: '69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005', task: '6f3f9c22b092a681283145ccdffa337af3155647b6761fd3ec32cfc72f43d0d5' },
-      ],
-      answer: [
-        { label: 'Memory evidence answer', persona: '89cf0957d504ae341dced00b9dd6ed1f73e70847a906edaf5ecef619871f4842',
-          completion: '5cb0a6687e11ec6a548c89255eb10d0370b78a5cfa4e194645de4e95dce8112b', task: '5fac1102eb44669765c8254a3fe8e2f00b7b420a01fbafae64e58ddbab6a9409' },
-      ],
-      placement: [
-        { label: 'Choose Memory Space provider', persona: 'd0f98b1d9591b1ed038c9ffbc0ff3663d0864351c7587928d2bc4c8c61da5013',
-          completion: '30aaf5a0193e5d316f45074ffd9f16164fd2e87491c9f7980930264ac5827a07', task: 'c5170c80c992364bcd9c4071928710345bc66f2e86c5d1b1eecf772c41161d2f' },
-      ],
-      'metadata maintenance': [
-        { label: 'Maintain Memory Space metadata', persona: '08c423921a514ff1a45bc68d45b34a0e0c95ebd82dd23fa294da418cd6a099ac',
-          completion: 'c682464e7578a1578669a642d0ed79b3883994aab64d3b6e6f6458fa04808d89', task: 'e2bfe1bf8fb3ce35c714b0bc29dd9ff3ec22c418a2199eaa1821d3a278c39a5b' },
-      ],
-      'review through spawn': [
-        { label: 'Memory idle checkpoint review', persona: '438d6c9a9d7781002cd8de5534272e0264582bec4217aa764f32eec9c9e4e710',
-          completion: '69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005', task: '101da42759c24bb5111b2d178052b1abbae7320b1800e5cd45a6e77281426578' },
-      ],
-      'review through spawn without runtime memory': [
-        { label: 'Memory idle checkpoint review', persona: '720fa9b000575a38616b7ab42502e0a43d21d6b25eaef7f4af45f38ce3700feb',
-          completion: '69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005', task: '101da42759c24bb5111b2d178052b1abbae7320b1800e5cd45a6e77281426578' },
-      ],
-      'review through fork': [
-        { label: 'Memory idle checkpoint review', persona: '7b614a7bc4dc085a9a8c743cc885d2358b6dc2fbce85a7ec9a40a41052c92574',
-          completion: '69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005', task: '7ceabde891caac2e4f810fc58e5061899a73898174778df9db7403ca640c7229' },
-      ],
-      'review through fork without runtime memory': [
-        { label: 'Memory idle checkpoint review', persona: '759fa9b66d574ccbd2ab37fac679e8618717402a94e63297541ad01012e3b43d',
-          completion: '69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005', task: '7ceabde891caac2e4f810fc58e5061899a73898174778df9db7403ca640c7229' },
-      ],
-      'MEMORY.md archive routing': [
-        { label: 'Route runtime memory archive batch 1/2', persona: '1fe08a6a9953c6413119b3063c1ed73ad861017e5031ba7a54b97d39c124376d',
-          completion: 'df4c325cedeaccab3e2ebdeedd9bba3906b9adeba7bcb4a624077474d72bf34b', task: '277cc9c22fbe8e81949046284983d18b6e8f156a85dbf62d0ebe3560c4f24de7' },
-        { label: 'Route runtime memory archive batch 2/2', persona: '1fe08a6a9953c6413119b3063c1ed73ad861017e5031ba7a54b97d39c124376d',
-          completion: 'df4c325cedeaccab3e2ebdeedd9bba3906b9adeba7bcb4a624077474d72bf34b', task: 'c5e273486bf87d7091d415a4cac13ce4cbf9b79aa8a33a5beb4921cdc04e0440' },
-      ],
-      'USER.md compaction': [
-        { label: 'Consolidate local user profile', persona: '0e46870323c6c2c7114aad3861777a2788a65ee36a18d1feeedccc09ba3648ee',
-          completion: '2f7416465bee14ef0aa9fded2e74cad938c440f3310bf2bb488d93d4e18fc050', task: '70f40c8b088e7080056613846352bcb20381f7c2677362bf0a737fe166ac55f7' },
-      ],
-      'document archive': [
-        { label: 'Plan managed document archive', persona: 'e3442641884883df4ec4747b5c28b8ae0bfe5cbe43bff9ec683370a84581a0d9',
-          completion: '2f852e665b63402c9d9b3d5617d657bdfca0879a8e52d2490a60756789848b6f', task: '5946addf812f3a6b2913f504560a9fb0dfa21caea34010c3773cf87b6f340369' },
-      ],
-      reconcile: [
-        { label: 'Reconcile merged local memory', persona: '4da2ac142dd4a78d060a6ca69ed44391996f66d2f1de3e6eb11d86a11b791ebb',
-          completion: 'bcd43b72f6418a5085e6b6cdf9ddee31681335d5ccf223f526029f72b3f71d3f', task: '97f382280495468163762827ab57ea99e93cf490afb7f94c154299543e7fed39' },
-      ],
-    })
+    "remember": [
+      {
+        "label": "Memory remember",
+        "persona": "cba2a11f7bc2176256e6bd65e2b13bd4fe78e67019e357598a4756528893827d",
+        "completion": "69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005",
+        "task": "c216154c32021ae68a65e0684188ebb1244f35255635aa8fcc3dbf5e80582bd1"
+      }
+    ],
+    "remember in a named space": [
+      {
+        "label": "Memory remember",
+        "persona": "cba2a11f7bc2176256e6bd65e2b13bd4fe78e67019e357598a4756528893827d",
+        "completion": "69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005",
+        "task": "795e21c70d83ded19c8692efb46df28a3183d32fb717b591b13035baa1eebf2f"
+      }
+    ],
+    "supervised writeback": [
+      {
+        "label": "Memory supervised-writeback",
+        "persona": "af30352f70610f159c9792454cca7e6c1b1ea314e363d8ab054ff0afc8aa4e34",
+        "completion": "69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005",
+        "task": "a746116d312f7092b625ac5d29d7fafc154da067e45bb19d053a5b75a1957619"
+      }
+    ],
+    "link": [
+      {
+        "label": "Memory link",
+        "persona": "9808cb8e3fb58639688c95e2539723aa5d099ddb37b8a017dd033813388df320",
+        "completion": "69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005",
+        "task": "a6c571ce9c6559c8d54787a755ee64546b1427bf2536e269c6ef55b5cd21a250"
+      }
+    ],
+    "forget": [
+      {
+        "label": "Memory forget",
+        "persona": "9808cb8e3fb58639688c95e2539723aa5d099ddb37b8a017dd033813388df320",
+        "completion": "69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005",
+        "task": "a89ffafffd902e5afbed078943d1c28d6c81f37e80dec441d84cdfb0a4148837"
+      }
+    ],
+    "create a space": [
+      {
+        "label": "Memory create-memory-body",
+        "persona": "9808cb8e3fb58639688c95e2539723aa5d099ddb37b8a017dd033813388df320",
+        "completion": "69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005",
+        "task": "bff66542c4a07d7808b3c2d0972743ae2be57ae3e2fdb7871aa2937d0a1779a8"
+      }
+    ],
+    "update a space": [
+      {
+        "label": "Memory update-memory-body",
+        "persona": "9808cb8e3fb58639688c95e2539723aa5d099ddb37b8a017dd033813388df320",
+        "completion": "69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005",
+        "task": "aaed5b8a71e9c76b574bbcfb06ba2a1f2dd6f65fecaf1ac72f742b82789c4aa8"
+      }
+    ],
+    "merge spaces": [
+      {
+        "label": "Memory merge-memory-bodies",
+        "persona": "9808cb8e3fb58639688c95e2539723aa5d099ddb37b8a017dd033813388df320",
+        "completion": "69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005",
+        "task": "bd292b0b6851ac6d2d530846931989aa9c92f15ae399d882b689015a076b6fda"
+      }
+    ],
+    "answer": [
+      {
+        "label": "Memory evidence answer",
+        "persona": "89cf0957d504ae341dced00b9dd6ed1f73e70847a906edaf5ecef619871f4842",
+        "completion": "5cb0a6687e11ec6a548c89255eb10d0370b78a5cfa4e194645de4e95dce8112b",
+        "task": "2160d30819bc248d5776532401ce1211ca6381d6e2cf977ff53ffeeccff6c221"
+      }
+    ],
+    "placement": [
+      {
+        "label": "Choose Memory Space provider",
+        "persona": "d0f98b1d9591b1ed038c9ffbc0ff3663d0864351c7587928d2bc4c8c61da5013",
+        "completion": "30aaf5a0193e5d316f45074ffd9f16164fd2e87491c9f7980930264ac5827a07",
+        "task": "40aa490f7abb44f6387189fa2e8626428bbbbcfdd635f1d89f5398553ece8909"
+      }
+    ],
+    "metadata maintenance": [
+      {
+        "label": "Maintain Memory Space metadata",
+        "persona": "08c423921a514ff1a45bc68d45b34a0e0c95ebd82dd23fa294da418cd6a099ac",
+        "completion": "c682464e7578a1578669a642d0ed79b3883994aab64d3b6e6f6458fa04808d89",
+        "task": "d0f3babf47457f1c5f1557c13f4b73fd85e1ac6844057768c8e3f9a6d332d0e1"
+      }
+    ],
+    "review through spawn": [
+      {
+        "label": "Memory idle checkpoint review",
+        "persona": "438d6c9a9d7781002cd8de5534272e0264582bec4217aa764f32eec9c9e4e710",
+        "completion": "69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005",
+        "task": "2bed904cbcd2232ffe4b3ac8ac881dcf52b783c59ec30ea3308c61f1a7789d01"
+      }
+    ],
+    "review through spawn without runtime memory": [
+      {
+        "label": "Memory idle checkpoint review",
+        "persona": "720fa9b000575a38616b7ab42502e0a43d21d6b25eaef7f4af45f38ce3700feb",
+        "completion": "69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005",
+        "task": "2bed904cbcd2232ffe4b3ac8ac881dcf52b783c59ec30ea3308c61f1a7789d01"
+      }
+    ],
+    "review through fork": [
+      {
+        "label": "Memory idle checkpoint review",
+        "persona": "7b614a7bc4dc085a9a8c743cc885d2358b6dc2fbce85a7ec9a40a41052c92574",
+        "completion": "69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005",
+        "task": "8746e3fd73cfbdf07fcf0ffa0e9b84bb6f76be569b4d476ce7bf70355b84dbd2"
+      }
+    ],
+    "review through fork without runtime memory": [
+      {
+        "label": "Memory idle checkpoint review",
+        "persona": "759fa9b66d574ccbd2ab37fac679e8618717402a94e63297541ad01012e3b43d",
+        "completion": "69cb9f2a3c472c0450b8e5c0e51f9cbc0d03ce1114b592d5fc794215a07cd005",
+        "task": "8746e3fd73cfbdf07fcf0ffa0e9b84bb6f76be569b4d476ce7bf70355b84dbd2"
+      }
+    ],
+    "MEMORY.md archive routing": [
+      {
+        "label": "Route runtime memory archive batch 1/2",
+        "persona": "1fe08a6a9953c6413119b3063c1ed73ad861017e5031ba7a54b97d39c124376d",
+        "completion": "df4c325cedeaccab3e2ebdeedd9bba3906b9adeba7bcb4a624077474d72bf34b",
+        "task": "a44461c2c666acf3264917075640a0fb95a1f4c6214180f2f3e7b3f806ab7933"
+      },
+      {
+        "label": "Route runtime memory archive batch 2/2",
+        "persona": "1fe08a6a9953c6413119b3063c1ed73ad861017e5031ba7a54b97d39c124376d",
+        "completion": "df4c325cedeaccab3e2ebdeedd9bba3906b9adeba7bcb4a624077474d72bf34b",
+        "task": "b9a0212e67ec903c59e7556d0778f18078cce014b61cdcaa3b76d0ffd061d1db"
+      }
+    ],
+    "USER.md compaction": [
+      {
+        "label": "Consolidate local user profile",
+        "persona": "0e46870323c6c2c7114aad3861777a2788a65ee36a18d1feeedccc09ba3648ee",
+        "completion": "2f7416465bee14ef0aa9fded2e74cad938c440f3310bf2bb488d93d4e18fc050",
+        "task": "919b7fbbf82fc671dda478c9ba293bd536c6e48cb21bf2e801b354d74020b09a"
+      }
+    ],
+    "document archive": [
+      {
+        "label": "Plan managed document archive",
+        "persona": "e3442641884883df4ec4747b5c28b8ae0bfe5cbe43bff9ec683370a84581a0d9",
+        "completion": "2f852e665b63402c9d9b3d5617d657bdfca0879a8e52d2490a60756789848b6f",
+        "task": "773b552eed4095f360873881367bb28279b5c96b7e2f74c575e9587469e95ad2"
+      }
+    ],
+    "reconcile": [
+      {
+        "label": "Reconcile merged local memory",
+        "persona": "4da2ac142dd4a78d060a6ca69ed44391996f66d2f1de3e6eb11d86a11b791ebb",
+        "completion": "bcd43b72f6418a5085e6b6cdf9ddee31681335d5ccf223f526029f72b3f71d3f",
+        "task": "64e35126c8aed858761b479a31c14f408e6e5605e50d387f8eb255e1cf418b2d"
+      }
+    ]
+  })
   })
 })

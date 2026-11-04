@@ -2,10 +2,10 @@ import { afterEach, vi } from 'vitest'
 import { resolveConfig } from '../../src/host/config.ts'
 import { createRuntimeGraph, type MemoryRuntimeGraph } from '../../src/host/runtime.ts'
 import { MemoryRuntime } from '../../src/core/runtime.ts'
-import { defineMemorySource, defineMemoryStrategy } from 'dsh-plugin-memory/extension-sdk'
-import { COMPOSABLE_MEMORY_API_VERSION } from 'dsh-plugin-memory/contracts'
-import type { SearchRequest } from 'dsh-plugin-memory-source-memory-spaces/contracts'
-import { DEFAULT_THREE_TIER_VIEW_STRATEGY } from 'dsh-plugin-memory-strategy-default-three-tier'
+import { defineMemorySource, defineMemoryStrategy } from 'suveng-dsh-plugin-memory/extension-sdk'
+import { COMPOSABLE_MEMORY_API_VERSION } from 'suveng-dsh-plugin-memory/contracts'
+import type { SearchRequest } from 'suveng-dsh-plugin-memory-source-memory-spaces/contracts'
+import { DEFAULT_THREE_TIER_VIEW_STRATEGY } from 'suveng-dsh-plugin-memory-strategy-default-three-tier'
 
 const fixtures: Array<{ graph: MemoryRuntimeGraph; extensions: MemoryRuntime }> = []
 afterEach(async () => {
@@ -34,7 +34,7 @@ export function memoryGraphFixture(initialIds = ['project']) {
   extensions.service.installContributions({ sources: [defineMemorySource({
     manifest: {
       apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'source', typeId: 'memory-spaces',
-      packageName: 'dsh-plugin-memory-source-test-spaces', role: 'fixture', capabilities: ['project', 'search'],
+      packageName: 'suveng-dsh-plugin-memory-source-test-spaces', role: 'fixture', capabilities: ['project', 'search'],
       consistency: 'namespace-pinned-live-read',
       routes: [{ id: 'recall', description: 'Query the dispatch-time namespaces.', capability: 'search',
         inputSchema: { type: 'object', required: ['query'], properties: { query: { type: 'string' }, memoryBodyIds: { type: 'array' }, limit: { type: 'number' }, mode: { type: 'string' } } },
@@ -51,7 +51,7 @@ export function memoryGraphFixture(initialIds = ['project']) {
             fragments: [{ id: context.sourceInstanceKey + '/cover', sourceInstanceKey: context.sourceInstanceKey,
               mode: request.mode, text: state.wake, revision: state.revision }],
             readGrant: { id: context.sourceInstanceKey + '/grant', sourceInstanceKey: context.sourceInstanceKey,
-              schema: 'dsh-plugin-memory.memory-spaces/v1', value: state.state, revision: state.revision, consistency: 'namespace-pinned-live-read' },
+              schema: 'suveng-dsh-plugin-memory.memory-spaces/v1', value: state.state, revision: state.revision, consistency: 'namespace-pinned-live-read' },
           }
         },
         query: async request => {
@@ -76,14 +76,14 @@ export function memoryGraphFixture(initialIds = ['project']) {
       facts: () => ({ sourceInstanceKey: context.sourceInstanceKey, sourceTypeId: 'documents', role: 'fixture', availability: 'ready', revision: 'empty',
         capabilities: ['project', 'search'], routeIds: ['search'], actionIds: [] }),
       project: () => ({ fragments: [], readGrant: { id: 'documents-grant', sourceInstanceKey: context.sourceInstanceKey,
-        schema: 'dsh-plugin-memory.documents/v1', value: {}, revision: 'empty', consistency: 'exact-snapshot' } }),
+        schema: 'suveng-dsh-plugin-memory.documents/v1', value: {}, revision: 'empty', consistency: 'exact-snapshot' } }),
       query: request => ({ id: 'documents-evidence', viewId: request.view.id, routeId: request.route.id, sourceInstanceKey: context.sourceInstanceKey,
         observedAt: '2026-08-31T00:00:00.000Z', items: [], truncated: false, metadata: { total: 0 } }),
     }),
   })] }, { instanceId: 'memory-source-documents' })
   extensions.service.installContributions({ strategies: [defineMemoryStrategy({
     manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'strategy', typeId: 'default-three-tier',
-      packageName: 'dsh-plugin-memory-strategy-test', deterministic: true, supportedSourceRoles: ['fixture'], maxSources: 2, maxRoutes: 2, maxActions: 1 },
+      packageName: 'suveng-dsh-plugin-memory-strategy-test', deterministic: true, supportedSourceRoles: ['fixture'], maxSources: 2, maxRoutes: 2, maxActions: 1 },
     createTurn: DEFAULT_THREE_TIER_VIEW_STRATEGY.createTurn!,
     compose: (_request, sources) => ({ strategyTypeId: 'default-three-tier', explanation: 'Select the test Source.',
       sources: sources.map(source => ({ sourceInstanceKey: source.sourceInstanceKey,

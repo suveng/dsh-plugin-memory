@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import { afterEach, describe, expect, it } from 'vitest'
-import openviking from 'dsh-plugin-memory-provider-openviking'
+import openviking from 'suveng-dsh-plugin-memory-provider-openviking'
 import { compositionFixture } from './fixtures/composition.ts'
 import { openVikingUserKeyFixture } from '../scripts/fixtures/openviking-user-key.mjs'
 

@@ -1,0 +1,61 @@
+{
+  "name": "suveng-dsh-plugin-memory-strategy-light-context",
+  "version": "0.5.6",
+  "description": "Additive shared projection budget cap for any Memory main Strategy.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "lib",
+    "locale",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsdown",
+    "test": "vitest run",
+    "verify": "pnpm typecheck && pnpm test && pnpm build"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "suveng-dsh-plugin-memory": "^0.5.17"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "suveng-dsh-plugin-memory": "^0.5.32",
+    "suveng-dsh-plugin-memory-strategy-default-three-tier": "^0.5.10",
+    "tsdown": "^0.22.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "latest",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/suveng/suveng-dsh-plugin-memory.git",
+    "directory": "plugins/suveng-dsh-plugin-memory-strategy-light-context"
+  },
+  "homepage": "https://github.com/suveng/suveng-dsh-plugin-memory/tree/main/plugins/suveng-dsh-plugin-memory-strategy-light-context#readme",
+  "bugs": {
+    "url": "https://github.com/suveng/suveng-dsh-plugin-memory/issues"
+  }
+}

@@ -2,7 +2,7 @@
 
 **简体中文** | [English](./CONTRIBUTING.md)
 
-欢迎为 dsh-plugin-memory 贡献代码。本文件定义 Issue、Pull Request、验证和维护规则；实现细节与测试场景见[开发和验证指南](./docs/zh-CN/development/README.md)。
+欢迎为 suveng-dsh-plugin-memory 贡献代码。本文件定义 Issue、Pull Request、验证和维护规则；实现细节与测试场景见[开发和验证指南](./docs/zh-CN/development/README.md)。
 
 ## PR 范围
 
@@ -26,8 +26,8 @@
 ## 快速开始
 
 ```sh
-git clone https://github.com/suveng/dsh-plugin-memory.git
-cd dsh-plugin-memory
+git clone https://github.com/suveng/suveng-dsh-plugin-memory.git
+cd suveng-dsh-plugin-memory
 pnpm install
 pnpm run verify
 ```

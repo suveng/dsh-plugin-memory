@@ -1,7 +1,7 @@
 // Ten synthetic suggestions for the list/detail scrolling regression (#512).
-import { MemoryCompositionRunner } from 'dsh-plugin-memory/testing'
-import * as skillsPlugin from 'dsh-plugin-memory-source-skills'
-import * as strategyPlugin from 'dsh-plugin-memory-strategy-general'
+import { MemoryCompositionRunner } from 'suveng-dsh-plugin-memory/testing'
+import * as skillsPlugin from 'suveng-dsh-plugin-memory-source-skills'
+import * as strategyPlugin from 'suveng-dsh-plugin-memory-strategy-general'
 
 export async function seedEvolutionScroll({ dataDir, workspace, dshHome, agentsHome }) {
   const runner = new MemoryCompositionRunner()

@@ -14,7 +14,7 @@ const directories: string[] = []
 afterEach(() => { for (const directory of directories.splice(0)) rmSync(directory, { recursive: true, force: true }) })
 
 function temporary(label: string): string {
-  const directory = mkdtempSync(join(tmpdir(), `dsh-plugin-memory-${label}-`))
+  const directory = mkdtempSync(join(tmpdir(), `suveng-dsh-plugin-memory-${label}-`))
   directories.push(directory)
   return directory
 }

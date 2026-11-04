@@ -3,7 +3,7 @@ import { dirname } from 'node:path'
 import type {
   BacktestRun, DraftView, EvalCase, EvidencePack, ReviewLogEntry, ReviewRecordInput, ReviewRecordResult, RunTarget, SkillCatalog, SkillDocument, SkillDraft, SkillRootKind, SkillSuggestion, Trajectory,
   ModelRoute,
-} from 'dsh-plugin-memory-source-skills/contracts'
+} from 'suveng-dsh-plugin-memory-source-skills/contracts'
 import type { HostAgent, HostPreStepDecision, HostSessionEvent } from './dsh.ts'
 import type { ResolvedSkillsConfig, SkillActivitySnapshot, StorageScopeKind, TurnSkillReview } from './protocol.ts'
 import {
@@ -171,7 +171,7 @@ export class SkillEvolution {
 
   private warn(text: string, error?: unknown): void {
     if (this.host.warn !== undefined) this.host.warn(text, error)
-    else console.warn(`dsh-plugin-memory: ${text}`, error === undefined ? '' : message(error))
+    else console.warn(`suveng-dsh-plugin-memory: ${text}`, error === undefined ? '' : message(error))
   }
 
   private state(agent: HostAgent): SessionState {

@@ -207,12 +207,12 @@ describe('Source Client presentation conformance', () => {
       generationId: 'generation:one',
       sources: [
         {
-          sourceInstanceKey: 'source:git-work', sourceTypeId: 'git', packageName: 'dsh-plugin-memory-source-git', role: 'repository',
+          sourceInstanceKey: 'source:git-work', sourceTypeId: 'git', packageName: 'suveng-dsh-plugin-memory-source-git', role: 'repository',
           availability: 'ready' as const, revision: 'work-r1', capabilities: ['read' as const],
           management: { label: 'Work repository', description: 'Work Git memory.' },
         },
         {
-          sourceInstanceKey: 'source:git-personal', sourceTypeId: 'git', packageName: 'dsh-plugin-memory-source-git', role: 'repository',
+          sourceInstanceKey: 'source:git-personal', sourceTypeId: 'git', packageName: 'suveng-dsh-plugin-memory-source-git', role: 'repository',
           availability: 'degraded' as const, revision: 'personal-r2', capabilities: ['read' as const],
           management: { label: 'Personal repository', description: 'Personal Git memory.' },
         },
@@ -283,7 +283,7 @@ describe('Source Client presentation conformance', () => {
   it('names tabs, Status cards and the header from the components, and shows the cards they contribute', async () => {
     const management = (label: string) => ({ label })
     const sources = [
-      { sourceInstanceKey: 'memory-source-runtime', sourceTypeId: 'runtime', packageName: 'dsh-plugin-memory-source-runtime', role: 'working-context', availability: 'ready', revision: 'r1', capabilities: ['read'], management: management('Runtime') },
+      { sourceInstanceKey: 'memory-source-runtime', sourceTypeId: 'runtime', packageName: 'suveng-dsh-plugin-memory-source-runtime', role: 'working-context', availability: 'ready', revision: 'r1', capabilities: ['read'], management: management('Runtime') },
       { sourceInstanceKey: 'source:notes', sourceTypeId: 'notes', packageName: 'acme-memory-notes', role: 'notes', availability: 'ready', revision: 'r1', capabilities: ['read'], management: management('notes') },
     ]
     const component = (entryId: string, packageName: string, roles: string[], typeId: string, label: { en: string; 'zh-CN': string }, enabled = true) => ({
@@ -292,8 +292,8 @@ describe('Source Client presentation conformance', () => {
     const dashboard = {
       revision: 'view-1', writable: true, strategyTypeId: 'general', sources: [], diagnostics: [], pluginInstallation: { supported: false, suggestions: [] },
       entries: [
-        component('memory-strategy-general', 'dsh-plugin-memory-strategy-general', ['strategy'], 'general', { en: 'General strategy', 'zh-CN': '通用策略' }),
-        component('memory-source-runtime', 'dsh-plugin-memory-source-runtime', ['source'], 'runtime', { en: 'Runtime memory', 'zh-CN': '运行时记忆' }),
+        component('memory-strategy-general', 'suveng-dsh-plugin-memory-strategy-general', ['strategy'], 'general', { en: 'General strategy', 'zh-CN': '通用策略' }),
+        component('memory-source-runtime', 'suveng-dsh-plugin-memory-source-runtime', ['source'], 'runtime', { en: 'Runtime memory', 'zh-CN': '运行时记忆' }),
         component('notes', 'acme-memory-notes', ['source'], 'notes', { en: 'Notes', 'zh-CN': '笔记' }),
         // A Source switched off has registered nothing, yet still has its card.
         component('drafts', 'acme-memory-drafts', ['source'], 'drafts', { en: 'Drafts', 'zh-CN': '草稿' }, false),
@@ -333,7 +333,7 @@ describe('Source Client presentation conformance', () => {
   })
 
   it('reveals only a connected Source element inside the owning canvas', async () => {
-    const source = { sourceInstanceKey: 'source:git', sourceTypeId: 'git', packageName: 'dsh-plugin-memory-source-git', role: 'repository', availability: 'ready', revision: 'r1', capabilities: ['read'], management: { label: 'Repository' } }
+    const source = { sourceInstanceKey: 'source:git', sourceTypeId: 'git', packageName: 'suveng-dsh-plugin-memory-source-git', role: 'repository', availability: 'ready', revision: 'r1', capabilities: ['read'], management: { label: 'Repository' } }
     const connection = { rpc: { call: vi.fn(async (_channel: string, endpoint: string) => ({ ok: true, value: endpoint === 'source-management-catalog' ? { generationId: 'g1', sources: [source] } : status })) }, isLoopback: true }
     const pages = [{ id: 'git/repository', sourceTypeId: 'git', pageId: 'repository', label: 'Repository', order: 1 }]
     let owner: MemorySourcePageProps | undefined
@@ -360,7 +360,7 @@ describe('Source Client presentation conformance', () => {
   })
 
   it('reveals an element below the locked page header unless the Source measures its own', async () => {
-    const source = { sourceInstanceKey: 'source:git', sourceTypeId: 'git', packageName: 'dsh-plugin-memory-source-git', role: 'repository', availability: 'ready', revision: 'r1', capabilities: ['read'], management: { label: 'Repository' } }
+    const source = { sourceInstanceKey: 'source:git', sourceTypeId: 'git', packageName: 'suveng-dsh-plugin-memory-source-git', role: 'repository', availability: 'ready', revision: 'r1', capabilities: ['read'], management: { label: 'Repository' } }
     const connection = { rpc: { call: vi.fn(async (_channel: string, endpoint: string) => ({ ok: true, value: endpoint === 'source-management-catalog' ? { generationId: 'g1', sources: [source] } : status })) }, isLoopback: true }
     const pages = [{ id: 'git/repository', sourceTypeId: 'git', pageId: 'repository', label: 'Repository', order: 1 }]
     let owner: MemorySourcePageProps | undefined
@@ -382,7 +382,7 @@ describe('Source Client presentation conformance', () => {
   })
 
   it('carries a conversation anchor into its page, while a tab opens the page fresh', async () => {
-    const source = { sourceInstanceKey: 'source:git', sourceTypeId: 'git', packageName: 'dsh-plugin-memory-source-git', role: 'repository', availability: 'ready', revision: 'r1', capabilities: ['read'], management: { label: 'Repository' } }
+    const source = { sourceInstanceKey: 'source:git', sourceTypeId: 'git', packageName: 'suveng-dsh-plugin-memory-source-git', role: 'repository', availability: 'ready', revision: 'r1', capabilities: ['read'], management: { label: 'Repository' } }
     const connection = { rpc: { call: vi.fn(async (_channel: string, endpoint: string) => ({ ok: true, value: endpoint === 'source-management-catalog' ? { generationId: 'g1', sources: [source] } : status })) }, isLoopback: true }
     const pages = [
       { id: 'git/repository', sourceTypeId: 'git', pageId: 'repository', label: 'Repository', order: 1 },
@@ -400,7 +400,7 @@ describe('Source Client presentation conformance', () => {
   })
 
   it.each(['page', 'focused', 'management'] as const)('does not mount a disabled third-party Source through its %s route', async mode => {
-    const source = { sourceInstanceKey: 'source:git', sourceTypeId: 'git', packageName: 'dsh-plugin-memory-source-git', role: 'repository', availability: 'ready', revision: 'r1', capabilities: ['read'], management: { label: 'Repository' } }
+    const source = { sourceInstanceKey: 'source:git', sourceTypeId: 'git', packageName: 'suveng-dsh-plugin-memory-source-git', role: 'repository', availability: 'ready', revision: 'r1', capabilities: ['read'], management: { label: 'Repository' } }
     const call = vi.fn(async (_channel: string, endpoint: string) => ({ ok: true, value: endpoint === 'source-management-catalog' ? { generationId: 'g1', sources: [source] } : status }))
     const connection = { rpc: { call }, isLoopback: true }
     const pages = mode === 'management' ? [] : [{ id: 'git/repository', sourceTypeId: 'git', pageId: 'repository', label: 'Repository', order: 1 }]
@@ -418,7 +418,7 @@ describe('Source Client presentation conformance', () => {
 
   it('keeps a running unmanaged replacement reachable when the shipped Source component is off', async () => {
     const source = { sourceInstanceKey: 'source:custom-runtime', sourceTypeId: 'runtime', packageName: 'acme-runtime', role: 'working-context', availability: 'ready', revision: 'r1', capabilities: ['read'], management: { label: 'Runtime' } }
-    const dashboard = { revision: 'v1', writable: true, strategyTypeId: 'general', diagnostics: [], pluginInstallation: { supported: false, suggestions: [] }, entries: [{ entryId: 'memory-source-runtime', packageName: 'dsh-plugin-memory-source-runtime', roles: ['source'], label: { en: 'Runtime memory' }, description: { en: '' }, enabled: false, active: false, writable: true, fields: [], provides: [], requires: [], requiredBy: [], config: {} }], sources: [source] }
+    const dashboard = { revision: 'v1', writable: true, strategyTypeId: 'general', diagnostics: [], pluginInstallation: { supported: false, suggestions: [] }, entries: [{ entryId: 'memory-source-runtime', packageName: 'suveng-dsh-plugin-memory-source-runtime', roles: ['source'], label: { en: 'Runtime memory' }, description: { en: '' }, enabled: false, active: false, writable: true, fields: [], provides: [], requires: [], requiredBy: [], config: {} }], sources: [source] }
     const connection = { rpc: { call: vi.fn(async (_channel: string, endpoint: string) => ({ ok: true, value: endpoint === 'source-management-catalog' ? { generationId: 'g1', sources: [source] } : endpoint === 'dashboard' ? dashboard : status })) }, isLoopback: true }
     const pages = [{ id: 'runtime/entries', sourceTypeId: 'runtime', pageId: 'entries', label: 'Runtime', order: 1 }]
     const renderSlot = (() => <div>Replacement runtime content</div>) as never
@@ -432,7 +432,7 @@ describe('Source Client presentation conformance', () => {
 
   it('selects additional built-in Source instances without injecting a hidden default page', async () => {
     const sources = ['source:extra-runtime', 'source:memory-source-runtime'].map(sourceInstanceKey => ({
-      sourceInstanceKey, sourceTypeId: 'runtime', packageName: 'dsh-plugin-memory-source-runtime', role: 'working-context',
+      sourceInstanceKey, sourceTypeId: 'runtime', packageName: 'suveng-dsh-plugin-memory-source-runtime', role: 'working-context',
       availability: 'ready', revision: 'r1', capabilities: ['read', 'write'], management: { label: sourceInstanceKey },
     }))
     const connection = { rpc: { call: vi.fn(async (_channel: string, endpoint: string) => ({
@@ -456,7 +456,7 @@ describe('Source Client presentation conformance', () => {
   it('keeps a descriptor-driven status/config/diagnostics path when a Source has no client module', async () => {
     const calls: Array<{ endpoint: string; payload: Record<string, unknown> }> = []
     const source = {
-      sourceInstanceKey: 'source:health-main', sourceTypeId: 'health', packageName: 'dsh-plugin-memory-source-health', role: 'health-records',
+      sourceInstanceKey: 'source:health-main', sourceTypeId: 'health', packageName: 'suveng-dsh-plugin-memory-source-health', role: 'health-records',
       availability: 'ready' as const, revision: 'health-r4', capabilities: ['read' as const, 'write' as const],
       management: {
         label: 'Health records',

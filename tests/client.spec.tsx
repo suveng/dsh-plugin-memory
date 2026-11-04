@@ -158,8 +158,8 @@ describe('MemoryWorkbench', () => {
       ...(options.workspaceMismatch === true ? {
         workspaceContext: {
           mode: 'workspace',
-          selectedRoot: '/tmp/workspace-two/.dsh-plugin-memory',
-          effectiveRoot: '/tmp/workspace-one/.dsh-plugin-memory',
+          selectedRoot: '/tmp/workspace-two/.suveng-dsh-plugin-memory',
+          effectiveRoot: '/tmp/workspace-one/.suveng-dsh-plugin-memory',
           aligned: false,
           selectedWorkspace: { id: 'workspace-2', title: 'Workspace Two', path: '/tmp/workspace-two' },
           effectiveWorkspace: { id: 'workspace-1', title: 'Workspace One', path: '/tmp/workspace-one' },
@@ -173,7 +173,7 @@ describe('MemoryWorkbench', () => {
       checkedAt: '2026-08-15T03:00:00.000Z',
       components: [
         { id: 'memory', name: 'Memory CLI', executablePath: '/usr/local/bin/memory', current: memoryVersionUpdated ? '0.2.0' : '0.1.2', latest: '0.2.0', outdated: !memoryVersionUpdated, installMode: 'homebrew', updateSupported: true, updateHint: 'brew' },
-        { id: 'dsh-plugin-memory', name: 'dsh-plugin-memory', installProfile: 'web', installPath: '/workspace/dsh-plugin-memory', current: '0.1.2', latest: '0.1.3', outdated: true, installMode: 'link', updateSupported: false, updateHint: 'link' },
+        { id: 'suveng-dsh-plugin-memory', name: 'suveng-dsh-plugin-memory', installProfile: 'web', installPath: '/workspace/suveng-dsh-plugin-memory', current: '0.1.2', latest: '0.1.3', outdated: true, installMode: 'link', updateSupported: false, updateHint: 'link' },
       ],
     } })
     const versionResolvers: Array<(response: ReturnType<typeof versionResponse>) => void> = []
@@ -203,14 +203,14 @@ describe('MemoryWorkbench', () => {
       : Array.from({ length: options.runtimeCount }, (_, index) => ({ content: `运行时条目 ${index + 1}`, created_at: `2026-08-13T02:${String(index).padStart(2, '0')}:00.000Z`, updated_at: `2026-08-13T02:${String(index).padStart(2, '0')}:00.000Z`, target: index % 2 === 0 ? 'user' : 'memory', importance: index % 3 === 0 ? 'critical' : 'normal' }))
     const baseDocument = {
       id: 'document-12345678', title: '发布验证清单', description: '发布前的完整验证路径。', status: 'active', filename: 'release-document-1234.md',
-      relativePath: '.dsh-plugin-memory/documents/active/release-document-1234.md', sourcePaths: ['package.json'], sessionIds: ['session-1'],
+      relativePath: '.suveng-dsh-plugin-memory/documents/active/release-document-1234.md', sourcePaths: ['package.json'], sessionIds: ['session-1'],
       createdAt: '2026-08-13T02:00:00.000Z', updatedAt: '2026-08-13T02:00:00.000Z', lastAccessedAt: '2026-08-13T02:00:00.000Z',
       revision: 1, contentHash: 'a'.repeat(64), sizeBytes: 640, memoryBodyIds: [] as string[], healthy: true, excerpt: '发布前运行 typecheck、单元测试与真实 WebUI E2E。',
       content: '# 发布验证\n\n发布前运行 **typecheck**、单元测试与真实 WebUI E2E。\n\n- 检查构建产物\n- 检查真实页面\n\n[架构说明](https://example.com/architecture)\n\n[不安全链接](javascript:alert(1))',
     }
     let documents = options.documentCount === undefined
       ? [baseDocument]
-      : Array.from({ length: options.documentCount }, (_, index) => ({ ...baseDocument, id: `document-${String(index + 1).padStart(8, '0')}`, title: `档案条目 ${index + 1}`, filename: `document-${index + 1}.md`, relativePath: `.dsh-plugin-memory/documents/active/document-${index + 1}.md`, content: `# 档案条目 ${index + 1}\n\n正文 ${index + 1}`, excerpt: `档案摘要 ${index + 1}` }))
+      : Array.from({ length: options.documentCount }, (_, index) => ({ ...baseDocument, id: `document-${String(index + 1).padStart(8, '0')}`, title: `档案条目 ${index + 1}`, filename: `document-${index + 1}.md`, relativePath: `.suveng-dsh-plugin-memory/documents/active/document-${index + 1}.md`, content: `# 档案条目 ${index + 1}\n\n正文 ${index + 1}`, excerpt: `档案摘要 ${index + 1}` }))
     const call = vi.fn(async (_channel: string, endpoint: string, payload?: Record<string, unknown>) => {
       const bodies = includeSecondaryBody ? [body, { ...secondaryBody, active: secondaryActive }] : [body]
       if (endpoint === 'runtime-memory') {
@@ -227,7 +227,7 @@ describe('MemoryWorkbench', () => {
       }
       if (endpoint === 'documents') {
         const active = documents.filter(document => document.status === 'active')
-        return { ok: true, value: { workspaceRoot: '/tmp/project', directory: '/tmp/project/.dsh-plugin-memory/documents', indexPath: '/tmp/project/.dsh-plugin-memory/documents/index.json', generatedAt: '2026-08-13T03:00:00.000Z', revision: 'r1', limitBytes: 10 * 1024 * 1024, activeBytes: active.reduce((sum, document) => sum + document.sizeBytes, 0), activeCount: active.length, archivedCount: documents.length - active.length, total: documents.length, documents: documents.map(({ content: _content, ...document }) => document) } }
+        return { ok: true, value: { workspaceRoot: '/tmp/project', directory: '/tmp/project/.suveng-dsh-plugin-memory/documents', indexPath: '/tmp/project/.suveng-dsh-plugin-memory/documents/index.json', generatedAt: '2026-08-13T03:00:00.000Z', revision: 'r1', limitBytes: 10 * 1024 * 1024, activeBytes: active.reduce((sum, document) => sum + document.sizeBytes, 0), activeCount: active.length, archivedCount: documents.length - active.length, total: documents.length, documents: documents.map(({ content: _content, ...document }) => document) } }
       }
       if (endpoint === 'document-search') {
         const query = String(payload?.query ?? '').toLowerCase()
@@ -237,7 +237,7 @@ describe('MemoryWorkbench', () => {
       }
       if (endpoint === 'document') {
         if (payload?.action === 'create') {
-          const created = { ...documents[0]!, id: 'document-new-1234', title: String(payload.title), description: String(payload.description ?? ''), content: String(payload.content), excerpt: String(payload.content).slice(0, 120), sourcePaths: payload.sourcePaths as string[] ?? [], filename: 'new-document-new.md', relativePath: '.dsh-plugin-memory/documents/active/new-document-new.md' }
+          const created = { ...documents[0]!, id: 'document-new-1234', title: String(payload.title), description: String(payload.description ?? ''), content: String(payload.content), excerpt: String(payload.content).slice(0, 120), sourcePaths: payload.sourcePaths as string[] ?? [], filename: 'new-document-new.md', relativePath: '.suveng-dsh-plugin-memory/documents/active/new-document-new.md' }
           documents = [...documents, created]
           return { ok: true, value: { success: true, action: 'created', document: created, snapshot: {} } }
         }
@@ -246,7 +246,7 @@ describe('MemoryWorkbench', () => {
           return { ok: true, value: { success: true, action: 'updated', document: documents.find(document => document.id === payload.id), snapshot: {} } }
         }
         if (payload?.action === 'archive') {
-          documents = documents.map(document => document.id === payload.id ? { ...document, status: 'archived', relativePath: `.dsh-plugin-memory/documents/archived/${document.filename}`, archiveSummary: '已写入发布记忆空间索引。', memoryBodyIds: ['project'] } : document)
+          documents = documents.map(document => document.id === payload.id ? { ...document, status: 'archived', relativePath: `.suveng-dsh-plugin-memory/documents/archived/${document.filename}`, archiveSummary: '已写入发布记忆空间索引。', memoryBodyIds: ['project'] } : document)
           return { ok: true, value: { success: true, action: 'archived', document: documents.find(document => document.id === payload.id), snapshot: {}, maintenance: { runId: 'archive-child', provider: 'spawn', summary: 'indexed', memoryBodyIds: ['project'], archivedDocumentIds: [payload.id] } } }
         }
         return { ok: true, value: documents.find(document => document.id === payload?.id) }
@@ -264,7 +264,7 @@ describe('MemoryWorkbench', () => {
         const names: Record<string, { en: string; 'zh-CN': string }> = { runtime: { en: 'Runtime memory', 'zh-CN': '运行时记忆' }, documents: { en: 'Project Documents', 'zh-CN': '项目档案' }, 'memory-spaces': { en: 'Memory Spaces', 'zh-CN': '记忆空间' } }
         const entries = ['runtime', 'documents', 'memory-spaces'].map(layer => {
           const enabled = options.componentsOff?.includes(layer) !== true
-          return { entryId: 'source-' + layer, packageName: 'dsh-plugin-memory-source-' + layer, roles: ['source'], ...enabled ? { typeId: layer } : {}, label: names[layer]!, description: { en: '', 'zh-CN': '' },
+          return { entryId: 'source-' + layer, packageName: 'suveng-dsh-plugin-memory-source-' + layer, roles: ['source'], ...enabled ? { typeId: layer } : {}, label: names[layer]!, description: { en: '', 'zh-CN': '' },
             fields: [], provides: [{ id: 'source', exclusive: false }], requires: [], requiredBy: [], enabled, active: enabled, writable: true, config: {} }
         })
         return { ok: true, value: { revision: 'view-1', writable: true, strategyTypeId: 'default-three-tier', entries, sources: [], diagnostics: [], pluginInstallation: { supported: false, suggestions: [] } } }
@@ -383,7 +383,7 @@ describe('MemoryWorkbench', () => {
   }
 
   it.each(['sidebar', 'builtin'] as const)('accepts scoped skin variables on the %s workspace without styling peer views', async surface => {
-    const selector = '[data-dsh-plugin="dsh-plugin-memory"][data-dsh-part="memory-view"]'
+    const selector = '[data-dsh-plugin="suveng-dsh-plugin-memory"][data-dsh-part="memory-view"]'
     const skin = document.createElement('style')
     skin.textContent = `${selector} { --mn-bg: rgb(232, 241, 249); --mn-backdrop: rgb(217, 232, 245); --mn-surface: rgba(232, 241, 249, 0.74); }`
     document.head.append(skin)
@@ -532,10 +532,10 @@ describe('MemoryWorkbench', () => {
   })
 
   it('warns while a rejected change leaves the previous composition serving', async () => {
-    const { connection } = createConnection({ composition: { serving: true, state: 'rejected', diagnostics: [{ code: 'composition-rejected', message: 'memory plugin dependency unavailable: dsh-plugin-memory-strategy-auto-capture requires source.durable-evidence' }] } })
+    const { connection } = createConnection({ composition: { serving: true, state: 'rejected', diagnostics: [{ code: 'composition-rejected', message: 'memory plugin dependency unavailable: suveng-dsh-plugin-memory-strategy-auto-capture requires source.durable-evidence' }] } })
     render(<MemoryWorkbench connection={connection} settingsScope={settingsScope} sessionId="session-1" t={translateEn} locale="en" />)
     const notice = await screen.findByRole('status', { name: 'The latest component change did not take effect' })
-    expect(within(notice).getByText('dsh-plugin-memory-strategy-auto-capture is missing source.durable-evidence. Memory still runs as composed before.')).toBeTruthy()
+    expect(within(notice).getByText('suveng-dsh-plugin-memory-strategy-auto-capture is missing source.durable-evidence. Memory still runs as composed before.')).toBeTruthy()
   })
 
   it('re-reads in place after a save that keeps the storage, and remounts for another storage', async () => {
@@ -593,7 +593,7 @@ describe('MemoryWorkbench', () => {
     render(<MemoryWorkbench connection={connection} settingsScope={settingsScope} sessionId="session-1" />)
     expect(await screen.findByText('Mnemon 0.1.2')).toBeTruthy()
     expect(screen.queryByText('等待版本信息')).toBeNull()
-    expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-read', 'status', expect.anything())
+    expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-read', 'status', expect.anything())
   })
 
   it.each([true, false])('shows a background-review warning in writable=%s sessions', async writable => {
@@ -713,7 +713,7 @@ describe('MemoryWorkbench', () => {
     expect(documentReader.querySelector('a[href^="javascript:"]')).toBeNull()
     expect(documentReader.querySelector('pre')).toBeNull()
     expect(screen.getByText('640 B / 10.0 MB')).toBeTruthy()
-    expect(screen.getByText('`.dsh-plugin-memory/documents/index.json` 是控制面事实源；active 总量固定不超过 10 MB，archived 不计入上限，项目源文件不会被修改。')).toBeTruthy()
+    expect(screen.getByText('`.suveng-dsh-plugin-memory/documents/index.json` 是控制面事实源；active 总量固定不超过 10 MB，archived 不计入上限，项目源文件不会被修改。')).toBeTruthy()
 
     await selectWorkspaceTab('实体')
     expect(screen.getByRole('heading', { name: '实体查阅' })).toBeTruthy()
@@ -753,12 +753,12 @@ describe('MemoryWorkbench', () => {
     expect(screen.getByText('/tmp/memory')).toBeTruthy()
   }, 10_000)
 
-  it('keeps a Native Provider failure out of the dsh-plugin-memory engine summary', async () => {
+  it('keeps a Native Provider failure out of the suveng-dsh-plugin-memory engine summary', async () => {
     const { connection } = createConnection({ nativeUnhealthy: true })
     render(<MemoryWorkbench connection={connection} settingsScope={settingsScope} sessionId="session-1" />)
 
     const engineStatus = await screen.findByRole('region', { name: 'Memory 运行状态' })
-    expect(within(engineStatus).getByText('dsh-plugin-memory 0.1.2')).toBeTruthy()
+    expect(within(engineStatus).getByText('suveng-dsh-plugin-memory 0.1.2')).toBeTruthy()
     expect(within(engineStatus).getByText('插件运行正常')).toBeTruthy()
     expect(screen.getByText('系统正常')).toBeTruthy()
     expect(screen.queryByText('Memory 不可用')).toBeNull()
@@ -779,8 +779,8 @@ describe('MemoryWorkbench', () => {
     fireEvent.click(toggle)
 
     await waitFor(() => expect(screen.getByRole('switch', { name: '偏好记忆空间读取开关' }).getAttribute('aria-checked')).toBe('true'))
-    expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-activation', 'body', { memoryBodyId: 'preferences', active: true, sessionId: 'session-1' })
-    expect(call).not.toHaveBeenCalledWith('/dsh-plugin-memory-write', 'body-update', expect.objectContaining({ memoryBodyId: 'preferences', active: true }))
+    expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-activation', 'body', { memoryBodyId: 'preferences', active: true, sessionId: 'session-1' })
+    expect(call).not.toHaveBeenCalledWith('/suveng-dsh-plugin-memory-write', 'body-update', expect.objectContaining({ memoryBodyId: 'preferences', active: true }))
     expect(screen.getByRole('button', { name: /偏好: 用户偏好简洁中文回答/ })).toBeTruthy()
     expect(screen.getByRole('img', { name: /Memory 实时记忆图谱，7 个元素/ })).toBeTruthy()
     expect(screen.getByRole('button', { name: '记忆空间: 偏好记忆空间' })).toBeTruthy()
@@ -815,7 +815,7 @@ describe('MemoryWorkbench', () => {
     fireEvent.click(toggle)
     await waitFor(() => expect(toggle.getAttribute('aria-checked')).toBe('true'))
     expect(call).toHaveBeenCalledWith('/api', 'body', { memoryBodyId: 'preferences', active: true, sessionId: 'session-1' })
-    expect(call.mock.calls.some(([channel]) => channel === '/dsh-plugin-memory-write')).toBe(false)
+    expect(call.mock.calls.some(([channel]) => channel === '/suveng-dsh-plugin-memory-write')).toBe(false)
   })
 
   it('says why a remote page is read only when the Host withholds the management grant', async () => {
@@ -841,7 +841,7 @@ describe('MemoryWorkbench', () => {
     expect(toggle.getAttribute('aria-expanded')).toBe('true')
     fireEvent.click(toggle)
     expect(toggle.getAttribute('aria-expanded')).toBe('false')
-    expect(call.mock.calls.some(([channel]) => channel === '/dsh-plugin-memory-write')).toBe(false)
+    expect(call.mock.calls.some(([channel]) => channel === '/suveng-dsh-plugin-memory-write')).toBe(false)
   })
 
   it('keeps review failures and restart warnings outside the ordinary notice summary', async () => {
@@ -852,7 +852,7 @@ describe('MemoryWorkbench', () => {
     const contents = document.getElementById(toggle.getAttribute('aria-controls')!)!
     expect(contents.contains(screen.getByRole('alert', { name: '空闲审查失败' }))).toBe(false)
     expect(contents.contains(screen.getByText(zh['status.reviewWatermarkPaused']))).toBe(false)
-    expect(contents.contains(screen.getByRole('status', { name: 'dsh-plugin-memory 0.1.3 已安装' }))).toBe(false)
+    expect(contents.contains(screen.getByRole('status', { name: 'suveng-dsh-plugin-memory 0.1.3 已安装' }))).toBe(false)
     expect(toggle.getAttribute('aria-expanded')).toBe('false')
   })
 
@@ -934,21 +934,21 @@ describe('MemoryWorkbench', () => {
     const { connection, call } = createConnection()
     render(<MemoryWorkbench connection={connection} settingsScope={settingsScope} sessionId="session-1" />)
 
-    await waitFor(() => expect(screen.getByText('dsh-plugin-memory 0.1.2')).toBeTruthy())
+    await waitFor(() => expect(screen.getByText('suveng-dsh-plugin-memory 0.1.2')).toBeTruthy())
     fireEvent.click(await screen.findByRole('button', { name: '检查版本' }))
     const dialog = screen.getByRole('dialog', { name: '检查与更新版本' })
     await waitFor(() => expect(within(dialog).getByText('Memory CLI')).toBeTruthy())
     expect(within(dialog).getByText('/usr/local/bin/memory')).toBeTruthy()
-    expect(within(dialog).getByText('dsh-plugin-memory')).toBeTruthy()
+    expect(within(dialog).getByText('suveng-dsh-plugin-memory')).toBeTruthy()
     expect(within(dialog).getByText('本地 Link')).toBeTruthy()
     expect(within(dialog).getByText('源码 · Profile web')).toBeTruthy()
-    expect(within(dialog).getByText('/workspace/dsh-plugin-memory')).toBeTruthy()
+    expect(within(dialog).getByText('/workspace/suveng-dsh-plugin-memory')).toBeTruthy()
     expect(within(dialog).getByText(/请在源码目录拉取并构建/)).toBeTruthy()
     expect(within(dialog).getAllByRole('button', { name: '更新' })).toHaveLength(1)
 
     fireEvent.click(within(dialog).getByRole('button', { name: '更新' }))
     await waitFor(() => expect(within(dialog).getByText('Memory CLI 已更新')).toBeTruthy())
-    expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-write', 'version-update', { component: 'memory' })
+    expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-write', 'version-update', { component: 'memory' })
     await waitFor(() => expect(within(dialog).getByText('已是最新')).toBeTruthy())
     expect(call.mock.calls.filter(([, endpoint]) => endpoint === 'versions')).toHaveLength(2)
     await waitFor(() => expect(screen.getByText('Mnemon 0.2.0')).toBeTruthy())
@@ -957,22 +957,22 @@ describe('MemoryWorkbench', () => {
   it('says on every page which update waits for a DSH restart', async () => {
     const { connection } = createConnection({ restartPending: { running: '0.1.2', installed: '0.1.3' } })
     render(<MemoryWorkbench connection={connection} settingsScope={settingsScope} sessionId="session-1" />)
-    const reminder = await screen.findByRole('status', { name: 'dsh-plugin-memory 0.1.3 已安装' })
+    const reminder = await screen.findByRole('status', { name: 'suveng-dsh-plugin-memory 0.1.3 已安装' })
     expect(reminder.textContent).toContain('当前运行的仍是 0.1.2；重启 DSH 后生效，桌面版请完全退出后重新打开。')
     // The engine card names the version that runs.
-    expect(screen.getByText('dsh-plugin-memory 0.1.2')).toBeTruthy()
+    expect(screen.getByText('suveng-dsh-plugin-memory 0.1.2')).toBeTruthy()
     await selectWorkspaceTab('运行时记忆')
-    expect(screen.getByRole('status', { name: 'dsh-plugin-memory 0.1.3 已安装' })).toBeTruthy()
+    expect(screen.getByRole('status', { name: 'suveng-dsh-plugin-memory 0.1.3 已安装' })).toBeTruthy()
   })
 
   it('names packages updated on their own until a restart, and stays quiet otherwise', async () => {
-    const { connection } = createConnection({ restartPending: { running: '0.1.2', packages: ['dsh-plugin-memory-strategy-scoped', 'dsh-plugin-memory-strategy-general'] } })
+    const { connection } = createConnection({ restartPending: { running: '0.1.2', packages: ['suveng-dsh-plugin-memory-strategy-scoped', 'suveng-dsh-plugin-memory-strategy-general'] } })
     render(<MemoryWorkbench connection={connection} settingsScope={settingsScope} sessionId="session-1" />)
-    const reminder = await screen.findByRole('status', { name: 'dsh-plugin-memory-strategy-scoped、dsh-plugin-memory-strategy-general 已更新' })
+    const reminder = await screen.findByRole('status', { name: 'suveng-dsh-plugin-memory-strategy-scoped、suveng-dsh-plugin-memory-strategy-general 已更新' })
     expect(reminder.textContent).toContain('重启 DSH 后生效')
     cleanup()
     render(<MemoryWorkbench connection={createConnection().connection} settingsScope={settingsScope} sessionId="session-1" />)
-    await waitFor(() => expect(screen.getByText('dsh-plugin-memory 0.1.2')).toBeTruthy())
+    await waitFor(() => expect(screen.getByText('suveng-dsh-plugin-memory 0.1.2')).toBeTruthy())
     expect(screen.queryByText(/重启 DSH 后生效/u)).toBeNull()
   })
 
@@ -984,7 +984,7 @@ describe('MemoryWorkbench', () => {
       render(<MemoryWorkbench connection={connection} settingsScope={settingsScope} sessionId="session-1" />)
       const dialog = await screen.findByRole('dialog', { name: '检查与更新版本' })
       await waitFor(() => expect(within(dialog).getByText('Memory CLI')).toBeTruthy())
-      expect(call).not.toHaveBeenCalledWith('/dsh-plugin-memory-write', 'version-update', expect.anything())
+      expect(call).not.toHaveBeenCalledWith('/suveng-dsh-plugin-memory-write', 'version-update', expect.anything())
       fireEvent.click(within(dialog).getAllByRole('button', { name: '关闭' }).at(-1)!)
       await waitFor(() => expect(screen.queryByRole('dialog', { name: '检查与更新版本' })).toBeNull())
       expect(pendingStarterUpdate()).toBeUndefined()
@@ -999,7 +999,7 @@ describe('MemoryWorkbench', () => {
     try {
       const { connection } = createConnection()
       render(<MemoryWorkbench connection={connection} settingsScope={settingsScope} sessionId="session-1" />)
-      await waitFor(() => expect(screen.getByText('dsh-plugin-memory 0.1.2')).toBeTruthy())
+      await waitFor(() => expect(screen.getByText('suveng-dsh-plugin-memory 0.1.2')).toBeTruthy())
       await waitFor(() => expect(pendingStarterUpdate()).toBeUndefined())
       expect(screen.queryByRole('dialog', { name: '检查与更新版本' })).toBeNull()
     } finally {
@@ -1011,7 +1011,7 @@ describe('MemoryWorkbench', () => {
     const { connection, resolveVersions } = createConnection({ versionsDeferred: true })
     render(<MemoryWorkbench connection={connection} settingsScope={settingsScope} sessionId="session-1" />)
 
-    await waitFor(() => expect(screen.getByText('dsh-plugin-memory 0.1.2')).toBeTruthy())
+    await waitFor(() => expect(screen.getByText('suveng-dsh-plugin-memory 0.1.2')).toBeTruthy())
     const trigger = screen.getByRole('button', { name: '检查版本' })
     trigger.focus()
     fireEvent.click(trigger)
@@ -1358,7 +1358,7 @@ describe('MemoryWorkbench', () => {
     fireEvent.click(await screen.findByRole('tab', { name: '状态' }))
     expect(await screen.findByRole('heading', { name: '系统状态' })).toBeTruthy()
     expect(screen.getAllByRole('status', { name: '检查中…' })).toHaveLength(1)
-    expect(screen.getByText('dsh-plugin-memory 0.1.2')).toBeTruthy()
+    expect(screen.getByText('suveng-dsh-plugin-memory 0.1.2')).toBeTruthy()
     expect(screen.queryByText('连接需要检查')).toBeNull()
   })
 
@@ -1639,8 +1639,8 @@ describe('MemoryWorkbench', () => {
     if (header === null) throw new Error('Sidebar header missing')
     expect(within(header).getByLabelText('存储范围：工作区')).toBeTruthy()
     const alignment = within(header).getByRole('status', { name: /查看目录与当前会话未对齐/ })
-    expect(alignment.getAttribute('aria-label')).toContain('查看：/tmp/workspace-two/.dsh-plugin-memory')
-    expect(alignment.getAttribute('aria-label')).toContain('生效：/tmp/workspace-one/.dsh-plugin-memory')
+    expect(alignment.getAttribute('aria-label')).toContain('查看：/tmp/workspace-two/.suveng-dsh-plugin-memory')
+    expect(alignment.getAttribute('aria-label')).toContain('生效：/tmp/workspace-one/.suveng-dsh-plugin-memory')
     fireEvent.click(screen.getByRole('button', { name: '选择要查看的记忆工作区 Workspace Two' }))
     fireEvent.click(screen.getByRole('menuitem', { name: 'Workspace One' }))
     expect(onSelect).toHaveBeenCalledWith('workspace-1')
@@ -1694,7 +1694,7 @@ describe('MemoryWorkbench', () => {
       if (endpoint === 'status-summary') {
         const value = response.value as Record<string, unknown>
         const storage = value.storage as Record<string, unknown>
-        return { ...response, value: { ...value, dataDir: '/Users/test/.dsh-plugin-memory', storage: { ...storage, activeKind: 'global', activeRoot: '/Users/test/.dsh-plugin-memory' }, workspaceContext: { mode: 'global', selectedRoot: '/Users/test/.dsh-plugin-memory', effectiveRoot: '/Users/test/.dsh-plugin-memory', aligned: true } } }
+        return { ...response, value: { ...value, dataDir: '/Users/test/.suveng-dsh-plugin-memory', storage: { ...storage, activeKind: 'global', activeRoot: '/Users/test/.suveng-dsh-plugin-memory' }, workspaceContext: { mode: 'global', selectedRoot: '/Users/test/.suveng-dsh-plugin-memory', effectiveRoot: '/Users/test/.suveng-dsh-plugin-memory', aligned: true } } }
       }
       const value = response.value as { targets: Record<string, Record<string, unknown>> }
       const content = '全局目录实时加载的运行时记忆。'

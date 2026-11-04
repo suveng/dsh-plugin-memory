@@ -2,10 +2,10 @@ import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, wr
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { MemoryCompositionRunner } from 'dsh-plugin-memory/testing'
-import * as skillsPlugin from 'dsh-plugin-memory-source-skills'
-import * as generalStrategy from 'dsh-plugin-memory-strategy-general'
-import type { BacktestRun, EvalCase, EvidencePack, SkillCatalog, SkillDraft, SkillSuggestion, Trajectory } from 'dsh-plugin-memory-source-skills/contracts'
+import { MemoryCompositionRunner } from 'suveng-dsh-plugin-memory/testing'
+import * as skillsPlugin from 'suveng-dsh-plugin-memory-source-skills'
+import * as generalStrategy from 'suveng-dsh-plugin-memory-strategy-general'
+import type { BacktestRun, EvalCase, EvidencePack, SkillCatalog, SkillDraft, SkillSuggestion, Trajectory } from 'suveng-dsh-plugin-memory-source-skills/contracts'
 import type { HostAgent, HostAgentContext, HostSessionEvent } from '../src/host/dsh.ts'
 import { DEFAULT_SKILLS_CONFIG, type ResolvedSkillsConfig } from '../src/host/protocol.ts'
 import { compareBacktestRuns, SkillEvolution, type SkillEvolutionHost, type SkillsSourcePort } from '../src/host/skill-evolution.ts'
@@ -19,7 +19,7 @@ function turn(events: HostSessionEvent[], number: number, user: string, tools: A
   const push = (type: string, data: Record<string, unknown>) => events.push({ type, seq: events.length, time: Date.UTC(2026, 9, 21, 8, number), data })
   push('turn/start', { turn: number })
   push('user/message', { id: `u${number}`, role: 'user', content: [{ type: 'text', text: user }], source: { kind: 'user' } })
-  push('user/message', { id: `m${number}`, role: 'user', content: [{ type: 'text', text: '[MNEMON] reminder' }], source: { kind: 'plugin:dsh-plugin-memory' } })
+  push('user/message', { id: `m${number}`, role: 'user', content: [{ type: 'text', text: '[MNEMON] reminder' }], source: { kind: 'plugin:suveng-dsh-plugin-memory' } })
   tools.forEach((tool, index) => {
     const callId = `c${number}-${index}`
     push('tool/call', { turn: number, step: 1, callId, name: tool.name, arguments: JSON.stringify(tool.args) })

@@ -17,7 +17,7 @@ describe('MemorySettingsScope', () => {
 
     expect(laterListener).toHaveBeenCalledOnce()
     expect(call).toHaveBeenCalledOnce()
-    expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-settings', 'get', { namespace: 'memory-ui' }, expect.any(AbortSignal))
+    expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-settings', 'get', { namespace: 'memory-ui' }, expect.any(AbortSignal))
     expect(warn).toHaveBeenCalledWith(expect.stringContaining('keeping the published Host snapshot'), expect.any(Error))
     warn.mockRestore()
   })
@@ -69,7 +69,7 @@ describe('MemorySettingsScope', () => {
     ]
     await scope.mutate(ops)
 
-    expect(call).toHaveBeenLastCalledWith('/dsh-plugin-memory-settings', 'mutate', { namespace: 'memory-ui', expectedRevision: 3, ops }, expect.any(AbortSignal))
+    expect(call).toHaveBeenLastCalledWith('/suveng-dsh-plugin-memory-settings', 'mutate', { namespace: 'memory-ui', expectedRevision: 3, ops }, expect.any(AbortSignal))
     expect(scope.getSnapshot()).toMatchObject({ revision: 4, value: { turnBar: true, saveAction: true } })
   })
 
@@ -104,7 +104,7 @@ describe('MemorySettingsScope', () => {
 
     await expect(scope.mutate([{ op: 'set', path: ['turnBar'], value: true }])).rejects.toThrow('timed out')
 
-    expect(call).toHaveBeenLastCalledWith('/dsh-plugin-memory-settings', 'mutate', expect.any(Object), expect.any(AbortSignal))
+    expect(call).toHaveBeenLastCalledWith('/suveng-dsh-plugin-memory-settings', 'mutate', expect.any(Object), expect.any(AbortSignal))
     expect(scope.getSnapshot()).toMatchObject({ status: 'ready', revision: 1, value: { turnBar: false } })
   })
 })

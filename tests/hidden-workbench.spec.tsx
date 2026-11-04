@@ -306,7 +306,7 @@ describe('retained hidden workbench', () => {
     await expect(stale.mutate('save', null, { confirmed: true })).rejects.toThrow(/context/iu)
     await retained!.mutate('save', null, { confirmed: true })
     expect(call.mock.calls.filter(([, endpoint]) => endpoint === 'source-management-mutate')).toEqual([
-      ['/dsh-plugin-memory-write', 'source-management-mutate', expect.objectContaining({ sessionId: 'C', workspaceId: 'three' })],
+      ['/suveng-dsh-plugin-memory-write', 'source-management-mutate', expect.objectContaining({ sessionId: 'C', workspaceId: 'three' })],
     ])
     expect(call.mock.calls.slice(before).every(([, , payload]) => payload?.sessionId === 'C')).toBe(true)
   })

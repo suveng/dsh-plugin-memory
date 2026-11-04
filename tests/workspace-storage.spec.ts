@@ -3,7 +3,7 @@ import { homedir, tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createStorageRoot } from '../src/host/storage-root.ts'
-import { canonicalWorkspacePath, workspaceStorageId } from 'dsh-plugin-memory/extension-sdk'
+import { canonicalWorkspacePath, workspaceStorageId } from 'suveng-dsh-plugin-memory/extension-sdk'
 
 const roots: string[] = []
 function fixture() {
@@ -30,15 +30,15 @@ describe('workspace-scoped roots without a workspace', () => {
 
   it('roots a real workspace at its own directory and ignores surrounding whitespace', () => {
     const { workspace } = fixture()
-    expect(createStorageRoot({ storageScope: 'workspace' }, workspace).effectiveDataDir()).toBe(join(workspace, '.dsh-plugin-memory'))
-    expect(createStorageRoot({ storageScope: 'workspace' }, ` ${workspace} `).effectiveDataDir()).toBe(join(workspace, '.dsh-plugin-memory'))
-    expect(existsSync(join(workspace, '.dsh-plugin-memory'))).toBe(false)
+    expect(createStorageRoot({ storageScope: 'workspace' }, workspace).effectiveDataDir()).toBe(join(workspace, '.suveng-dsh-plugin-memory'))
+    expect(createStorageRoot({ storageScope: 'workspace' }, ` ${workspace} `).effectiveDataDir()).toBe(join(workspace, '.suveng-dsh-plugin-memory'))
+    expect(existsSync(join(workspace, '.suveng-dsh-plugin-memory'))).toBe(false)
   })
 
   it('keeps the user-wide and custom layouts independent of any workspace', () => {
     const { root } = fixture()
     for (const workspaceRoot of [undefined, '']) {
-      expect(createStorageRoot({ storageScope: 'global' }, workspaceRoot).effectiveDataDir()).toBe(resolve(homedir(), '.dsh-plugin-memory'))
+      expect(createStorageRoot({ storageScope: 'global' }, workspaceRoot).effectiveDataDir()).toBe(resolve(homedir(), '.suveng-dsh-plugin-memory'))
       expect(createStorageRoot({ storageScope: 'custom', dataDir: root }, workspaceRoot).effectiveDataDir()).toBe(root)
     }
   })

@@ -12,9 +12,9 @@ import type {
   HostSessionEvent,
   HostUserMessage,
 } from "./dsh.ts"
-import type { Insight, RememberRequest, SearchRequest } from 'dsh-plugin-memory-source-memory-spaces/contracts'
-import type { RuntimeMemoryMutation } from 'dsh-plugin-memory-source-runtime/contracts'
-import type { DocumentMutation } from 'dsh-plugin-memory-source-documents/contracts'
+import type { Insight, RememberRequest, SearchRequest } from 'suveng-dsh-plugin-memory-source-memory-spaces/contracts'
+import type { RuntimeMemoryMutation } from 'suveng-dsh-plugin-memory-source-runtime/contracts'
+import type { DocumentMutation } from 'suveng-dsh-plugin-memory-source-documents/contracts'
 import { IdleReviewError, MemorySubagentCoordinator } from './subagent.ts'
 import { scoreReviewActivity } from './review-activity.ts'
 import { idleReviewBlockReason } from './review-tools.ts'
@@ -25,7 +25,7 @@ import { strategyDrives, viewStrategy } from './strategy-workflows.ts'
 import { mainStrategyTypeId } from './main-strategy.ts'
 import { AgentMemoryTurn, openAgentTurn, type DelegatedMemoryView } from './agent-memory-turn.ts'
 import type { AssistantMessageText, LifecycleAgentSnapshot, LifecycleCounters, LifecyclePhase, LifecycleSnapshot, ReviewActivityScore, SkillActivitySnapshot, SupervisedWritebackResult, TaskAgentModelCatalog } from "./protocol.ts"
-import type { PreparedMemoryPlacement } from 'dsh-plugin-memory-source-memory-spaces/contracts'
+import type { PreparedMemoryPlacement } from 'suveng-dsh-plugin-memory-source-memory-spaces/contracts'
 import type { MemoryWake } from "../core/contracts/index.ts"
 import { agentScope, type MemoryAgentRuntimeSource } from './runtime.ts'
 import { createPluginMessage, MEMORY_PLUGIN_SOURCE } from './plugin-message.ts'
@@ -97,7 +97,7 @@ interface PromptAssemblyContext {
 function isMemoryMessageSource(source: unknown): boolean {
   if (typeof source !== 'object' || source === null) return false
   const { kind, plugin } = source as { kind?: unknown; plugin?: unknown }
-  // V3-to-V4 migrates the legacy plugin wrapper to `plugin:dsh-plugin-memory`.
+  // V3-to-V4 migrates the legacy plugin wrapper to `plugin:suveng-dsh-plugin-memory`.
   return kind === MEMORY_PLUGIN_SOURCE
     || kind === `plugin:${MEMORY_PLUGIN_SOURCE}`
     || (kind === 'plugin' && plugin === MEMORY_PLUGIN_SOURCE)
@@ -355,7 +355,7 @@ class MemoryAgentLifecycle {
    * The runtime memory snapshot, as this plugin's own message, when it changed.
    *
    * `.context()` used to carry this inside the host's shared runtime-context
-   * projection. Carrying it here instead attributes it to dsh-plugin-memory and keeps
+   * projection. Carrying it here instead attributes it to suveng-dsh-plugin-memory and keeps
    * a memory write from re-emitting other contributors' sections; supersede
    * stays intact because the block is still a complete state replacing its
    * predecessor, keyed on the rendered text's revision digest.
@@ -737,7 +737,7 @@ class MemoryAgentLifecycle {
     this.lastError = (error instanceof Error ? error.message : String(error))
       .replace(/\bsk-[A-Za-z0-9_-]{8,}\b/gu, '[redacted]')
       .replace(/\s+/gu, ' ').trim().slice(0, 500)
-    console.warn(`[dsh-plugin-memory] idle review failed: ${this.lastError}`)
+    console.warn(`[suveng-dsh-plugin-memory] idle review failed: ${this.lastError}`)
   }
 
 }
@@ -755,7 +755,7 @@ interface WorkingDirectoryService {
 export type RoutedPick = { provider: string; model: string; reasoningEffort?: string }
 
 /** Explicit model route carried by the task Agent a skill run created. */
-export const TASK_ROUTE: unique symbol = Symbol.for('dsh-plugin-memory.taskRoute')
+export const TASK_ROUTE: unique symbol = Symbol.for('suveng-dsh-plugin-memory.taskRoute')
 
 /**
  * The route a task Agent was created with, when its caller picked one. Skill
@@ -1100,7 +1100,7 @@ export class MemoryLifecycle {
     signal: AbortSignal,
     withAgent: <T>(operation: (agent: HostAgent) => Promise<T>) => Promise<T>,
   ): Promise<SupervisedWritebackResult> {
-    if (!this.config.writeEnabled) throw new Error('dsh-plugin-memory is configured read-only (writeEnabled: false)')
+    if (!this.config.writeEnabled) throw new Error('suveng-dsh-plugin-memory is configured read-only (writeEnabled: false)')
     const normalizedContent = content.trim()
     if (normalizedContent === '') throw new Error('memory candidate is required')
     if (normalizedContent.length > 8000) throw new Error('memory candidate is too long (max 8000 characters)')
@@ -1361,7 +1361,7 @@ export class MemoryLifecycle {
           if (this.memoryTurns.get(agent) === memoryTurn) this.memoryTurns.delete(agent)
         }
       }
-    }, 'dsh-plugin-memory.lifecycle()')
+    }, 'suveng-dsh-plugin-memory.lifecycle()')
     this.owners.set(agent, { lifecycle, dispose })
     if (memoryTurn !== undefined) this.memoryTurns.set(agent, memoryTurn)
   }
@@ -1434,7 +1434,7 @@ export class MemoryLifecycle {
         throw error
       }
       return cleanup
-    }, 'dsh-plugin-memory.child-memory()')
+    }, 'suveng-dsh-plugin-memory.child-memory()')
     this.children.set(agent, dispose)
   }
 }

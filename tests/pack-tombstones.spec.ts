@@ -14,7 +14,7 @@ const directories: string[] = []
 const releases: Array<() => Promise<void>> = []
 
 function temporary(label: string): string {
-  const directory = mkdtempSync(join(tmpdir(), `dsh-plugin-memory-${label}-`))
+  const directory = mkdtempSync(join(tmpdir(), `suveng-dsh-plugin-memory-${label}-`))
   directories.push(directory)
   return directory
 }

@@ -1,5 +1,5 @@
 // Import every public Node entry and check that no declaration it reaches exposes a private type, and that
-// dsh-plugin-memory/client's declarations stay on the browser side.
+// suveng-dsh-plugin-memory/client's declarations stay on the browser side.
 import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
 import { dirname, relative, resolve } from 'node:path'
@@ -49,13 +49,13 @@ function verifyClientDeclarations(filename, seen = new Set()) {
   if (seen.has(filename)) return seen
   seen.add(filename)
   const path = relative(root, filename).split('\\').join('/')
-  if (/^lib\/types\/src\/(?:host|sdk)\//u.test(path)) throw new Error(`dsh-plugin-memory/client declarations reach ${path}`)
+  if (/^lib\/types\/src\/(?:host|sdk)\//u.test(path)) throw new Error(`suveng-dsh-plugin-memory/client declarations reach ${path}`)
   const source = readFileSync(filename, 'utf8')
-  if (/declare\s+module\s+['"]@deepseek-ai\/cordis['"]/u.test(source)) throw new Error(`dsh-plugin-memory/client declarations reach a cordis Context augmentation in ${path}`)
+  if (/declare\s+module\s+['"]@deepseek-ai\/cordis['"]/u.test(source)) throw new Error(`suveng-dsh-plugin-memory/client declarations reach a cordis Context augmentation in ${path}`)
   const dependencies = ts.preProcessFile(source, true, true)
   for (const { fileName } of [...dependencies.importedFiles, ...dependencies.referencedFiles, ...dependencies.typeReferenceDirectives]) {
     if (fileName.startsWith('.')) verifyClientDeclarations(resolve(dirname(filename), fileName.replace(/(?<!\.d)\.[cm]?[jt]sx?$/u, '.d.ts')), seen)
-    else if (!CLIENT_DECLARATION_PACKAGES.has(fileName)) throw new Error(`dsh-plugin-memory/client declarations import ${fileName} in ${path}; only ${[...CLIENT_DECLARATION_PACKAGES].join(', ')} may be imported there`)
+    else if (!CLIENT_DECLARATION_PACKAGES.has(fileName)) throw new Error(`suveng-dsh-plugin-memory/client declarations import ${fileName} in ${path}; only ${[...CLIENT_DECLARATION_PACKAGES].join(', ')} may be imported there`)
   }
   return seen
 }
@@ -63,7 +63,7 @@ function verifyClientDeclarations(filename, seen = new Set()) {
 let imported = 0
 let executables = 0
 const clientDeclarations = verifyClientDeclarations(resolve(root, JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8')).exports['./client'].types))
-for (const directory of [root, resolve(root, 'plugins/dsh-plugin-memory-source-memory-spaces'), resolve(root, 'plugins/dsh-plugin-memory-strategy-default-three-tier')]) {
+for (const directory of [root, resolve(root, 'plugins/suveng-dsh-plugin-memory-source-memory-spaces'), resolve(root, 'plugins/suveng-dsh-plugin-memory-strategy-default-three-tier')]) {
   const manifest = JSON.parse(readFileSync(resolve(directory, 'package.json'), 'utf8'))
   for (const executable of Object.values(manifest.bin ?? {})) {
     execFileSync(process.execPath, [resolve(directory, executable), '--help'], { encoding: 'utf8', timeout: 10_000 })

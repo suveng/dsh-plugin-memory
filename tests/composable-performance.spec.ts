@@ -1,10 +1,10 @@
 import { performance } from 'node:perf_hooks'
 import { afterEach, describe, expect, it } from 'vitest'
 import { compositionFixture } from './fixtures/composition.ts'
-import type { DocumentMutationResult } from 'dsh-plugin-memory-source-documents/contracts'
-import * as scoped from 'dsh-plugin-memory-strategy-scoped'
-import * as light from 'dsh-plugin-memory-strategy-light-context'
-import * as capture from 'dsh-plugin-memory-strategy-auto-capture'
+import type { DocumentMutationResult } from 'suveng-dsh-plugin-memory-source-documents/contracts'
+import * as scoped from 'suveng-dsh-plugin-memory-strategy-scoped'
+import * as light from 'suveng-dsh-plugin-memory-strategy-light-context'
+import * as capture from 'suveng-dsh-plugin-memory-strategy-auto-capture'
 const fixtures: Awaited<ReturnType<typeof compositionFixture>>[] = []
 async function fixture() { const value = await compositionFixture(); fixtures.push(value); return value }
 afterEach(async () => { for (const value of fixtures.splice(0)) await value.dispose() })

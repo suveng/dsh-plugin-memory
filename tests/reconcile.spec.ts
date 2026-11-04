@@ -2,8 +2,8 @@ import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import type { DocumentSnapshot } from 'dsh-plugin-memory-source-documents/contracts'
-import type { RuntimeMemoryEntry, RuntimeMemorySnapshot, RuntimeMemoryTargetView } from 'dsh-plugin-memory-source-runtime/contracts'
+import type { DocumentSnapshot } from 'suveng-dsh-plugin-memory-source-documents/contracts'
+import type { RuntimeMemoryEntry, RuntimeMemorySnapshot, RuntimeMemoryTargetView } from 'suveng-dsh-plugin-memory-source-runtime/contracts'
 import { sourceFixture } from './fixtures/sources.ts'
 import type { MemoryMachineIdentity, MemoryReconcileOperation, MemoryReviewEntry } from '../src/host/protocol.ts'
 import type { MemoryReconcileApplier, MemoryReconcileSessions } from '../src/host/reconcile.ts'
@@ -23,7 +23,7 @@ const directories: string[] = []
 const disposals: Array<() => Promise<void>> = []
 
 function temporary(label: string): string {
-  const directory = mkdtempSync(join(tmpdir(), `dsh-plugin-memory-${label}-`))
+  const directory = mkdtempSync(join(tmpdir(), `suveng-dsh-plugin-memory-${label}-`))
   directories.push(directory)
   return directory
 }

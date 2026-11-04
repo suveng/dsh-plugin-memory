@@ -17,7 +17,7 @@ interface MemorySettingsHostProps extends Omit<MemorySettingsCardProps, 'session
   workspaces: MemoryClientContext['workspaces']
   /** The components that contributed settings to their pages. */
   componentSettingsDirectory?: ComponentSettingsDirectory
-  /** What the page lends the shipped components whose settings dsh-plugin-memory used to draw. */
+  /** What the page lends the shipped components whose settings suveng-dsh-plugin-memory used to draw. */
   componentHost?: ComponentHosts
   /**
    * Renders a contribution on a page that does not own the settings region,
@@ -27,7 +27,7 @@ interface MemorySettingsHostProps extends Omit<MemorySettingsCardProps, 'session
   renderContributed?: (packageName: string, props: MemoryComponentSettingsProps) => ReactNode
 }
 
-/** The dsh-plugin-memory bundle page body; root-slot injection is cached, so session and workspace stay live here. */
+/** The suveng-dsh-plugin-memory bundle page body; root-slot injection is cached, so session and workspace stay live here. */
 export function MemorySettingsHost({ view, currentSession, sessions, workspaces, localeRuntime, componentSettingsDirectory, componentHost, renderSlot, renderContributed, ...props }: MemorySettingsHostProps): JSX.Element | null {
   const sessionId = useMemorySessionId(currentSession)
   const subscribeSessions = useCallback((listener: () => void) => sessions.list.subscribe(listener), [sessions.list])

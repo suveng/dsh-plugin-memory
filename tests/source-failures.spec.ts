@@ -3,9 +3,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   COMPOSABLE_MEMORY_API_VERSION, type MemorySourceRuntime, type MemorySourceRuntimeContext,
   type MemoryViewContribution,
-} from 'dsh-plugin-memory/contracts'
-import { defineMemorySource, defineMemoryStrategy, installMemory } from 'dsh-plugin-memory/extension-sdk'
-import { MemoryCompositionRunner } from 'dsh-plugin-memory/testing'
+} from 'suveng-dsh-plugin-memory/contracts'
+import { defineMemorySource, defineMemoryStrategy, installMemory } from 'suveng-dsh-plugin-memory/extension-sdk'
+import { MemoryCompositionRunner } from 'suveng-dsh-plugin-memory/testing'
 
 const runners: MemoryCompositionRunner[] = []
 afterEach(async () => {

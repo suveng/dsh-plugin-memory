@@ -13,7 +13,7 @@ interface MemoryCoreContext {
 export function provideMemoryRuntime(context: MemoryCoreContext): MemoryRuntime {
   const runtime = new MemoryRuntime()
   context.provide('memoryMemory', runtime.service)
-  context.effect(() => () => runtime.dispose(), 'dsh-plugin-memory.core()')
+  context.effect(() => () => runtime.dispose(), 'suveng-dsh-plugin-memory.core()')
   return runtime
 }
 

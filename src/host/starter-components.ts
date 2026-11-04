@@ -1,4 +1,4 @@
-// The memory components the dsh-plugin-memory Starter ships, named once for the
+// The memory components the suveng-dsh-plugin-memory Starter ships, named once for the
 // Host, the browser client and the repository scripts. Keep this file plain
 // data with erasable types only and no imports: the scripts load it as is,
 // with Node's own TypeScript support, without a build step.
@@ -10,20 +10,20 @@
  * versions package.json pins.
  */
 export const STARTER_COMPONENT_ROWS: ReadonlyArray<{ rowId: string; packageName: string }> = [
-  { rowId: 'memory-source-runtime', packageName: 'dsh-plugin-memory-source-runtime' },
-  { rowId: 'memory-source-documents', packageName: 'dsh-plugin-memory-source-documents' },
-  { rowId: 'memory-source-memory-spaces', packageName: 'dsh-plugin-memory-source-memory-spaces' },
-  { rowId: 'memory-source-skills', packageName: 'dsh-plugin-memory-source-skills' },
-  { rowId: 'memory-strategy-default-three-tier', packageName: 'dsh-plugin-memory-strategy-default-three-tier' },
-  { rowId: 'memory-strategy-general', packageName: 'dsh-plugin-memory-strategy-general' },
-  { rowId: 'memory-strategy-auto-capture', packageName: 'dsh-plugin-memory-strategy-auto-capture' },
-  { rowId: 'memory-strategy-light-context', packageName: 'dsh-plugin-memory-strategy-light-context' },
-  { rowId: 'memory-strategy-scoped', packageName: 'dsh-plugin-memory-strategy-scoped' },
+  { rowId: 'memory-source-runtime', packageName: 'suveng-dsh-plugin-memory-source-runtime' },
+  { rowId: 'memory-source-documents', packageName: 'suveng-dsh-plugin-memory-source-documents' },
+  { rowId: 'memory-source-memory-spaces', packageName: 'suveng-dsh-plugin-memory-source-memory-spaces' },
+  { rowId: 'memory-source-skills', packageName: 'suveng-dsh-plugin-memory-source-skills' },
+  { rowId: 'memory-strategy-default-three-tier', packageName: 'suveng-dsh-plugin-memory-strategy-default-three-tier' },
+  { rowId: 'memory-strategy-general', packageName: 'suveng-dsh-plugin-memory-strategy-general' },
+  { rowId: 'memory-strategy-auto-capture', packageName: 'suveng-dsh-plugin-memory-strategy-auto-capture' },
+  { rowId: 'memory-strategy-light-context', packageName: 'suveng-dsh-plugin-memory-strategy-light-context' },
+  { rowId: 'memory-strategy-scoped', packageName: 'suveng-dsh-plugin-memory-strategy-scoped' },
 ]
 
 /** The three enhancements the Starter ships switched off, in the order the Host suggests them for installation. */
 export const STARTER_ENHANCEMENT_PACKAGES: readonly string[] = [
-  'dsh-plugin-memory-strategy-scoped', 'dsh-plugin-memory-strategy-light-context', 'dsh-plugin-memory-strategy-auto-capture',
+  'suveng-dsh-plugin-memory-strategy-scoped', 'suveng-dsh-plugin-memory-strategy-light-context', 'suveng-dsh-plugin-memory-strategy-auto-capture',
 ]
 
 /**
@@ -34,5 +34,5 @@ export const STARTER_ENHANCEMENT_PACKAGES: readonly string[] = [
  * spread of the list above, so that a bundle that does not use it drops it.
  */
 export const STARTER_SELF_REGISTERING_PACKAGES: readonly string[] = [
-  'dsh-plugin-memory-strategy-scoped', 'dsh-plugin-memory-strategy-light-context', 'dsh-plugin-memory-strategy-auto-capture', 'dsh-plugin-memory-strategy-general',
+  'suveng-dsh-plugin-memory-strategy-scoped', 'suveng-dsh-plugin-memory-strategy-light-context', 'suveng-dsh-plugin-memory-strategy-auto-capture', 'suveng-dsh-plugin-memory-strategy-general',
 ]

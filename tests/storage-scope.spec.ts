@@ -7,7 +7,7 @@ import { StorageScopeInspector } from "../src/host/storage-scope.ts"
 const directories: string[] = []
 
 function temporaryDirectory(): string {
-  const directory = mkdtempSync(join(tmpdir(), 'dsh-plugin-memory-storage-'))
+  const directory = mkdtempSync(join(tmpdir(), 'suveng-dsh-plugin-memory-storage-'))
   directories.push(directory)
   return directory
 }
@@ -88,7 +88,7 @@ describe('Memory storage-domain inventory', () => {
 
     expect(catalog.scopes.map(scope => scope.kind)).toEqual(['global', 'workspace', 'custom', 'workspaces'])
     expect(catalog.scopes.filter(scope => scope.active)).toEqual([expect.objectContaining({ kind: 'custom', root })])
-    expect(catalog.scopes.find(scope => scope.kind === 'workspace')?.root).toBe(join(workspace, '.dsh-plugin-memory'))
+    expect(catalog.scopes.find(scope => scope.kind === 'workspace')?.root).toBe(join(workspace, '.suveng-dsh-plugin-memory'))
   })
 
   it('reports no workspace scope at all for an empty workspace path', () => {
@@ -126,7 +126,7 @@ describe('centralized storage roots', () => {
       expect(createStorageRoot({ storageScope: 'workspaces' }, workspace).effectiveDataDir()).toMatch(join(root, 'workspaces'))
       expect(createStorageRoot({ storageScope: 'workspaces', dataDir: '~/central' }, workspace).effectiveDataDir()).toMatch(join(homedir(), 'central', 'workspaces'))
       vi.stubEnv('MNEMON_DATA_DIR', '')
-      expect(createStorageRoot({ storageScope: 'workspaces' }, workspace).effectiveDataDir()).toMatch(join(homedir(), '.dsh-plugin-memory', 'workspaces'))
+      expect(createStorageRoot({ storageScope: 'workspaces' }, workspace).effectiveDataDir()).toMatch(join(homedir(), '.suveng-dsh-plugin-memory', 'workspaces'))
     } finally { vi.unstubAllEnvs() }
   })
 })

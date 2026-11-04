@@ -18,7 +18,7 @@ describe('default Source presentation migration', () => {
 
   it.each(['page', 'sidebar'] as const)('preserves the %s class map with the reviewed layout changes', kind => {
     const filename = kind === 'page' ? 'src/client/MemoryView.module.css' : 'src/client/MemorySidebarView.module.css'
-    const files = [filename, ...sources.map(source => `plugins/dsh-plugin-memory-source-${source}/presentation/${kind}.module.css`)]
+    const files = [filename, ...sources.map(source => `plugins/suveng-dsh-plugin-memory-source-${source}/presentation/${kind}.module.css`)]
     // Rules include their container/media conditions. Browser checks cover cascade and layout.
     expect(presentationFingerprint(files.map(path => ({ filename: presentationNamespace(path), text: read(path) })))).toEqual(baseline.clientDebtCleanup[kind])
   })
@@ -28,7 +28,7 @@ describe('default Source presentation migration', () => {
     expect(copyFingerprint(zh)).toEqual(baseline.clientDebtCleanup.zh)
     expect(copyFingerprint(en)).toEqual(baseline.clientDebtCleanup.en)
     for (const source of sources) {
-      const copy = JSON.parse(read(`plugins/dsh-plugin-memory-source-${source}/presentation/locales.json`))
+      const copy = JSON.parse(read(`plugins/suveng-dsh-plugin-memory-source-${source}/presentation/locales.json`))
       expect(Object.keys(copy.en).sort()).toEqual(Object.keys(copy.zh).sort())
       expect(Object.keys(copy.en).length).toBeGreaterThan(0)
     }

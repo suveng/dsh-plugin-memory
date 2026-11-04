@@ -77,7 +77,7 @@ describe('Memory lifecycle with the real DSH SystemPrompt', () => {
     }, 'agent.root-turn', expect.any(AbortSignal))
     expect(assembly.sections.some(section => section.name === 'memory:runtime-memory-protocol')).toBe(false)
     // The Wake no longer travels as a shared runtime-context contribution; it is
-    // appended as a dsh-plugin-memory message so it cannot invalidate other plugins' context.
+    // appended as a suveng-dsh-plugin-memory message so it cannot invalidate other plugins' context.
     expect(assembly.contexts).not.toContainEqual(expect.objectContaining({ name: 'memory:runtime-memory' }))
     expect(runtimeSource.bindAgentRuntime).toHaveBeenCalledOnce()
     expect(lifecycle.memoryView(agent.id)).toMatchObject({ id: 'view-first-turn', state: 'active', memoryText: 'First-turn Wake', turn: 1 })

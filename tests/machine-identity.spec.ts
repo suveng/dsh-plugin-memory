@@ -8,7 +8,7 @@ import { MEMORY_MACHINE_LABEL_MAX } from "../src/host/protocol.ts"
 const directories: string[] = []
 
 function temporary(): string {
-  const directory = mkdtempSync(join(tmpdir(), 'dsh-plugin-memory-identity-'))
+  const directory = mkdtempSync(join(tmpdir(), 'suveng-dsh-plugin-memory-identity-'))
   directories.push(directory)
   return directory
 }

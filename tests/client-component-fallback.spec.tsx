@@ -5,10 +5,10 @@ import { SlotCore } from '@deepseek-ai/dsh-client-ui-slots'
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import type { ComponentType } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { descriptor as hindsight } from 'dsh-plugin-memory-provider-hindsight'
-import { descriptor as holographic } from 'dsh-plugin-memory-provider-holographic'
-import { descriptor as mem0 } from 'dsh-plugin-memory-provider-mem0'
-import { descriptor as openviking } from 'dsh-plugin-memory-provider-openviking'
+import { descriptor as hindsight } from 'suveng-dsh-plugin-memory-provider-hindsight'
+import { descriptor as holographic } from 'suveng-dsh-plugin-memory-provider-holographic'
+import { descriptor as mem0 } from 'suveng-dsh-plugin-memory-provider-mem0'
+import { descriptor as openviking } from 'suveng-dsh-plugin-memory-provider-openviking'
 import { createComponentHosts } from '../src/client/component-host.ts'
 import { installShippedComponentSettings, MEMORY_SPACES_PACKAGE } from '../src/client/component-settings.tsx'
 import { installMemoryComponentUI, MEMORY_COMPONENT_FALLBACK_PRIORITY, MEMORY_COMPONENT_SETTINGS_SLOT, renderComponentRegion, type MemoryComponentSettingsProps } from '../src/client/component-ui.tsx'
@@ -18,7 +18,7 @@ import type { Config } from '../src/host/config.ts'
 import { loadMemoryClientArtifact } from '../src/sdk/testing.ts'
 import { settingsScope } from './helpers/settings-scope.ts'
 
-afterEach(() => { cleanup(); vi.doUnmock('dsh-plugin-memory/client'); vi.resetModules(); vi.restoreAllMocks() })
+afterEach(() => { cleanup(); vi.doUnmock('suveng-dsh-plugin-memory/client'); vi.resetModules(); vi.restoreAllMocks() })
 
 /** DSH's own Slot core behind the capability the component regions use: same-key entries shadow by priority. */
 class TestSlots {
@@ -40,7 +40,7 @@ class TestSlots {
   subscribe(key: string, listener: () => void): () => void { return this.core.subscribe(key, listener) }
 }
 
-/** The dsh-plugin-memory configuration declares the region, as its bundle page does. */
+/** The suveng-dsh-plugin-memory configuration declares the region, as its bundle page does. */
 function page(t = translateZh) {
   const slots = new TestSlots()
   const declaration = slots.register({ name: 'root', children: { [MEMORY_COMPONENT_SETTINGS_SLOT]: { kind: 'keyed', scope: 'root' } } }, () => null)
@@ -56,21 +56,21 @@ const owner = (host = true): MemoryComponentSettingsProps => ({
 })
 const services = { scope, t: translateZh }
 
-/** dsh-plugin-memory 0.5.31 drew Memory Spaces' settings itself, registered at the default priority. */
+/** suveng-dsh-plugin-memory 0.5.31 drew Memory Spaces' settings itself, registered at the default priority. */
 const oldBuiltIn = () => <p>0.5.31 built-in settings</p>
 const installOldStarter = (ctx: ReturnType<typeof page>['ctx']) => installMemoryComponentUI(ctx as never, { packageName: MEMORY_SPACES_PACKAGE, settings: oldBuiltIn })
 
-/** Memory Spaces' client as DSH loads it, with its own module state, against a dsh-plugin-memory/client with or without the fallback contract. */
+/** Memory Spaces' client as DSH loads it, with its own module state, against a suveng-dsh-plugin-memory/client with or without the fallback contract. */
 async function spacesClient(starterYields: boolean) {
   if (!starterYields) {
-    // The CommonJS bundle reads an export dsh-plugin-memory 0.5.31 lacks as undefined.
-    vi.doMock('dsh-plugin-memory/client', async () => ({ ...await vi.importActual<object>('dsh-plugin-memory/client'), MEMORY_COMPONENT_FALLBACK_PRIORITY: undefined }))
+    // The CommonJS bundle reads an export suveng-dsh-plugin-memory 0.5.31 lacks as undefined.
+    vi.doMock('suveng-dsh-plugin-memory/client', async () => ({ ...await vi.importActual<object>('suveng-dsh-plugin-memory/client'), MEMORY_COMPONENT_FALLBACK_PRIORITY: undefined }))
   }
   vi.resetModules()
   return {
-    ...await import('dsh-plugin-memory-source-memory-spaces/client'),
+    ...await import('suveng-dsh-plugin-memory-source-memory-spaces/client'),
     // Its own settings registration, which its apply() makes beside its pages.
-    installMemorySpacesSettings: (await import('../plugins/dsh-plugin-memory-source-memory-spaces/src/client/settings.tsx')).installMemorySpacesSettings,
+    installMemorySpacesSettings: (await import('../plugins/suveng-dsh-plugin-memory-source-memory-spaces/src/client/settings.tsx')).installMemorySpacesSettings,
   }
 }
 
@@ -118,7 +118,7 @@ describe('Memory Spaces\' settings across Starter and Memory Spaces versions', (
     expect(screen.getByText('Mnemon Native')).toBeTruthy()
   })
 
-  it('dsh-plugin-memory 0.5.31 and new Memory Spaces: Memory Spaces registers nothing, so the old built-in shows alone', async () => {
+  it('suveng-dsh-plugin-memory 0.5.31 and new Memory Spaces: Memory Spaces registers nothing, so the old built-in shows alone', async () => {
     const { ctx, slots, spaces } = page()
     installOldStarter(ctx)
     const client = await spacesClient(false)
@@ -130,7 +130,7 @@ describe('Memory Spaces\' settings across Starter and Memory Spaces versions', (
     expect(screen.queryByRole('heading', { name: '记忆 Provider' })).toBeNull()
   })
 
-  it('dsh-plugin-memory 0.5.31 and Memory Spaces 0.5.21: the old built-in shows, as before', () => {
+  it('suveng-dsh-plugin-memory 0.5.31 and Memory Spaces 0.5.21: the old built-in shows, as before', () => {
     const { ctx, slots, spaces } = page()
     installOldStarter(ctx)
     expect(spaces()).toHaveLength(1)
@@ -142,10 +142,10 @@ describe('Memory Spaces\' settings across Starter and Memory Spaces versions', (
     const { ctx } = page()
     installOldStarter(ctx)
     const client = await spacesClient(false)
-    expect(() => client.installMemorySpacesSettings(ctx as never)).toThrow(/already has an entry for key "dsh-plugin-memory-source-memory-spaces"/u)
+    expect(() => client.installMemorySpacesSettings(ctx as never)).toThrow(/already has an entry for key "suveng-dsh-plugin-memory-source-memory-spaces"/u)
   })
 
-  it('shows nothing from Memory Spaces\' own settings without what dsh-plugin-memory lends them', async () => {
+  it('shows nothing from Memory Spaces\' own settings without what suveng-dsh-plugin-memory lends them', async () => {
     const client = await spacesClient(true)
     const view = render(<>{client.MemorySpacesSettings(owner(false))}</>)
     expect(view.container.textContent).toBe('')
@@ -224,7 +224,7 @@ describe('turning Memory Spaces on from its page', () => {
   })
 })
 
-describe('the built Memory Spaces client beside dsh-plugin-memory 0.5.31', () => {
+describe('the built Memory Spaces client beside suveng-dsh-plugin-memory 0.5.31', () => {
   const require = createRequire(import.meta.url)
   // The browser bundles as DSH loads them: build the Starter, then Memory Spaces, first.
   const bundle = (entry: string) => {
@@ -249,13 +249,13 @@ describe('the built Memory Spaces client beside dsh-plugin-memory 0.5.31', () =>
   async function load() {
     const react = { react: await import('react'), 'react/jsx-runtime': await import('react/jsx-runtime'), 'react-dom': await import('react-dom'),
       '@deepseek-ai/dsh-client-ui-primitives': await import('@deepseek-ai/dsh-client-ui-primitives') }
-    const current = loadMemoryClientArtifact<Record<string, unknown>>(bundle('dsh-plugin-memory/client'), react)
-    // A dsh-plugin-memory/client with exactly the names 0.5.31 exports: every newer one reads as undefined, as it would there.
+    const current = loadMemoryClientArtifact<Record<string, unknown>>(bundle('suveng-dsh-plugin-memory/client'), react)
+    // A suveng-dsh-plugin-memory/client with exactly the names 0.5.31 exports: every newer one reads as undefined, as it would there.
     // Those names carry this branch's implementations, not 0.5.31's, so this checks which exports the bundle needs,
     // not how 0.5.31's behave.
     const old = Object.fromEntries(names.map(name => [name, current[currentName(name)]]))
     expect(names.every(name => current[currentName(name)] !== undefined)).toBe(true)
-    return loadMemoryClientArtifact<Record<string, unknown>>(bundle('dsh-plugin-memory-source-memory-spaces/client'), { ...react, 'dsh-plugin-memory/client': old })
+    return loadMemoryClientArtifact<Record<string, unknown>>(bundle('suveng-dsh-plugin-memory-source-memory-spaces/client'), { ...react, 'suveng-dsh-plugin-memory/client': old })
   }
 
   it('registers its pages and no settings', async () => {

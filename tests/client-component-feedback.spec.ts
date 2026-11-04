@@ -7,7 +7,7 @@ import type { MemoryPluginEntryView, MemoryViewConfigurationRequest, MemoryViewD
 
 function entry(entryId: string, roles: MemoryPluginEntryView['roles'], overrides: Partial<MemoryPluginEntryView> = {}): MemoryPluginEntryView {
   return {
-    entryId, packageName: 'dsh-plugin-memory-' + entryId, roles, label: { en: entryId, 'zh-CN': entryId }, description: { en: '', 'zh-CN': '' },
+    entryId, packageName: 'suveng-dsh-plugin-memory-' + entryId, roles, label: { en: entryId, 'zh-CN': entryId }, description: { en: '', 'zh-CN': '' },
     fields: [], provides: [], requires: [], requiredBy: [], enabled: true, active: true, writable: true, config: {}, ...overrides,
   }
 }

@@ -29,7 +29,7 @@ let globalConfig = ''
  * reads from HOME and later Git from GIT_CONFIG_GLOBAL, and no system file is read.
  */
 function isolatedHome(label) {
-  const home = mkdtempSync(join(tmpdir(), 'dsh-plugin-memory-' + label + '-'))
+  const home = mkdtempSync(join(tmpdir(), 'suveng-dsh-plugin-memory-' + label + '-'))
   const gitconfig = join(home, '.gitconfig')
   writeFileSync(gitconfig, '')
   return { home, gitconfig, env: { HOME: home, XDG_CONFIG_HOME: join(home, 'xdg'), GIT_CONFIG_GLOBAL: gitconfig, GIT_CONFIG_NOSYSTEM: '1' } }
@@ -52,7 +52,7 @@ const resolvesHosts = gitAtLeast(2, 37)
 afterAll(() => rmSync(probe.home, { recursive: true, force: true }))
 
 function temporary(label) {
-  const directory = mkdtempSync(join(tmpdir(), 'dsh-plugin-memory-' + label + '-'))
+  const directory = mkdtempSync(join(tmpdir(), 'suveng-dsh-plugin-memory-' + label + '-'))
   directories.push(directory)
   return directory
 }

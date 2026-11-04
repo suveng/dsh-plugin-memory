@@ -1,8 +1,8 @@
 import { SlotCore } from '@deepseek-ai/dsh-client-ui-slots'
 import { createElement, useEffect, useMemo, type ComponentProps, type ComponentType } from 'react'
-import { installRuntimeMemoryUI } from 'dsh-plugin-memory-source-runtime/client'
-import { installDocumentsMemoryUI } from 'dsh-plugin-memory-source-documents/client'
-import { installMemorySpacesUI } from 'dsh-plugin-memory-source-memory-spaces/client'
+import { installRuntimeMemoryUI } from 'suveng-dsh-plugin-memory-source-runtime/client'
+import { installDocumentsMemoryUI } from 'suveng-dsh-plugin-memory-source-documents/client'
+import { installMemorySpacesUI } from 'suveng-dsh-plugin-memory-source-memory-spaces/client'
 import { MemoryWorkbench } from '../../src/client/MemoryWorkbench.tsx'
 import { translateZh, type MemoryTranslate } from '../../src/client/locales.ts'
 import { createMemorySourcePageDirectory, MEMORY_SOURCE_PAGE_SLOT, type MemorySourcePageProps } from '../../src/client/source-pages.tsx'
@@ -50,7 +50,7 @@ export const sourceCatalog: MemorySourceManagementCatalog = {
     { sourceTypeId: 'memory-spaces', role: 'durable-evidence', label: '记忆空间', assistance: ['activation', 'agent-search', 'supervise', 'body-metadata-maintain', 'body-create'] },
   ].map(({ sourceTypeId, role, label, assistance }) => ({
     sourceInstanceKey: 'source:memory-source-' + sourceTypeId,
-    sourceTypeId, role, assistance, packageName: 'dsh-plugin-memory-source-' + sourceTypeId,
+    sourceTypeId, role, assistance, packageName: 'suveng-dsh-plugin-memory-source-' + sourceTypeId,
     availability: 'ready', revision: 'r1', capabilities: ['read', 'write'], management: { label, description: '' },
   })),
 }

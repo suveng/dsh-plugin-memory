@@ -2,7 +2,7 @@ import { existsSync, readFileSync, mkdtempSync, rmSync, symlinkSync } from 'node
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import type { RuntimeMemorySnapshot } from 'dsh-plugin-memory-source-runtime/contracts'
+import type { RuntimeMemorySnapshot } from 'suveng-dsh-plugin-memory-source-runtime/contracts'
 import type { HostAgent, HostWorkspaceRegistry, HostAgentsService, HostContextShape, HostSubagentsService } from '../src/host/dsh.ts'
 import { createRuntimeGraph, LiveMemoryRuntime } from '../src/host/runtime.ts'
 import { createStorageRoot, NO_WORKSPACE_MESSAGE } from '../src/host/storage-root.ts'
@@ -302,8 +302,8 @@ describe('centralized workspace persistence', () => {
     expect(snapshot.targets.user.markdownPath).toBe(join(runtimeUserScope === 'global' ? globalRoot : second.directory, 'runtime', 'USER.md'))
     expect((await second.source('documents').read<{ activeCount: number }>('snapshot')).activeCount).toBe(0)
     expect((await second.source('memory-spaces').read<{ items: unknown[] }>('body-directory')).items).toHaveLength(0)
-    expect(existsSync(join(one, '.dsh-plugin-memory'))).toBe(false)
-    expect(existsSync(join(two, '.dsh-plugin-memory'))).toBe(false)
+    expect(existsSync(join(one, '.suveng-dsh-plugin-memory'))).toBe(false)
+    expect(existsSync(join(two, '.suveng-dsh-plugin-memory'))).toBe(false)
     const originalMemory = readFileSync(join(first.directory, 'runtime', 'memories.json'), 'utf8')
     const originalState = readFileSync(join(first.directory, 'state', 'memory-providers.json'), 'utf8')
     const legacy = createRuntimeGraph(resolveConfig({ ...f.config, storageScope: 'custom' }), one, f.extensions)

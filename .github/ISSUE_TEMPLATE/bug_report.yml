@@ -15,7 +15,7 @@ body:
         通过 CLI/API 提交时可使用相同段落标题组织正文。类型填写为“Bug 报告 / Bug report”时，机器人会补齐 `bug` 标签，无需提交者拥有标签权限。
         CLI/API reports may use the same section headings. The bot adds the `bug` label when the type is “Bug 报告 / Bug report”; reporters do not need label permissions.
 
-        提交前请先搜索确认没有重复 / Search for existing reports before submitting: [Issues](https://github.com/suveng/dsh-plugin-memory/issues?q=is%3Aissue)
+        提交前请先搜索确认没有重复 / Search for existing reports before submitting: [Issues](https://github.com/suveng/suveng-dsh-plugin-memory/issues?q=is%3Aissue)
 
         不要粘贴 token、密钥、私有记忆内容或未脱敏日志。安全漏洞请按 [SECURITY.md](../../SECURITY.md) 私下报告。
         Do not post tokens, credentials, private memory, or unredacted logs. Report security vulnerabilities privately through [SECURITY.md](../../SECURITY.md).
@@ -87,10 +87,10 @@ body:
     id: environment
     attributes:
       label: 环境信息 / Environment
-      description: 请提供 DSH、dsh-plugin-memory、Memory、Node.js、操作系统、浏览器以及相关 Provider/配置，并先脱敏。 / Provide DSH, dsh-plugin-memory, Memory, Node.js, OS, browser, and relevant redacted Provider or configuration details.
+      description: 请提供 DSH、suveng-dsh-plugin-memory、Memory、Node.js、操作系统、浏览器以及相关 Provider/配置，并先脱敏。 / Provide DSH, suveng-dsh-plugin-memory, Memory, Node.js, OS, browser, and relevant redacted Provider or configuration details.
       placeholder: |
         - DSH 版本 / DSH version:
-        - dsh-plugin-memory 版本或 commit / dsh-plugin-memory version or commit:
+        - suveng-dsh-plugin-memory 版本或 commit / suveng-dsh-plugin-memory version or commit:
         - Memory 版本 / Memory version:
         - Node.js / pnpm:
         - 操作系统或浏览器 / OS or browser:

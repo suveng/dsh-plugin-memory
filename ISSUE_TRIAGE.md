@@ -2,7 +2,7 @@
 
 [简体中文](./ISSUE_TRIAGE.zh-CN.md) | **English**
 
-This document defines the dsh-plugin-memory Issue label system, classification, information requests, and closure process. The goal is to keep every open Issue searchable, verifiable, assignable, and traceable.
+This document defines the suveng-dsh-plugin-memory Issue label system, classification, information requests, and closure process. The goal is to keep every open Issue searchable, verifiable, assignable, and traceable.
 
 ## Labels
 
@@ -58,12 +58,12 @@ Formatting, the location of a log, a missing code reference or the absence of a 
 ## Maintainer command reference
 
 ```sh
-gh issue edit <n> -R suveng/dsh-plugin-memory --add-label "bug,good first issue"
-gh issue comment <n> -R suveng/dsh-plugin-memory --body "Explanation"
+gh issue edit <n> -R suveng/suveng-dsh-plugin-memory --add-label "bug,good first issue"
+gh issue comment <n> -R suveng/suveng-dsh-plugin-memory --body "Explanation"
 gh api -X PATCH repos/omdsh-dev/dsh-mnemon/issues/<n> \
   -f state=closed -f state_reason=completed
 
-gh issue list -R suveng/dsh-plugin-memory --state open \
+gh issue list -R suveng/suveng-dsh-plugin-memory --state open \
   --json number,title,labels --jq '.[] | select(.labels|length==0)'
 ```
 

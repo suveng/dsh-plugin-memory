@@ -6,7 +6,7 @@ import { presentationNamespace } from '../../tsdown.config.ts'
 /** Apply the shipped class maps and viewport rules; JSDOM does not evaluate media queries. */
 export function installClientFrameStyles(width: number, height = 900): () => void {
   const files = ['src/client/MemoryView.module.css', 'src/client/MemorySidebarView.module.css',
-    ...['runtime', 'documents', 'memory-spaces'].flatMap(source => ['page', 'sidebar'].map(kind => `plugins/dsh-plugin-memory-source-${source}/presentation/${kind}.module.css`))]
+    ...['runtime', 'documents', 'memory-spaces'].flatMap(source => ['page', 'sidebar'].map(kind => `plugins/suveng-dsh-plugin-memory-source-${source}/presentation/${kind}.module.css`))]
   const styles = files.map(filename => {
     const style = document.createElement('style')
     style.textContent = transform({ filename: presentationNamespace(filename),

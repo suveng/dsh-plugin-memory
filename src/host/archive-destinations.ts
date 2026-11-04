@@ -3,7 +3,7 @@
  * entry went: the Memory Spaces that can take one, and the destination a Provider's receipt proves.
  */
 import { createHash } from 'node:crypto'
-import type { MemorySpaceCatalog } from 'dsh-plugin-memory-source-memory-spaces/contracts'
+import type { MemorySpaceCatalog } from 'suveng-dsh-plugin-memory-source-memory-spaces/contracts'
 import { mutationResultCommitted } from './receipts.ts'
 import type { MemoryMigrationLineage, MemoryOperationScope } from '../core/contracts/index.ts'
 import type { MemoryCompositionGeneration } from '../core/composition.ts'

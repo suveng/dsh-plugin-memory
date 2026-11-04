@@ -38,7 +38,7 @@ import { seedEvolutionScroll } from './fixtures/evolution-scroll.mjs'
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const flags = new Set(process.argv.slice(2))
 let betterSidebarRoot
-// Test-only plugins linked into the profile beside dsh-plugin-memory, for example a shell fixture.
+// Test-only plugins linked into the profile beside suveng-dsh-plugin-memory, for example a shell fixture.
 const extraPlugins = []
 let electronExecutable
 let trustedHost
@@ -294,7 +294,7 @@ try {
   const manifest = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
   // Root owns the disabled enhancement Entries. Adding their self-registering
   // bundles as separate Profile layers would intentionally duplicate ids.
-  const plugins = Object.keys(manifest.dependencies).filter(name => name.startsWith('dsh-plugin-memory-') && !selfRegistering.has(name))
+  const plugins = Object.keys(manifest.dependencies).filter(name => name.startsWith('suveng-dsh-plugin-memory-') && !selfRegistering.has(name))
   const installer = spawn(process.execPath, [dshBin, 'plugin', '--profile', 'web', 'add',
     `link:${root}`, ...plugins.map(name => `link:${join(root, 'plugins', name)}`),
     ...(betterSidebarRoot === undefined ? [] : [`link:${betterSidebarRoot}`]),
@@ -353,7 +353,7 @@ ${docsDemo === undefined ? '' : docsDemoTools}    - id: e2e-directory-picker
     + (slowEmbedder === undefined ? '' : `- id: memory\n  config:\n    runtimeMemory:\n      memoryLimitBytes: ${archiveCopiesLimitBytes}\n    embedding:\n      enabled: true\n      endpoint: http://127.0.0.1:${slowEmbedder.address().port}/v1\n      model: fixture-embed\n      protocol: openai\n`)
     + (flags.has('--general-strategy') ? '- id: memory-strategy-general\n  disabled: false\n- id: memory-strategy-default-three-tier\n  disabled: true\n- id: memory\n  config:\n    memoryView:\n      strategyTypeId: general\n' : '')
     // A second runtime track beside the Starter's, with its own directory, as a profile can mount one (#397).
-    + (flags.has('--second-runtime') ? '- insert:\n    - id: memory-source-runtime-global\n      name: dsh-plugin-memory-source-runtime\n      config:\n        dataDir: '
+    + (flags.has('--second-runtime') ? '- insert:\n    - id: memory-source-runtime-global\n      name: suveng-dsh-plugin-memory-source-runtime\n      config:\n        dataDir: '
       + JSON.stringify(join(fixture, 'global-runtime')) + '\n        userDataDir: ' + JSON.stringify(join(fixture, 'global-runtime')) + '\n' : '')
     + (flags.has('--runtime-write-scope') ? '- id: memory\n  config:\n    persistenceStrategy:\n      mode: manual\n      providerId: memory-native\n    runtimeMemory:\n      memoryLimitBytes: 512\n' : '')
     + (reviewModel === undefined ? '' : '- insert:\n    - id: review-evidence-fixture\n      name: ' + JSON.stringify(reviewFixture) + '\n')

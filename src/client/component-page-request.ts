@@ -1,5 +1,5 @@
 /**
- * A request to open one component's page on the dsh-plugin-memory configuration
+ * A request to open one component's page on the suveng-dsh-plugin-memory configuration
  * under Plugins, such as 技能管理's gear asking for its own settings. DSH opens
  * the bundle page; the configuration takes the request once it can name the
  * component, or at once when it is already on screen.

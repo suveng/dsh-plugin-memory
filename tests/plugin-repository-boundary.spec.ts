@@ -6,13 +6,13 @@ import ts from 'typescript'
 import { describe, expect, it } from 'vitest'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
-const pluginNames = readdirSync(join(root, 'plugins')).filter(name => name.startsWith('dsh-plugin-memory-')).sort()
-const coreImports = new Set(['dsh-plugin-memory/contracts', 'dsh-plugin-memory/extension-sdk', 'dsh-plugin-memory/testing', 'dsh-plugin-memory/client'])
-const providerImports = new Set(['dsh-plugin-memory-source-memory-spaces/provider-sdk', 'dsh-plugin-memory-source-memory-spaces/testing'])
+const pluginNames = readdirSync(join(root, 'plugins')).filter(name => name.startsWith('suveng-dsh-plugin-memory-')).sort()
+const coreImports = new Set(['suveng-dsh-plugin-memory/contracts', 'suveng-dsh-plugin-memory/extension-sdk', 'suveng-dsh-plugin-memory/testing', 'suveng-dsh-plugin-memory/client'])
+const providerImports = new Set(['suveng-dsh-plugin-memory-source-memory-spaces/provider-sdk', 'suveng-dsh-plugin-memory-source-memory-spaces/testing'])
 // Standard-slot extensions follow any main Strategy, so they do not depend on one.
-const viewExtensions = new Set(['dsh-plugin-memory-strategy-auto-capture', 'dsh-plugin-memory-strategy-light-context', 'dsh-plugin-memory-strategy-scoped'])
-const threeTierOwner = 'dsh-plugin-memory-strategy-default-three-tier'
-const mainStrategies = [threeTierOwner, 'dsh-plugin-memory-strategy-general']
+const viewExtensions = new Set(['suveng-dsh-plugin-memory-strategy-auto-capture', 'suveng-dsh-plugin-memory-strategy-light-context', 'suveng-dsh-plugin-memory-strategy-scoped'])
+const threeTierOwner = 'suveng-dsh-plugin-memory-strategy-default-three-tier'
+const mainStrategies = [threeTierOwner, 'suveng-dsh-plugin-memory-strategy-general']
 
 function inside(directory: string, path: string): boolean {
   const child = relative(directory, path)
@@ -43,11 +43,11 @@ function packageName(specifier: string): string {
 
 describe('standalone plugin repository boundary', () => {
   it('keeps four Sources, two main Strategies, three optional contributions and nine private Providers explicit', () => {
-    expect(pluginNames.filter(name => name.startsWith('dsh-plugin-memory-source-'))).toEqual([
-      'dsh-plugin-memory-source-documents', 'dsh-plugin-memory-source-memory-spaces', 'dsh-plugin-memory-source-runtime', 'dsh-plugin-memory-source-skills',
+    expect(pluginNames.filter(name => name.startsWith('suveng-dsh-plugin-memory-source-'))).toEqual([
+      'suveng-dsh-plugin-memory-source-documents', 'suveng-dsh-plugin-memory-source-memory-spaces', 'suveng-dsh-plugin-memory-source-runtime', 'suveng-dsh-plugin-memory-source-skills',
     ])
-    expect(pluginNames.filter(name => name.startsWith('dsh-plugin-memory-strategy-'))).toEqual([...viewExtensions, ...mainStrategies].sort())
-    expect(pluginNames.filter(name => name.startsWith('dsh-plugin-memory-provider-'))).toHaveLength(9)
+    expect(pluginNames.filter(name => name.startsWith('suveng-dsh-plugin-memory-strategy-'))).toEqual([...viewExtensions, ...mainStrategies].sort())
+    expect(pluginNames.filter(name => name.startsWith('suveng-dsh-plugin-memory-provider-'))).toHaveLength(9)
   })
 
   for (const name of pluginNames) it(`${name} owns its build, tests and declared public dependencies`, () => {
@@ -65,9 +65,9 @@ describe('standalone plugin repository boundary', () => {
     expect(configuration.compilerOptions.paths).toBeUndefined()
     const dependencies = { ...manifest.dependencies, ...manifest.peerDependencies, ...manifest.devDependencies }
     for (const version of Object.values(dependencies)) expect(version).not.toMatch(/^(?:workspace:|file:|link:|\.\.?\/)/u)
-    const provider = name.startsWith('dsh-plugin-memory-provider-')
-    expect(manifest.peerDependencies[provider ? 'dsh-plugin-memory-source-memory-spaces' : 'dsh-plugin-memory']).toBeTruthy()
-    if (provider) expect(manifest.peerDependencies['dsh-plugin-memory']).toBeUndefined()
+    const provider = name.startsWith('suveng-dsh-plugin-memory-provider-')
+    expect(manifest.peerDependencies[provider ? 'suveng-dsh-plugin-memory-source-memory-spaces' : 'suveng-dsh-plugin-memory']).toBeTruthy()
+    if (provider) expect(manifest.peerDependencies['suveng-dsh-plugin-memory']).toBeUndefined()
     if (viewExtensions.has(name)) {
       expect(manifest.peerDependencies[threeTierOwner]).toBeUndefined()
       expect(manifest.dsh?.bundle?.patch).toBe('./cordis.patch.yml')
@@ -90,7 +90,7 @@ describe('standalone plugin repository boundary', () => {
         if (packageName(specifier) === name && Object.hasOwn(manifest.exports, '.' + specifier.slice(name.length))) continue
         if (!Object.hasOwn(dependencies, packageName(specifier))) violations.push(`${relative(root, file)} has undeclared dependency ${specifier}`)
         const testOwner = viewExtensions.has(name) && file.includes(`${sep}tests${sep}`) && specifier === threeTierOwner
-        if (specifier.startsWith('dsh-plugin-memory') && !(provider ? providerImports : coreImports).has(specifier) && !testOwner && !(file.includes(`${sep}tests${sep}`) && /^dsh-plugin-memory-provider-[a-z0-9-]+$/u.test(specifier))) {
+        if (specifier.startsWith('suveng-dsh-plugin-memory') && !(provider ? providerImports : coreImports).has(specifier) && !testOwner && !(file.includes(`${sep}tests${sep}`) && /^suveng-dsh-plugin-memory-provider-[a-z0-9-]+$/u.test(specifier))) {
           violations.push(`${relative(root, file)} crosses its public contract: ${specifier}`)
         }
       }
@@ -103,7 +103,7 @@ describe('standalone plugin repository boundary', () => {
 
   it('keeps the Strategy-owned SDK independent of its runtime policy and every Source implementation', () => {
     const entry = join(root, 'plugins', threeTierOwner, 'src/extension-sdk.ts')
-    expect(imports(entry).map(item => item.specifier).sort()).toEqual(['dsh-plugin-memory/contracts', 'dsh-plugin-memory/extension-sdk'])
+    expect(imports(entry).map(item => item.specifier).sort()).toEqual(['suveng-dsh-plugin-memory/contracts', 'suveng-dsh-plugin-memory/extension-sdk'])
   })
 
   it('keeps the pure Core import closure independent of Sources, Providers, clients and the default bundle', () => {
@@ -121,7 +121,7 @@ describe('standalone plugin repository boundary', () => {
       for (const { specifier, typeOnly } of imports(file)) {
         if (typeOnly) continue
         if (specifier.startsWith('.')) pending.push(resolve(dirname(file), specifier))
-        else if (specifier.startsWith('dsh-plugin-memory') || specifier === 'react') violations.push(`${relative(root, file)}: ${specifier}`)
+        else if (specifier.startsWith('suveng-dsh-plugin-memory') || specifier === 'react') violations.push(`${relative(root, file)}: ${specifier}`)
       }
     }
     expect(visited.size).toBeGreaterThan(3)
@@ -153,9 +153,9 @@ describe('standalone plugin repository boundary', () => {
           const target = resolve(dirname(file), specifier)
           if (inside(join(root, 'plugins'), target)) violations.push(`${relative(root, file)}: ${specifier}`)
           else if (/\.tsx?$/.test(target)) pending.push(target)
-        } else if (/^dsh-plugin-memory-(?:source|provider|strategy)-/.test(specifier) && !/^dsh-plugin-memory-source-[^/]+\/presentation\//.test(specifier)
-          && !(file === gateway && specifier === 'dsh-plugin-memory-source-memory-spaces/client')
-          && !(file === runtimeSettings && specifier === 'dsh-plugin-memory-source-runtime/contracts')) {
+        } else if (/^suveng-dsh-plugin-memory-(?:source|provider|strategy)-/.test(specifier) && !/^suveng-dsh-plugin-memory-source-[^/]+\/presentation\//.test(specifier)
+          && !(file === gateway && specifier === 'suveng-dsh-plugin-memory-source-memory-spaces/client')
+          && !(file === runtimeSettings && specifier === 'suveng-dsh-plugin-memory-source-runtime/contracts')) {
           violations.push(`${relative(root, file)}: ${specifier}`)
         }
       }
@@ -163,9 +163,9 @@ describe('standalone plugin repository boundary', () => {
     expect(visited.size).toBeGreaterThan(30)
     expect(violations).toEqual([])
     expect(visited.has(gateway)).toBe(true)
-    expect(imports(gateway)).toEqual([{ specifier: 'dsh-plugin-memory-source-memory-spaces/client', typeOnly: false }])
+    expect(imports(gateway)).toEqual([{ specifier: 'suveng-dsh-plugin-memory-source-memory-spaces/client', typeOnly: false }])
     const runtimeImport = ts.createSourceFile(runtimeSettings, readFileSync(runtimeSettings, 'utf8'), ts.ScriptTarget.Latest, true).statements
-      .find(statement => ts.isImportDeclaration(statement) && ts.isStringLiteral(statement.moduleSpecifier) && statement.moduleSpecifier.text === 'dsh-plugin-memory-source-runtime/contracts') as ts.ImportDeclaration
+      .find(statement => ts.isImportDeclaration(statement) && ts.isStringLiteral(statement.moduleSpecifier) && statement.moduleSpecifier.text === 'suveng-dsh-plugin-memory-source-runtime/contracts') as ts.ImportDeclaration
     const bindings = runtimeImport.importClause?.namedBindings
     expect(bindings !== undefined && ts.isNamedImports(bindings) ? bindings.elements.map(element => element.name.text).sort() : [])
       .toEqual(['RUNTIME_MEMORY_LIMITS', 'RUNTIME_MEMORY_LIMIT_MAX_BYTES'])
@@ -173,10 +173,10 @@ describe('standalone plugin repository boundary', () => {
 
   for (const [entry, allowed] of [
     ['src/sdk/index.ts', ['src/sdk', 'src/core/contracts', 'src/core/definitions.ts']],
-    ['plugins/dsh-plugin-memory-source-memory-spaces/src/provider-sdk.ts', [
-      'plugins/dsh-plugin-memory-source-memory-spaces/src/provider-sdk.ts',
-      'plugins/dsh-plugin-memory-source-memory-spaces/src/contracts.ts',
-      ...['adapter', 'definitions', 'http', 'process'].map(name => `plugins/dsh-plugin-memory-source-memory-spaces/src/providers/${name}.ts`),
+    ['plugins/suveng-dsh-plugin-memory-source-memory-spaces/src/provider-sdk.ts', [
+      'plugins/suveng-dsh-plugin-memory-source-memory-spaces/src/provider-sdk.ts',
+      'plugins/suveng-dsh-plugin-memory-source-memory-spaces/src/contracts.ts',
+      ...['adapter', 'definitions', 'http', 'process'].map(name => `plugins/suveng-dsh-plugin-memory-source-memory-spaces/src/providers/${name}.ts`),
     ]],
   ] as const) it(`${entry} does not load its private runtime or registries`, () => {
     const pending = [join(root, entry)]

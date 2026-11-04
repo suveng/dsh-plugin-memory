@@ -23,7 +23,7 @@ export interface MemoryCompositionStatus {
   configuration: ResolvedMemoryTopologyConfig
 }
 
-import type { RecallQualityConfig, ResolvedRecallQualityConfig, MemoryEmbeddingConfig, ResolvedMemoryEmbeddingConfig } from 'dsh-plugin-memory-source-memory-spaces/contracts'
+import type { RecallQualityConfig, ResolvedRecallQualityConfig, MemoryEmbeddingConfig, ResolvedMemoryEmbeddingConfig } from 'suveng-dsh-plugin-memory-source-memory-spaces/contracts'
 import type {
   MemoryPersistenceStrategy,
   ResolvedMemoryPersistenceStrategy,
@@ -31,18 +31,18 @@ import type {
   Source,
   MemorySpaceStats,
   MemorySpaceView,
-} from 'dsh-plugin-memory-source-memory-spaces/contracts'
+} from 'suveng-dsh-plugin-memory-source-memory-spaces/contracts'
 import type { ConnectionHandle as DshClientConnectionHandle } from '@deepseek-ai/dsh-client-connection/client'
-import type { DocumentMutationResult, DocumentSnapshot } from 'dsh-plugin-memory-source-documents/contracts'
-import type { RuntimeMemoryMutationResult } from 'dsh-plugin-memory-source-runtime/contracts'
+import type { DocumentMutationResult, DocumentSnapshot } from 'suveng-dsh-plugin-memory-source-documents/contracts'
+import type { RuntimeMemoryMutationResult } from 'suveng-dsh-plugin-memory-source-runtime/contracts'
 import type { MemoryMigrationLineage, MemoryMutationReceipt } from '../core/contracts/index.ts'
 import { MEMORY_VIEW_CHANNEL, MEMORY_VIEW_WRITE_CHANNEL } from './view-protocol.ts'
 
-export const MEMORY_READ_CHANNEL = '/dsh-plugin-memory-read'
-export const MEMORY_ACTIVATION_CHANNEL = '/dsh-plugin-memory-activation'
-export const MEMORY_WRITE_CHANNEL = '/dsh-plugin-memory-write'
-export const MEMORY_PACK_CHANNEL = '/dsh-plugin-memory-pack'
-export const MEMORY_SYNC_CHANNEL = '/dsh-plugin-memory-sync'
+export const MEMORY_READ_CHANNEL = '/suveng-dsh-plugin-memory-read'
+export const MEMORY_ACTIVATION_CHANNEL = '/suveng-dsh-plugin-memory-activation'
+export const MEMORY_WRITE_CHANNEL = '/suveng-dsh-plugin-memory-write'
+export const MEMORY_PACK_CHANNEL = '/suveng-dsh-plugin-memory-pack'
+export const MEMORY_SYNC_CHANNEL = '/suveng-dsh-plugin-memory-sync'
 /**
  * The credential environment variable the sync channel reads before its stored
  * token. The name travels to the browser so the settings form can tell the user
@@ -57,15 +57,15 @@ export const MEMORY_SYNC_TOKEN_ENV = 'MNEMON_SYNC_GIT_TOKEN'
  */
 export const MEMORY_SYNC_DEFAULT_BRANCH = 'memory-sync'
 export const MEMORY_SYNC_DEFAULT_SUBDIR = 'memory/'
-export const MEMORY_SYNC_DEFAULT_AUTHOR_NAME = 'dsh-plugin-memory sync'
+export const MEMORY_SYNC_DEFAULT_AUTHOR_NAME = 'suveng-dsh-plugin-memory sync'
 export const MEMORY_SYNC_DEFAULT_AUTHOR_EMAIL = 'memory@localhost'
-export const MEMORY_SETTINGS_CHANNEL = '/dsh-plugin-memory-settings'
+export const MEMORY_SETTINGS_CHANNEL = '/suveng-dsh-plugin-memory-settings'
 /**
  * Reconciliation is the only channel that changes memory after a human read it:
  * it stages proposals into a review ledger, takes opinions, and applies an
  * accepted entry. It is deliberately separate from the write channel.
  */
-export const MEMORY_REVIEW_CHANNEL = '/dsh-plugin-memory-review'
+export const MEMORY_REVIEW_CHANNEL = '/suveng-dsh-plugin-memory-review'
 /** DSH API Gateway endpoints used by paired remote Web clients. */
 export const MEMORY_REMOTE_CHANNEL = '/api'
 export const MEMORY_REMOTE_NAMESPACE = 'dshMemory'
@@ -80,7 +80,7 @@ export const MEMORY_REMOTE_VIEW_WRITE_ENDPOINT = `${MEMORY_REMOTE_NAMESPACE}/vie
 export const MEMORY_REMOTE_REVIEW_ENDPOINT = `${MEMORY_REMOTE_NAMESPACE}/review`
 export const MEMORY_SETTINGS_NAMESPACE = 'memory'
 export const MEMORY_UI_SETTINGS_NAMESPACE = 'memory-ui'
-/** 技能管理's settings: one live group of the dsh-plugin-memory entry, drawn on that component's page. */
+/** 技能管理's settings: one live group of the suveng-dsh-plugin-memory entry, drawn on that component's page. */
 export const MEMORY_SKILLS_SETTINGS_NAMESPACE = 'memory-skills'
 export * from './view-protocol.ts'
 export * from './memory-tools.ts'
@@ -486,10 +486,10 @@ export interface SkillsStatusSummary {
  * Provider instance identity inside one Memory Spaces Source. Built-in ids
  * remain stable; third-party child modules may contribute additional ids.
  */
-export type * from 'dsh-plugin-memory-source-memory-spaces/contracts'
+export type * from 'suveng-dsh-plugin-memory-source-memory-spaces/contracts'
 
-export type * from 'dsh-plugin-memory-source-documents/contracts'
-export type * from 'dsh-plugin-memory-source-runtime/contracts'
+export type * from 'suveng-dsh-plugin-memory-source-documents/contracts'
+export type * from 'suveng-dsh-plugin-memory-source-runtime/contracts'
 
 export interface TurnMemoryActivity {
   turn: number
@@ -707,7 +707,7 @@ export interface StatusView {
   healthy: boolean
   error?: string
   version?: string
-  /** The dsh-plugin-memory version this Host runs, which an installed update replaces only when DSH restarts. */
+  /** The suveng-dsh-plugin-memory version this Host runs, which an installed update replaces only when DSH restarts. */
   dshMemoryVersion?: string
   /** Updates installed while this Host runs; they load when DSH restarts. */
   restartPending?: VersionRestartStatus
@@ -761,7 +761,7 @@ export interface MemoryPackManifest {
   scope: MemoryPackScope
   exportedAt: string
   // A Pack written before the rename names the old plugin; readers accept both.
-  source: { plugin: 'dsh-mnemon' | 'dsh-plugin-memory'; pluginVersion: string }
+  source: { plugin: 'dsh-mnemon' | 'suveng-dsh-plugin-memory'; pluginVersion: string }
   components: MemoryPackComponent[]
   summary: MemoryPackComponentSummary[]
 }
@@ -1326,8 +1326,8 @@ export interface MemorySyncDiff {
   remoteTombstones: MemoryTombstone[]
 }
 
-export type VersionPackageId = `dsh-plugin-memory-${'source' | 'strategy' | 'provider'}-${string}`
-export type VersionComponentId = 'memory' | 'dsh-plugin-memory' | VersionPackageId
+export type VersionPackageId = `suveng-dsh-plugin-memory-${'source' | 'strategy' | 'provider'}-${string}`
+export type VersionComponentId = 'memory' | 'suveng-dsh-plugin-memory' | VersionPackageId
 export type VersionInstallMode = 'homebrew' | 'go' | 'npm' | 'link' | 'manual' | 'missing'
 
 export interface VersionComponentStatus {
@@ -1371,9 +1371,9 @@ export interface VersionUpdateOutcome {
 }
 
 export interface VersionRestartStatus {
-  /** The dsh-plugin-memory version this Host runs. */
+  /** The suveng-dsh-plugin-memory version this Host runs. */
   running: string
-  /** The dsh-plugin-memory version now installed, when it differs, however it was installed: Check versions or `dsh plugin`, for example. */
+  /** The suveng-dsh-plugin-memory version now installed, when it differs, however it was installed: Check versions or `dsh plugin`, for example. */
   installed?: string
   /** Packages Check versions updated on their own. */
   packages?: VersionPackageId[]

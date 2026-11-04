@@ -107,11 +107,11 @@ describe('Memory Web client composition', () => {
     expect(slots.some(options => options.name === 'conversation.view')).toBe(false)
   })
 
-  it('edits the whole configuration on the dsh-plugin-memory page under Plugins, not in Settings', () => {
+  it('edits the whole configuration on the suveng-dsh-plugin-memory page under Plugins, not in Settings', () => {
     const { context, slots, scope } = workspaceContext({})
     expect(slots.some(options => options.name === 'settings.section')).toBe(false)
     const entry = slots.find(options => options.name === 'plugins.bundle.config')!
-    expect(entry).toMatchObject({ key: 'dsh-plugin-memory', locale: 'memory' })
+    expect(entry).toMatchObject({ key: 'suveng-dsh-plugin-memory', locale: 'memory' })
     expect(context.slots.register).toHaveBeenCalledWith(entry, MemorySettingsHost)
     const props = (entry.inject as () => Record<string, unknown> & { t: (key: keyof typeof zh) => string })()
     expect(props).toMatchObject({
@@ -124,14 +124,14 @@ describe('Memory Web client composition', () => {
     expect(props.renderContributed).toBeTypeOf('function')
     // Each component row DSH lists under the bundle opens that component's page, with the same services.
     const rows = slots.filter(options => options.name === 'plugins.row.config')
-    expect(rows.map(row => row.key)).toEqual(STARTER_COMPONENT_ROWS.map(({ rowId }) => `dsh-plugin-memory#${rowId}`))
+    expect(rows.map(row => row.key)).toEqual(STARTER_COMPONENT_ROWS.map(({ rowId }) => `suveng-dsh-plugin-memory#${rowId}`))
     for (const row of rows) {
       // Only the configuration declares the settings region; a row page renders what was registered there.
       expect(row).toMatchObject({ locale: 'memory' })
       expect(row.children).toBeUndefined()
       expect(context.slots.register).toHaveBeenCalledWith(row, MemoryComponentRowHost)
       const injected = (row.inject as () => Record<string, unknown>)()
-      expect(injected).toMatchObject({ scope, component: STARTER_COMPONENT_ROWS.find(({ rowId }) => `dsh-plugin-memory#${rowId}` === row.key)!.packageName })
+      expect(injected).toMatchObject({ scope, component: STARTER_COMPONENT_ROWS.find(({ rowId }) => `suveng-dsh-plugin-memory#${rowId}` === row.key)!.packageName })
       expect(injected.renderContributed).toBeTypeOf('function')
     }
   })
@@ -140,7 +140,7 @@ describe('Memory Web client composition', () => {
     const { context, slots, scope, provide, workspaceStops } = workspaceContext({ displayMode: 'sidebar' })
     await vi.waitFor(() => expect(workspaceStops).toHaveLength(1))
     const action = slots.find(options => options.name === 'plugins.detail.actions')!
-    expect(action).toMatchObject({ id: 'dsh-plugin-memory/open-workspace', locale: 'memory' })
+    expect(action).toMatchObject({ id: 'suveng-dsh-plugin-memory/open-workspace', locale: 'memory' })
     expect(context.slots.register).toHaveBeenCalledWith(action, MemoryPluginActions)
     const injected = (action.inject as () => { workspace: MemoryActionSeat; componentList: unknown })()
     const workspace = injected.workspace
@@ -156,7 +156,7 @@ describe('Memory Web client composition', () => {
     const openBundle = vi.fn()
     provide('pluginNavigation', { openBundle })
     configuration.getSnapshot()!()
-    expect(openBundle).toHaveBeenCalledWith('dsh-plugin-memory')
+    expect(openBundle).toHaveBeenCalledWith('suveng-dsh-plugin-memory')
 
     // Hiding the workspace withdraws its entry from the Plugins page.
     await scope.mutate([{ op: 'set', path: ['tabEnabled'], value: false }])
@@ -182,9 +182,9 @@ describe('Memory Web client composition', () => {
     revision = 7
     for (const listener of listeners) listener()
     await vi.waitFor(() => expect(reads()).toBe(before + 3))
-    expect(context.connection.rpc.call).toHaveBeenCalledWith('/dsh-plugin-memory-settings', 'get', { namespace: 'memory' }, expect.anything())
-    expect(context.connection.rpc.call).toHaveBeenCalledWith('/dsh-plugin-memory-settings', 'get', { namespace: 'memory-ui' }, expect.anything())
-    expect(context.connection.rpc.call).toHaveBeenCalledWith('/dsh-plugin-memory-settings', 'get', { namespace: 'memory-skills' }, expect.anything())
+    expect(context.connection.rpc.call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-settings', 'get', { namespace: 'memory' }, expect.anything())
+    expect(context.connection.rpc.call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-settings', 'get', { namespace: 'memory-ui' }, expect.anything())
+    expect(context.connection.rpc.call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-settings', 'get', { namespace: 'memory-skills' }, expect.anything())
   })
 
   it.each([undefined, 'sidebar'])('keeps one complete Sidebar for displayMode=%s with live visibility', async displayMode => {

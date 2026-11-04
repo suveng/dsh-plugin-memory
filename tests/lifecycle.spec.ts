@@ -268,7 +268,7 @@ describe('Memory DSH lifecycle integration', () => {
     const value = fixture(resolveConfig({ recallMode: 'guided', writebackMode: 'guided' }))
     const decision = await value.preStep([userMessage()], 1)
     if (decision.kind !== 'enter') throw new Error('unexpected rejection')
-    const messages = decision.messages.filter(message => message.source.kind === 'dsh-plugin-memory')
+    const messages = decision.messages.filter(message => message.source.kind === 'suveng-dsh-plugin-memory')
     expect(messages.map(message => message.source.form)).toEqual(['instructions', 'recall'])
     for (const message of messages) {
       expect(message.source).not.toHaveProperty('plugin')
@@ -298,16 +298,16 @@ describe('Memory DSH lifecycle integration', () => {
     }
     const artifact = { header: session.header, inheritedEventCount: 0, events: session.snapshotEvents() }
     expect(() => format.restoreReleasedV4Artifact(artifact, sessionApi.KNOWN_SESSION_EVENT_TYPES)).not.toThrow()
-    const oldWrapper = { ...artifact.events[0], data: { ...messages[0], source: { kind: 'plugin', plugin: 'dsh-plugin-memory', form: 'instructions' } } }
+    const oldWrapper = { ...artifact.events[0], data: { ...messages[0], source: { kind: 'plugin', plugin: 'suveng-dsh-plugin-memory', form: 'instructions' } } }
     expect(() => format.restoreReleasedV4Artifact({ ...artifact, events: [oldWrapper] }, sessionApi.KNOWN_SESSION_EVENT_TYPES))
       .toThrow('format v4 message requires a producer-owned source kind')
     value.stop()
   })
 
   const ownSources = [
-    { kind: 'dsh-plugin-memory', form: 'instructions' },
-    { kind: 'plugin:dsh-plugin-memory', form: 'instructions' },
-    { kind: 'plugin', plugin: 'dsh-plugin-memory', form: 'instructions' },
+    { kind: 'suveng-dsh-plugin-memory', form: 'instructions' },
+    { kind: 'plugin:suveng-dsh-plugin-memory', form: 'instructions' },
+    { kind: 'plugin', plugin: 'suveng-dsh-plugin-memory', form: 'instructions' },
   ]
 
   it.each(ownSources)('does not reinject context into a request already owned by Memory: %j', async source => {
@@ -331,8 +331,8 @@ describe('Memory DSH lifecycle integration', () => {
 
   it.each([
     { kind: 'plugin', plugin: 'other-plugin' },
-    { kind: 'plugin:dsh-plugin-memory-other' },
-    { kind: 'other-plugin', plugin: 'dsh-plugin-memory' },
+    { kind: 'plugin:suveng-dsh-plugin-memory-other' },
+    { kind: 'other-plugin', plugin: 'suveng-dsh-plugin-memory' },
   ])('does not let another producer suppress Memory context: %j', async source => {
     const value = fixture()
     const other = { ...userMessage('Unrelated producer context'), source }
@@ -342,7 +342,7 @@ describe('Memory DSH lifecycle integration', () => {
     if (decision.kind !== 'enter') throw new Error('unexpected rejection')
     expect(decision.messages[0]).toEqual(other)
     expect(decision.messages.slice(1).map(message => message.source)).toEqual([
-      { kind: 'dsh-plugin-memory', form: 'instructions' }, { kind: 'dsh-plugin-memory', form: 'recall' },
+      { kind: 'suveng-dsh-plugin-memory', form: 'instructions' }, { kind: 'suveng-dsh-plugin-memory', form: 'recall' },
     ])
     value.stop()
   })
@@ -361,7 +361,7 @@ describe('Memory DSH lifecycle integration', () => {
     expect(decision.kind === 'enter' && decision.messages.slice(0, 2)).toEqual([user, shared])
     expect(decision.kind === 'enter' && decision.messages.at(-1)).toMatchObject({
       content: [{ type: 'text', text }],
-      source: { kind: 'dsh-plugin-memory', form: 'recall' },
+      source: { kind: 'suveng-dsh-plugin-memory', form: 'recall' },
     })
     if (decision.kind === 'enter') expect(decision.messages.at(-1)?.source).not.toHaveProperty('summary')
     await value.turnStopping(1)
@@ -849,7 +849,7 @@ describe('Memory DSH lifecycle integration', () => {
     expect(decision).toMatchObject({ kind: 'enter' })
     if (decision.kind !== 'enter') throw new Error('unexpected rejection')
     expect(decision.messages).toHaveLength(3)
-    expect(decision.messages[1]?.source).toMatchObject({ kind: 'dsh-plugin-memory', form: 'instructions' })
+    expect(decision.messages[1]?.source).toMatchObject({ kind: 'suveng-dsh-plugin-memory', form: 'instructions' })
     expect(decision.messages[1]?.content[0]?.text).toBe('[MNEMON] Use memory_view_route only when relevant evidence is missing. Use memory_view_action only for an intended memory change; require a write receipt. Use only ids offered by the current View and follow each Source\'s semantics. Otherwise use none.')
     expect(value.coordinator.recall).not.toHaveBeenCalled()
 
@@ -859,7 +859,7 @@ describe('Memory DSH lifecycle integration', () => {
     // fixture derives Wake text from the turn, so turn 2 is a new revision.
     expect(second.messages).toHaveLength(2)
     expect(second.messages.some(message => (message.source as { form?: string }).form === 'instructions')).toBe(false)
-    expect(second.messages.at(-1)?.source).toMatchObject({ kind: 'dsh-plugin-memory', form: 'recall' })
+    expect(second.messages.at(-1)?.source).toMatchObject({ kind: 'suveng-dsh-plugin-memory', form: 'recall' })
     expect(value.coordinator.recall).not.toHaveBeenCalled()
     expect(value.lifecycle.snapshot('session-1').counters).toMatchObject({ primes: 1, recallCues: 1, writebackCues: 1 })
   })

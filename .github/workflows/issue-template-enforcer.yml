@@ -84,7 +84,7 @@ jobs:
             const { data: initialIssue } = await github.rest.issues.get(issueParams);
             if (initialIssue.state !== 'open') return;
 
-            const marker = '<!-- dsh-plugin-memory:issue-template-check -->';
+            const marker = '<!-- suveng-dsh-plugin-memory:issue-template-check -->';
             const comments = await github.paginate(github.rest.issues.listComments, {
               ...issueParams,
               per_page: 100,

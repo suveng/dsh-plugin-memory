@@ -176,7 +176,7 @@ async function clientCalls(): Promise<Array<readonly [string, string]>> {
   const scope: ClientSettingsScope<Config> = { getSnapshot: () => ({ status: 'ready', writable: true, mode: 'host' }), subscribe: () => () => {}, mutate: async () => {} }
   const hosts = createComponentHosts({ scope, connection })
   const probes = [...new Set(Object.values(MEMORY_RPC_ENDPOINTS).flat())]
-  for (const packageName of ['dsh-plugin-memory-source-runtime', 'dsh-plugin-memory-source-documents', 'dsh-plugin-memory-source-memory-spaces']) {
+  for (const packageName of ['suveng-dsh-plugin-memory-source-runtime', 'suveng-dsh-plugin-memory-source-documents', 'suveng-dsh-plugin-memory-source-memory-spaces']) {
     const operations = hosts(packageName, 'session-1', 'workspace-1')?.operations
     for (const operation of probes) {
       await operations?.read(operation, {}).catch(() => undefined)

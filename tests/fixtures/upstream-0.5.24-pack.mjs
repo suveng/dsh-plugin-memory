@@ -12,8 +12,8 @@ import { createHash, randomUUID } from 'node:crypto'
 import { existsSync, readFileSync, writeFileSync, mkdirSync, renameSync, rmSync, statSync, lstatSync, readdirSync, openSync, closeSync, fstatSync } from 'node:fs'
 import { join, resolve, dirname, basename } from 'node:path'
 import { strToU8, zipSync, unzipSync } from 'fflate'
-import { DOCUMENTS_ACTIVE_LIMIT_BYTES, DOCUMENTS_VERSION } from 'dsh-plugin-memory-source-documents/contracts'
-import { RUNTIME_ENTRY_DELIMITER, RUNTIME_MEMORY_LIMITS, RUNTIME_MEMORY_VERSION } from 'dsh-plugin-memory-source-runtime/contracts'
+import { DOCUMENTS_ACTIVE_LIMIT_BYTES, DOCUMENTS_VERSION } from 'suveng-dsh-plugin-memory-source-documents/contracts'
+import { RUNTIME_ENTRY_DELIMITER, RUNTIME_MEMORY_LIMITS, RUNTIME_MEMORY_VERSION } from 'suveng-dsh-plugin-memory-source-runtime/contracts'
 import { createStorageRoot } from '../../src/host/storage-root.ts'
 
 // 0.5.24 kept this list inline (lib/index.js lines 66-70). It is vendored rather than

@@ -100,7 +100,7 @@ export class MemorySettingsScope<T extends object> implements ClientSettingsScop
       try {
         listener()
       } catch (error) {
-        console.warn('dsh-plugin-memory: settings listener failed; keeping the published Host snapshot', error)
+        console.warn('suveng-dsh-plugin-memory: settings listener failed; keeping the published Host snapshot', error)
       }
     }
   }

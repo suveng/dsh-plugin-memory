@@ -13,7 +13,7 @@ import type {
   MemorySourceMode,
 } from './index.ts'
 
-export const COMPOSABLE_MEMORY_API_VERSION = 'dsh-plugin-memory/v1' as const
+export const COMPOSABLE_MEMORY_API_VERSION = 'suveng-dsh-plugin-memory/v1' as const
 
 /** Persistence truth, not a taxonomy of memory operations. */
 export type MemoryMutationCompletion = 'accepted' | 'candidate' | 'committed' | 'partial' | 'failed' | 'unknown'

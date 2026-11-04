@@ -166,12 +166,12 @@ it.each([
       expect(child.map(request => request.promptKept)).toEqual([true, true, true, false, false])
       expect(child.map(request => request.userQuery)).toEqual([true, true, true, false, true])
       expect(child.map(request => request.continuations)).toEqual([0, 0, 0, 0, 1])
-      expect(child.at(-1)!.last).toBe('dsh-plugin-memory')
+      expect(child.at(-1)!.last).toBe('suveng-dsh-plugin-memory')
     } else {
       // A server that keeps the prompt never refuses, so every request stays as it was.
       expect(child.map(request => [request.userQuery, request.promptKept, request.continuations])).toEqual([[true, true, 0], [true, true, 0], [true, true, 0], [true, true, 0]])
     }
-    expect(child.slice(0, 4).map(request => request.last)).not.toContain('dsh-plugin-memory')
+    expect(child.slice(0, 4).map(request => request.last)).not.toContain('suveng-dsh-plugin-memory')
     expect(ollama.requests.filter(request => request.session === 'parent').map(request => request.continuations)).toEqual([0])
   } finally {
     stop?.()

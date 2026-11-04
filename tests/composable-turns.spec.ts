@@ -5,8 +5,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { resolveConfig } from "../src/host/config.ts"
 import { createRuntimeGraph } from "../src/host/runtime.ts"
 import { compositionFixture } from './fixtures/composition.ts'
-import type { DocumentMutationResult } from 'dsh-plugin-memory-source-documents/contracts'
-import type { RuntimeMemorySnapshot } from 'dsh-plugin-memory-source-runtime/contracts'
+import type { DocumentMutationResult } from 'suveng-dsh-plugin-memory-source-documents/contracts'
+import type { RuntimeMemorySnapshot } from 'suveng-dsh-plugin-memory-source-runtime/contracts'
 const fixtures: Awaited<ReturnType<typeof compositionFixture>>[] = []
 async function fixture() { const value = await compositionFixture(); fixtures.push(value); return value }
 afterEach(async () => { for (const value of fixtures.splice(0)) await value.dispose() })

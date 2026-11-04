@@ -66,7 +66,7 @@ export async function startSubagent(
   if ((toolFilter === undefined && persona === undefined) || childComposition(subagents, subagents.getProvider(provider)) !== 'publication') {
     return startOnHost(subagents, agents, provider, request)
   }
-  if (publications === undefined) throw new Error('This DSH takes no subagent persona or tool filter at start, and dsh-plugin-memory cannot observe the child it publishes')
+  if (publications === undefined) throw new Error('This DSH takes no subagent persona or tool filter at start, and suveng-dsh-plugin-memory cannot observe the child it publishes')
   const composition: ChildComposition = { ...(toolFilter === undefined ? {} : { toolFilter }), ...(persona === undefined ? {} : { persona }) }
   return startComposed(publications, agents, request.parent, composition, () => startOnHost(subagents, agents, provider, task))
 }
@@ -103,7 +103,7 @@ async function startOnHost(
     }
   }
   if (typeof subagents.start === 'function') return subagents.start(provider, request)
-  throw new Error('This DSH has neither subagents.startActivation nor subagents.start, so dsh-plugin-memory cannot start its memory subagent; install a dsh-plugin-memory release that supports this DSH version')
+  throw new Error('This DSH has neither subagents.startActivation nor subagents.start, so suveng-dsh-plugin-memory cannot start its memory subagent; install a suveng-dsh-plugin-memory release that supports this DSH version')
 }
 
 /**
@@ -117,10 +117,10 @@ function compose(agent: HostAgent, { toolFilter, persona }: ChildComposition): v
   const prompt = agent.ctx.systemPrompt
   const tools = agent.ctx.tools
   if (persona !== undefined && (typeof prompt?.section !== 'function' || typeof prompt.getSectionOrder !== 'function')) {
-    throw new Error('DSH gives this memory subagent no prompt section of its own, so dsh-plugin-memory cannot give it its instructions')
+    throw new Error('DSH gives this memory subagent no prompt section of its own, so suveng-dsh-plugin-memory cannot give it its instructions')
   }
   if (toolFilter !== undefined && typeof tools?.restrict !== 'function') {
-    throw new Error('DSH gives this memory subagent no tool restriction of its own, so dsh-plugin-memory cannot limit it to its memory tools')
+    throw new Error('DSH gives this memory subagent no tool restriction of its own, so suveng-dsh-plugin-memory cannot limit it to its memory tools')
   }
   if (persona !== undefined) prompt!.section!({ name: PERSONA_SECTION, order: prompt!.getSectionOrder!('DEPLOYMENT_PERSONA_PREFIX'), text: persona })
   if (toolFilter !== undefined) tools!.restrict!(toolFilter)
@@ -153,7 +153,7 @@ async function startComposed(
       throw error
     }
   }) as never, { prepend: true })
-  if (typeof listener !== 'function') throw new Error('dsh-plugin-memory could not observe the memory subagent DSH creates, so it does not start one')
+  if (typeof listener !== 'function') throw new Error('suveng-dsh-plugin-memory could not observe the memory subagent DSH creates, so it does not start one')
   let stopObserving: (() => unknown) | undefined = listener as () => unknown
   const closeObserver = async () => {
     const stop = stopObserving
@@ -164,7 +164,7 @@ async function startComposed(
   try {
     run = await composingChild.run(pending, start)
     if (failure !== undefined) throw failure
-    if (!composed.has(run.id)) throw new Error(`dsh-plugin-memory did not see memory subagent ${run.id} created, so it could not give it its own instructions and tools`)
+    if (!composed.has(run.id)) throw new Error(`suveng-dsh-plugin-memory did not see memory subagent ${run.id} created, so it could not give it its own instructions and tools`)
     // Stop observing before handing the run over; a failure here takes the same path as a failed start.
     await closeObserver()
     return run

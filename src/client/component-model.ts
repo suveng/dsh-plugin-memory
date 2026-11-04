@@ -1,7 +1,7 @@
 import type { MemoryPluginEntryView, MemoryViewDashboard } from '../host/view-protocol.ts'
 
 /** Shipped Source packages are named after the memory layer they serve. */
-const SHIPPED_SOURCE_PREFIX = 'dsh-plugin-memory-source-'
+const SHIPPED_SOURCE_PREFIX = 'suveng-dsh-plugin-memory-source-'
 /** An enhancement that fits whichever main Strategy offers its slot. */
 const ANY_STRATEGY = '*'
 

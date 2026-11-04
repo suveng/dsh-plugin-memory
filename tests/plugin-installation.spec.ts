@@ -62,9 +62,9 @@ async function profile() {
   return { root, directory, ctx, settings, documents, emit }
 }
 
-const registryManifest = (name = 'dsh-plugin-memory-strategy-focus') => ({
+const registryManifest = (name = 'suveng-dsh-plugin-memory-strategy-focus') => ({
   name, version: '0.5.0-beta.4', description: 'A bounded test Strategy.',
-  peerDependencies: { 'dsh-plugin-memory': '^0.5.0-beta.1' }, dsh: { bundle: { patch: './cordis.patch.yml' } },
+  peerDependencies: { 'suveng-dsh-plugin-memory': '^0.5.0-beta.1' }, dsh: { bundle: { patch: './cordis.patch.yml' } },
 })
 
 describe('DSH-native Memory plugin installation', () => {
@@ -72,7 +72,7 @@ describe('DSH-native Memory plugin installation', () => {
     const f = await profile()
     const manager = new MemoryPluginInstallation(f.ctx, { resolveDshCommand: () => ({ command: '/fake/dsh', prefix: [] }) })
     expect(manager.environment()).toEqual({ supported: true, profileName: 'web', suggestions: [
-      'dsh-plugin-memory-strategy-scoped', 'dsh-plugin-memory-strategy-light-context', 'dsh-plugin-memory-strategy-auto-capture',
+      'suveng-dsh-plugin-memory-strategy-scoped', 'suveng-dsh-plugin-memory-strategy-light-context', 'suveng-dsh-plugin-memory-strategy-auto-capture',
     ] })
   })
 
@@ -81,37 +81,37 @@ describe('DSH-native Memory plugin installation', () => {
     const fetchPackage = vi.fn(async (name: string, tag: string) => registryManifest(name))
     const manager = new MemoryPluginInstallation(f.ctx, { currentVersion: '0.5.0-beta.1', fetchPackage,
       resolveDshCommand: () => ({ command: '/fake/dsh', prefix: [] }) })
-    await expect(manager.inspect('dsh-plugin-memory-strategy-focus')).resolves.toEqual({
-      packageName: 'dsh-plugin-memory-strategy-focus', version: '0.5.0-beta.4', kind: 'strategy',
+    await expect(manager.inspect('suveng-dsh-plugin-memory-strategy-focus')).resolves.toEqual({
+      packageName: 'suveng-dsh-plugin-memory-strategy-focus', version: '0.5.0-beta.4', kind: 'strategy',
       description: 'A bounded test Strategy.', memoryPeerRange: '^0.5.0-beta.1', installed: false,
     })
-    expect(fetchPackage).toHaveBeenCalledWith('dsh-plugin-memory-strategy-focus', 'beta')
-    await expect(manager.inspect('file:../plugin')).rejects.toThrow('exact dsh-plugin-memory')
+    expect(fetchPackage).toHaveBeenCalledWith('suveng-dsh-plugin-memory-strategy-focus', 'beta')
+    await expect(manager.inspect('file:../plugin')).rejects.toThrow('exact suveng-dsh-plugin-memory')
   })
 
   it('rejects packages that cannot join the DSH bundle stack', async () => {
     const f = await profile()
     const manager = new MemoryPluginInstallation(f.ctx, { fetchPackage: async name => ({ ...registryManifest(name), dsh: undefined }),
       resolveDshCommand: () => ({ command: '/fake/dsh', prefix: [] }) })
-    await expect(manager.inspect('dsh-plugin-memory-source-notes')).rejects.toThrow('bundle patch')
+    await expect(manager.inspect('suveng-dsh-plugin-memory-source-notes')).rejects.toThrow('bundle patch')
   })
 
   it('installs an inspected exact version through the current DSH Profile and verifies registration', async () => {
     const f = await profile()
     const processRunner = vi.fn(async (command: string, args: readonly string[], options: ProcessOptions) => {
       const value = JSON.parse(await readFile(join(f.directory, 'package.json'), 'utf8')) as Record<string, any>
-      value.dependencies['dsh-plugin-memory-strategy-focus'] = '0.5.0-beta.4'
-      value.dsh.profile.bundles.push('dsh-plugin-memory-strategy-focus')
+      value.dependencies['suveng-dsh-plugin-memory-strategy-focus'] = '0.5.0-beta.4'
+      value.dsh.profile.bundles.push('suveng-dsh-plugin-memory-strategy-focus')
       await writeFile(join(f.directory, 'package.json'), JSON.stringify(value, null, 2))
       expect(command).toBe(process.execPath)
-      expect(args).toEqual(['/opt/dsh/lib/bin.js', 'plugin', '--profile', 'web', 'add', 'dsh-plugin-memory-strategy-focus@0.5.0-beta.4', '--save-exact'])
+      expect(args).toEqual(['/opt/dsh/lib/bin.js', 'plugin', '--profile', 'web', 'add', 'suveng-dsh-plugin-memory-strategy-focus@0.5.0-beta.4', '--save-exact'])
       expect(options.env?.DSH_HOME).toBe(f.root)
       return { stdout: '', stderr: '', exitCode: 0 }
     })
     const manager = new MemoryPluginInstallation(f.ctx, { currentVersion: '0.5.0-beta.1', fetchPackage: async name => registryManifest(name), processRunner,
       resolveDshCommand: () => ({ command: process.execPath, prefix: ['/opt/dsh/lib/bin.js'] }) })
-    await expect(manager.install('dsh-plugin-memory-strategy-focus', '0.5.0-beta.4')).resolves.toEqual({
-      packageName: 'dsh-plugin-memory-strategy-focus', version: '0.5.0-beta.4', profileName: 'web', installed: true, restartRequired: true,
+    await expect(manager.install('suveng-dsh-plugin-memory-strategy-focus', '0.5.0-beta.4')).resolves.toEqual({
+      packageName: 'suveng-dsh-plugin-memory-strategy-focus', version: '0.5.0-beta.4', profileName: 'web', installed: true, restartRequired: true,
     })
     expect(processRunner).toHaveBeenCalledOnce()
   })
@@ -121,7 +121,7 @@ describe('DSH-native Memory plugin installation', () => {
     expect(new MemoryPluginInstallation(noLoader).environment()).toMatchObject({ supported: false, reason: 'loader-unavailable' })
     const f = await profile()
     const manager = new MemoryPluginInstallation(f.ctx, { fetchPackage: async name => registryManifest(name), resolveDshCommand: () => ({ command: '/fake/dsh', prefix: [] }) })
-    await expect(manager.install('dsh-plugin-memory-strategy-focus', '0.5.0-beta.3')).rejects.toThrow('version changed')
+    await expect(manager.install('suveng-dsh-plugin-memory-strategy-focus', '0.5.0-beta.3')).rejects.toThrow('version changed')
   })
 
 })

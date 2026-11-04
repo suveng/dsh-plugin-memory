@@ -6,7 +6,7 @@ import ts from 'typescript'
 
 describe('browser bundle platform boundary', () => {
   const root = fileURLToPath(new URL('../', import.meta.url))
-  const directories = ['src/client', ...['runtime', 'documents', 'memory-spaces'].map(group => `plugins/dsh-plugin-memory-source-${group}/src/client`)]
+  const directories = ['src/client', ...['runtime', 'documents', 'memory-spaces'].map(group => `plugins/suveng-dsh-plugin-memory-source-${group}/src/client`)]
   const clientSources = () => directories.flatMap(directory => {
     const directoryPath = join(root, directory)
     return readdirSync(directoryPath, { recursive: true })
@@ -21,7 +21,7 @@ describe('browser bundle platform boundary', () => {
       for (const node of ast.statements) {
         if ((!ts.isImportDeclaration(node) && !ts.isExportDeclaration(node)) || node.moduleSpecifier === undefined || !ts.isStringLiteral(node.moduleSpecifier)) continue
         const specifier = node.moduleSpecifier.text
-        if (/^(?:node:|dsh-plugin-memory\/(?:core|kernel|extension-sdk)|dsh-plugin-memory-source-[^/]+$)/u.test(specifier)) violations.push(`${path}: ${specifier}`)
+        if (/^(?:node:|suveng-dsh-plugin-memory\/(?:core|kernel|extension-sdk)|suveng-dsh-plugin-memory-source-[^/]+$)/u.test(specifier)) violations.push(`${path}: ${specifier}`)
         if (!specifier.startsWith('.')) continue
         const target = resolve(root, dirname(path), specifier)
         const browserFile = directories.some(directory => target.startsWith(join(root, directory) + sep))

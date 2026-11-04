@@ -5,14 +5,14 @@ import type { UserConfig, TsdownPlugin } from 'tsdown'
 import { transform } from 'lightningcss'
 import ts from 'typescript'
 
-const PLUGIN_ID = 'dsh-plugin-memory'
+const PLUGIN_ID = 'suveng-dsh-plugin-memory'
 const PROJECT_ROOT = dirname(fileURLToPath(import.meta.url))
 const CLIENT_EXTERNALS = [
   /^react(?:\/.*)?$/,
   /^react-dom(?:\/.*)?$/,
   /^@deepseek-ai\/dsh-client-ui-primitives(?:\/.*)?$/,
 ]
-const CSS_VIRTUAL_PREFIX = '\0dsh-plugin-memory-css:'
+const CSS_VIRTUAL_PREFIX = '\0suveng-dsh-plugin-memory-css:'
 const CSS_VIRTUAL_SUFFIX = '.mjs'
 
 const host: UserConfig = {
@@ -48,9 +48,9 @@ const client: UserConfig = {
     neverBundle: CLIENT_EXTERNALS,
     // Source presentation assets, and what the Starter still draws of Memory Spaces (src/client/memory-spaces-client.ts),
     // taken from the pinned version's source through the tsconfig path of its public client entry.
-    alwaysBundle: [/^dsh-plugin-memory-source-[^/]+\/presentation\//, /^dsh-plugin-memory-source-memory-spaces\/client$/,
+    alwaysBundle: [/^suveng-dsh-plugin-memory-source-[^/]+\/presentation\//, /^suveng-dsh-plugin-memory-source-memory-spaces\/client$/,
       // Runtime settings share the Source's byte limits; DSH has no browser factory for its contracts entry.
-      /^dsh-plugin-memory-source-runtime\/contracts$/],
+      /^suveng-dsh-plugin-memory-source-runtime\/contracts$/],
   },
   define: {
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV ?? 'production'),
@@ -65,11 +65,11 @@ const client: UserConfig = {
 
 export function clientCssPlugin(injectStyles = true): TsdownPlugin {
   return {
-    name: 'dsh-plugin-memory-css-modules-inline',
+    name: 'suveng-dsh-plugin-memory-css-modules-inline',
     resolveId(source: string, importer: string | undefined) {
-      if (source === 'dsh-plugin-memory/client') return resolvePath(PROJECT_ROOT, 'src/client/extension-sdk.ts')
+      if (source === 'suveng-dsh-plugin-memory/client') return resolvePath(PROJECT_ROOT, 'src/client/extension-sdk.ts')
       if (!source.endsWith('.module.css')) return null
-      const absolute = source.startsWith('dsh-plugin-memory-source-')
+      const absolute = source.startsWith('suveng-dsh-plugin-memory-source-')
         ? fileURLToPath(import.meta.resolve(source))
         : importer === undefined ? source : resolveAssetPath(source, importer)
       return CSS_VIRTUAL_PREFIX + absolute + CSS_VIRTUAL_SUFFIX
@@ -88,7 +88,7 @@ export function clientCssPlugin(injectStyles = true): TsdownPlugin {
         minify: true,
       })
       const classMap = stableCssClassMap(cssExports)
-      const tagId = filename.match(/dsh-plugin-memory-source-[^/]+\/presentation\/[^/]+$/)?.[0] ?? `${PLUGIN_ID}/${filename}`
+      const tagId = filename.match(/suveng-dsh-plugin-memory-source-[^/]+\/presentation\/[^/]+$/)?.[0] ?? `${PLUGIN_ID}/${filename}`
       return [
         `const css = ${JSON.stringify(code.toString())};`,
         `const tagId = ${JSON.stringify(tagId)};`,
@@ -106,7 +106,7 @@ export function clientCssPlugin(injectStyles = true): TsdownPlugin {
 /** Lower standard decorators because Rolldown currently preserves their syntax. */
 function standardDecoratorsPlugin(): TsdownPlugin {
   return {
-    name: 'dsh-plugin-memory-standard-decorators',
+    name: 'suveng-dsh-plugin-memory-standard-decorators',
     transform(code: string, id: string) {
       if (!id.replaceAll('\\', '/').endsWith('/src/host/remote-rpc.ts')) return null
       const output = ts.transpileModule(code, {
@@ -131,8 +131,8 @@ export function portableRelativePath(root: string, path: string): string {
 }
 
 export function presentationNamespace(filename: string): string {
-  if (/dsh-plugin-memory-source-[^/]+\/presentation\/page\.module\.css$/.test(filename)) return 'src/client/MemoryView.module.css'
-  if (/dsh-plugin-memory-source-[^/]+\/presentation\/sidebar\.module\.css$/.test(filename)) return 'src/client/MemorySidebarView.module.css'
+  if (/suveng-dsh-plugin-memory-source-[^/]+\/presentation\/page\.module\.css$/.test(filename)) return 'src/client/MemoryView.module.css'
+  if (/suveng-dsh-plugin-memory-source-[^/]+\/presentation\/sidebar\.module\.css$/.test(filename)) return 'src/client/MemorySidebarView.module.css'
   return filename
 }
 

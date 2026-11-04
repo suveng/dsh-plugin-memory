@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import openviking from 'dsh-plugin-memory-provider-openviking'
+import openviking from 'suveng-dsh-plugin-memory-provider-openviking'
 import { compositionFixture } from './fixtures/composition.ts'
 import { openVikingProtocolFixture } from '../scripts/fixtures/openviking-protocol.mjs'
 import { MemorySubagentCoordinator } from '../src/host/subagent.ts'

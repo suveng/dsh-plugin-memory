@@ -8,7 +8,7 @@ import { SelectRow, ToggleRow } from './settings-controls.tsx'
 import { PanelActions, useLive, useScope, useStaged, WriteFailure } from './settings-panel.tsx'
 
 /** The package 技能管理 ships as; its page under Plugins carries these settings. */
-export const SKILLS_PACKAGE = 'dsh-plugin-memory-source-skills'
+export const SKILLS_PACKAGE = 'suveng-dsh-plugin-memory-source-skills'
 
 /** 技能管理's settings as stored, every missing key at its default. */
 export function resolvedSkills(value: SkillsConfig | undefined): ResolvedSkillsConfig {

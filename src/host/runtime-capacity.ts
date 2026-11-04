@@ -6,8 +6,8 @@
  */
 import { randomUUID } from 'node:crypto'
 import type { HostSubagentResult } from "./dsh.ts"
-import { RUNTIME_ENTRY_DELIMITER, type RuntimeMemoryCompactedEntry, type RuntimeMemoryMaintenancePlan, type RuntimeMemoryMutation, type RuntimeMemoryMutationResult } from 'dsh-plugin-memory-source-runtime/contracts'
-import type { Insight, MemorySpaceCatalog, MemorySpaceWriteScopeRequest } from 'dsh-plugin-memory-source-memory-spaces/contracts'
+import { RUNTIME_ENTRY_DELIMITER, type RuntimeMemoryCompactedEntry, type RuntimeMemoryMaintenancePlan, type RuntimeMemoryMutation, type RuntimeMemoryMutationResult } from 'suveng-dsh-plugin-memory-source-runtime/contracts'
+import type { Insight, MemorySpaceCatalog, MemorySpaceWriteScopeRequest } from 'suveng-dsh-plugin-memory-source-memory-spaces/contracts'
 import { mutationResultCommitted } from './receipts.ts'
 import { sourceFailure, type SourceSession } from './source-session.ts'
 import { allowsParticipation } from './access.ts'
@@ -102,7 +102,7 @@ function runtimeMigrationSources(
 }
 
 export async function runtimeArchiveSource(runtimeSource: MemoryAgentRuntimeSource, graph: MemoryRuntimeGraph, scope: MemoryOperationScope, view: ComposableMemoryView, generation: MemoryCompositionGeneration, turn?: ComposableMemoryTurn, signal?: AbortSignal): Promise<RuntimeArchiveScope | undefined> {
-  if (!graph.config.writeEnabled || !runtimeSource.config.writeEnabled) throw new Error('dsh-plugin-memory is configured read-only')
+  if (!graph.config.writeEnabled || !runtimeSource.config.writeEnabled) throw new Error('suveng-dsh-plugin-memory is configured read-only')
   // Memory Spaces switched off, or taking no automatic writes, leave the archive
   // to the Runtime Source (#336).
   if (!allowsParticipation(graph.config, 'memory-spaces', 'write', 'automatic')) return undefined
@@ -119,7 +119,7 @@ export async function runtimeArchiveSource(runtimeSource: MemoryAgentRuntimeSour
   const cleanup = graph.source('memory-spaces', scope).forInstance(candidates[0]!.sourceInstanceKey).forGeneration(generation)
   let source = cleanup
   if (turn !== undefined) source = source.forTurn(turn)
-  const grant = view.readGrants.find(grant => grant.sourceInstanceKey === candidates[0]!.sourceInstanceKey && grant.schema === 'dsh-plugin-memory.memory-spaces/v1')
+  const grant = view.readGrants.find(grant => grant.sourceInstanceKey === candidates[0]!.sourceInstanceKey && grant.schema === 'suveng-dsh-plugin-memory.memory-spaces/v1')
   if (grant === undefined) throw new Error('Runtime archival requires the selected Memory Spaces namespace scope')
   return { source, cleanup, memoryBodyIds: new Set(strings(object(grant.value).memoryBodyIds)), writeScope: { viewId: view.id, grant },
     elsewhere: await archivableElsewhere(graph, scope, generation, candidates[0]!.sourceInstanceKey, signal) }
@@ -134,7 +134,7 @@ async function archiveRuntimeLocally(counters: SubagentCounters, context: Runtim
   signal.throwIfAborted()
   // A Runtime Source from before the local archive would compact without keeping what it leaves out.
   if (plan.localArchive !== true) {
-    throw new Error(`runtime memory archival found no Memory Space that can take the archive (${reason}), and this Runtime Source cannot archive locally; pending write was not committed and existing runtime entries are unchanged; update dsh-plugin-memory-source-runtime, activate a supported Memory Space, or increase runtimeMemory.memoryLimitBytes`)
+    throw new Error(`runtime memory archival found no Memory Space that can take the archive (${reason}), and this Runtime Source cannot archive locally; pending write was not committed and existing runtime entries are unchanged; update suveng-dsh-plugin-memory-source-runtime, activate a supported Memory Space, or increase runtimeMemory.memoryLimitBytes`)
   }
   context.assertWritable?.()
   const runId = `host-${randomUUID()}`

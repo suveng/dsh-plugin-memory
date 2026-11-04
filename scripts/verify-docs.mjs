@@ -64,8 +64,8 @@ export function documentLinks(markdown) {
 function renamedPluginPath(target) {
   const relative = target.split('/plugins/')[1]
   if (relative === undefined) return undefined
-  const renamed = relative.replace(/^dsh-mnemon-provider-mnemon-native(\/|$)/u, 'dsh-plugin-memory-provider-native$1')
-    .replace(/^dsh-mnemon-/u, 'dsh-plugin-memory-')
+  const renamed = relative.replace(/^dsh-mnemon-provider-mnemon-native(\/|$)/u, 'suveng-dsh-plugin-memory-provider-native$1')
+    .replace(/^dsh-mnemon-/u, 'suveng-dsh-plugin-memory-')
   return renamed === relative ? undefined : target.slice(0, target.length - relative.length) + renamed
 }
 
@@ -78,7 +78,7 @@ export function checkDocuments(root, files) {
     const body = readFileSync(join(root, file), 'utf8')
     for (const { url, line } of documentLinks(body)) {
       // README links also work on npm; verify current-repository URLs locally.
-      const repositoryPath = url.match(/^https:\/\/github\.com\/omdsh-dev\/dsh-plugin-memory\/(?:blob|tree)\/main\/(.+)$/u)?.[1]
+      const repositoryPath = url.match(/^https:\/\/github\.com\/omdsh-dev\/suveng-dsh-plugin-memory\/(?:blob|tree)\/main\/(.+)$/u)?.[1]
       if (!repositoryPath && /^(?:[a-z][a-z\d+.-]*:|\/\/)/iu.test(url)) continue
       const [pathAndQuery, rawAnchor] = (repositoryPath ?? url).split('#')
       const rawPath = pathAndQuery.split('?')[0]
@@ -116,7 +116,7 @@ function main() {
   const manifest = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
   for (const file of ['README.md', 'README.zh-CN.md']) {
     const readme = readFileSync(join(root, file), 'utf8')
-    for (const name of Object.keys(manifest.dependencies).filter(name => name.startsWith('dsh-plugin-memory-'))) {
+    for (const name of Object.keys(manifest.dependencies).filter(name => name.startsWith('suveng-dsh-plugin-memory-'))) {
       if (!readme.includes(name)) report.failures.push(`${file}: missing official plugin ${name}`)
     }
   }

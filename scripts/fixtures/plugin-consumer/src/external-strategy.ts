@@ -1,8 +1,8 @@
 import type { Context } from '@deepseek-ai/cordis'
-import { COMPOSABLE_MEMORY_API_VERSION } from 'dsh-plugin-memory/contracts'
-import { defineMemoryPlugin, defineMemoryStrategy, installMemory } from 'dsh-plugin-memory/extension-sdk'
+import { COMPOSABLE_MEMORY_API_VERSION } from 'suveng-dsh-plugin-memory/contracts'
+import { defineMemoryPlugin, defineMemoryStrategy, installMemory } from 'suveng-dsh-plugin-memory/extension-sdk'
 
-export const name = 'dsh-plugin-memory-strategy-external-focus'
+export const name = 'suveng-dsh-plugin-memory-strategy-external-focus'
 export const inject = ['memoryMemory']
 export const memoryPlugin = defineMemoryPlugin({
   packageName: name,

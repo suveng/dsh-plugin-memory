@@ -4,5 +4,5 @@ import type { MemoryDisplayMode } from './protocol.ts'
 export function normalizeDisplayMode(value: unknown): MemoryDisplayMode {
   if (value === undefined || value === 'sidebar') return 'sidebar'
   if (value === 'builtin' || value === 'buildin') return 'builtin'
-  throw new Error('dsh-plugin-memory: displayMode must be sidebar or builtin (legacy buildin is accepted)')
+  throw new Error('suveng-dsh-plugin-memory: displayMode must be sidebar or builtin (legacy buildin is accepted)')
 }

@@ -5,8 +5,8 @@ import { MEMORY_SETTINGS_CLASS_NAMES } from '../src/client/settings-controls.tsx
 const sidebarCss = readFileSync(new URL('../src/client/MemorySidebarView.module.css', import.meta.url), 'utf8')
 const workspaceCss = readFileSync(new URL('../src/client/MemoryWorkspace.module.css', import.meta.url), 'utf8')
 const viewCss = readFileSync(new URL('../src/client/MemoryView.module.css', import.meta.url), 'utf8')
-const runtimeCss = readFileSync(new URL('../plugins/dsh-plugin-memory-source-runtime/presentation/sidebar.module.css', import.meta.url), 'utf8')
-const spacesCss = readFileSync(new URL('../plugins/dsh-plugin-memory-source-memory-spaces/presentation/sidebar.module.css', import.meta.url), 'utf8')
+const runtimeCss = readFileSync(new URL('../plugins/suveng-dsh-plugin-memory-source-runtime/presentation/sidebar.module.css', import.meta.url), 'utf8')
+const spacesCss = readFileSync(new URL('../plugins/suveng-dsh-plugin-memory-source-memory-spaces/presentation/sidebar.module.css', import.meta.url), 'utf8')
 
 const sidebarSurface = 'var(--dsw-alias-bg-overlay, var(--dsw-alias-bg-base))'
 // The pinned DSH sidebar; 0.2.0-rc.2 ships the same panel row rules.

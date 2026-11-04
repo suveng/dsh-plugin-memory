@@ -1,8 +1,8 @@
 import { realpathSync } from 'node:fs'
-import { MemoryCompositionRunner } from 'dsh-plugin-memory/testing'
-import * as runtimePlugin from 'dsh-plugin-memory-source-runtime'
-import * as spacesPlugin from 'dsh-plugin-memory-source-memory-spaces'
-import * as strategyPlugin from 'dsh-plugin-memory-strategy-default-three-tier'
+import { MemoryCompositionRunner } from 'suveng-dsh-plugin-memory/testing'
+import * as runtimePlugin from 'suveng-dsh-plugin-memory-source-runtime'
+import * as spacesPlugin from 'suveng-dsh-plugin-memory-source-memory-spaces'
+import * as strategyPlugin from 'suveng-dsh-plugin-memory-strategy-default-three-tier'
 
 /**
  * Working memory that an earlier, failed archive attempt already copied into
@@ -32,7 +32,7 @@ export async function seedArchiveCopies({ dataDir, workspace }) {
     await runner.mount(runtimePlugin, { instanceId: 'runtime', config: { dataDir, userDataDir: dataDir } })
     await runner.mount(spacesPlugin, { instanceId: 'memory-spaces', config: {
       dataDir, timeoutMs: 20_000,
-      providers: [{ use: 'dsh-plugin-memory-provider-native', instanceId: 'memory-native' }],
+      providers: [{ use: 'suveng-dsh-plugin-memory-provider-native', instanceId: 'memory-native' }],
     } })
     const scope = { storage: 'global', workspaceId: realpathSync(workspace) }
     const runtime = await runner.managementClient('source:runtime', scope)

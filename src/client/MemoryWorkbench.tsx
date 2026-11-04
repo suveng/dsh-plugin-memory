@@ -55,7 +55,7 @@ interface MemoryWorkbenchProps {
   t?: MemoryTranslate
   locale?: string
   onClose?: () => void
-  /** Opens the dsh-plugin-memory page under DSH Plugins, where the configuration lives, while that page offers navigation. */
+  /** Opens the suveng-dsh-plugin-memory page under DSH Plugins, where the configuration lives, while that page offers navigation. */
   configuration?: MemoryActionSeat
   /** Moves when a component is switched through DSH's plugin manager, or memory changes on the configuration page. */
   componentChanges?: MemoryChangeSignal
@@ -452,7 +452,7 @@ function MemoryWorkspace({ connection, settingsScope, sessionId, workspaceId, wo
   const sourceComponents = (dashboard?.entries ?? []).filter(entry => entry.roles.includes('source'))
   const rank = (entry: MemoryPluginEntryView): number => { const index = layerIds.indexOf(layerOf(entry) ?? ''); return index < 0 ? layerIds.length : index }
   const componentCards: ComponentCard[] = dashboard === null
-    ? layerIds.map(id => ({ key: id, packageName: 'dsh-plugin-memory-source-' + id, label: sourceName(id), enabled: layerState(id) !== 'off', state: layerState(id) }))
+    ? layerIds.map(id => ({ key: id, packageName: 'suveng-dsh-plugin-memory-source-' + id, label: sourceName(id), enabled: layerState(id) !== 'off', state: layerState(id) }))
     : [...sourceComponents].sort((left, right) => rank(left) - rank(right)).map(entry => {
       const layerId = layerOf(entry)
       return { key: entry.entryId, packageName: entry.packageName, label: componentCopy(entry, locale).label, enabled: entry.enabled,
@@ -494,7 +494,7 @@ function MemoryWorkspace({ connection, settingsScope, sessionId, workspaceId, wo
       : () => { requestComponentPage(focusPackage); openConfiguration() }
   const focused = focusType !== undefined
   return (
-    <main className={appearanceClass(css.shell, sidebarCss.shell)} data-dsh-plugin="dsh-plugin-memory" data-dsh-part="memory-view" data-memory-surface={surface} data-memory-focus={focusType}>
+    <main className={appearanceClass(css.shell, sidebarCss.shell)} data-dsh-plugin="suveng-dsh-plugin-memory" data-dsh-part="memory-view" data-memory-surface={surface} data-memory-focus={focusType}>
       <header className={appearanceClass(css.masthead, sidebarCss.masthead)} data-window-drag={titleBar || undefined}>
         {onClose !== undefined && <button type="button" className={appearanceClass(css.ghostButton, css.backButton)} onClick={onClose} aria-label={t('header.backToConversation')}><IconChevronLeftOutline14 size={14} /><span>{t('header.backToConversation')}</span></button>}
         <div className={appearanceClass(css.brand, sidebarCss.brand)}>

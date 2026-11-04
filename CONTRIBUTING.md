@@ -2,7 +2,7 @@
 
 [简体中文](./CONTRIBUTING.zh-CN.md) | **English**
 
-Thank you for contributing to dsh-plugin-memory. This document defines the Issue, Pull Request, verification, and maintenance rules. See the [Development and Verification Guide](./docs/en/development/README.md) for implementation details and test scenarios.
+Thank you for contributing to suveng-dsh-plugin-memory. This document defines the Issue, Pull Request, verification, and maintenance rules. See the [Development and Verification Guide](./docs/en/development/README.md) for implementation details and test scenarios.
 
 ## Pull Request scope
 
@@ -26,8 +26,8 @@ Documentation-only PRs from external contributors are not accepted directly. Ope
 ## Quick start
 
 ```sh
-git clone https://github.com/suveng/dsh-plugin-memory.git
-cd dsh-plugin-memory
+git clone https://github.com/suveng/suveng-dsh-plugin-memory.git
+cd suveng-dsh-plugin-memory
 pnpm install
 pnpm run verify
 ```

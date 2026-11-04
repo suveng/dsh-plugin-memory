@@ -5,7 +5,7 @@ import { join } from 'node:path'
 import { servePackedWebFixture } from './packed-web-fixture.mjs'
 
 const packageName = 'issue273-memory-skin-fixture'
-const selector = '[data-dsh-plugin="dsh-plugin-memory"][data-dsh-part="memory-view"]'
+const selector = '[data-dsh-plugin="suveng-dsh-plugin-memory"][data-dsh-part="memory-view"]'
 const css = `${selector} {
   --mn-bg: #e0f7ed;
   --mn-backdrop: #c4eadc;
@@ -25,7 +25,7 @@ await servePackedWebFixture({
       name: packageName, version: '0.0.0', private: true, type: 'module',
       main: './index.js', exports: { '.': './index.js', './client': './client.js', './package.json': './package.json' },
       files: ['index.js', 'client.js', 'skin.css', 'cordis.patch.yml'],
-      dsh: { bundle: { patch: './cordis.patch.yml' }, client: { inject: ['dsh-plugin-memory'], external: ['dsh-plugin-memory'], platform: 'web' } },
+      dsh: { bundle: { patch: './cordis.patch.yml' }, client: { inject: ['suveng-dsh-plugin-memory'], external: ['suveng-dsh-plugin-memory'], platform: 'web' } },
     }, null, 2) + '\n')
     await writeFile(join(directory, 'index.js'), 'export function apply() {}\n')
     await writeFile(join(directory, 'skin.css'), css)
@@ -36,7 +36,7 @@ await servePackedWebFixture({
     await writeFile(join(directory, 'client.js'), `window.__ModuleLoader__.load({
   id: ${JSON.stringify(packageName)},
   factory: require => {
-    require('dsh-plugin-memory');
+    require('suveng-dsh-plugin-memory');
     return { apply(ctx) {
       ctx.effect(() => {
         const style = document.createElement('style');

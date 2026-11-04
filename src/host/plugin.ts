@@ -26,7 +26,7 @@ import { plainHostConfig, type LiveHostConfig } from './live-config.ts'
 import { ProfileMemorySettings } from './settings-service.ts'
 import { dshPluginCommand, VersionUpdateManager, type DshBundleInstaller } from './version-updates.ts'
 
-export const name = 'dsh-plugin-memory'
+export const name = 'suveng-dsh-plugin-memory'
 export const provide = ['memoryMemory']
 export const inject = ['tools', 'settings', 'commands', 'agents', 'subagents']
 export { LiveConfig as Config } from './live-config.ts'
@@ -143,8 +143,8 @@ export function apply(rawContext: unknown, rawConfig: MemoryConfig | LiveHostCon
     const graph = createGraphAwaitingWorkspace(config, extensions)
     if (graph !== undefined) runtime.swap(graph)
     else runtime.defer(config)
-  }), 'dsh-plugin-memory: live runtime settings')
-  ctx.effect(() => memoryPlugins.start(), 'dsh-plugin-memory: plugin graph settings')
+  }), 'suveng-dsh-plugin-memory: live runtime settings')
+  ctx.effect(() => memoryPlugins.start(), 'suveng-dsh-plugin-memory: plugin graph settings')
   hostSettings.register('memory-ui', InteractionConfig, {
     base: resolveInteractionConfig(resolved.conversationInteraction),
     applies: 'live',
@@ -159,7 +159,7 @@ export function apply(rawContext: unknown, rawConfig: MemoryConfig | LiveHostCon
     const migrate = (): void => {
       if (disposed) return
       void migrateLegacyDisplayMode(hostSettings).catch(error => {
-        console.warn('dsh-plugin-memory: could not persist the builtin displayMode migration', error)
+        console.warn('suveng-dsh-plugin-memory: could not persist the builtin displayMode migration', error)
       })
     }
     const unsubscribe = ctx.on('settings/document-updated', ((namespace: string) => {
@@ -167,7 +167,7 @@ export function apply(rawContext: unknown, rawConfig: MemoryConfig | LiveHostCon
     }) as never)
     migrate()
     return () => { disposed = true; unsubscribe() }
-  }, 'dsh-plugin-memory: canonical displayMode migration')
+  }, 'suveng-dsh-plugin-memory: canonical displayMode migration')
   ctx.effect(() => {
     let disposed = false
     const loader = ctx.get('loader') as { await?(): Promise<unknown> } | undefined
@@ -176,9 +176,9 @@ export function apply(rawContext: unknown, rawConfig: MemoryConfig | LiveHostCon
       const catalog = await memoryPlugins.catalog()
       if (disposed) return
       await hostSettings.importLegacy(catalog.entries.filter(entry => entry.roles.includes('source')).map(entry => entry.entryId))
-    }).catch(error => { console.warn('dsh-plugin-memory: could not recover retained legacy settings', error) })
+    }).catch(error => { console.warn('suveng-dsh-plugin-memory: could not recover retained legacy settings', error) })
     return () => { disposed = true }
-  }, 'dsh-plugin-memory: retained settings migration')
+  }, 'suveng-dsh-plugin-memory: retained settings migration')
   const coordinator: MemorySubagentCoordinator = new MemorySubagentCoordinator(ctx.subagents, runtime, ctx, () => {
     const taskAgentModel = runtime.config.taskAgentModel
     if (taskAgentModel.mode !== 'fixed') return undefined
@@ -201,7 +201,7 @@ export function apply(rawContext: unknown, rawConfig: MemoryConfig | LiveHostCon
   ctx.effect(() => {
     const stop = autoBackup.start()
     return () => { stop() }
-  }, 'dsh-plugin-memory: automatic Git backup')
+  }, 'suveng-dsh-plugin-memory: automatic Git backup')
   ctx.effect(() => {
     const stop = lifecycle.start()
     return async () => {
@@ -210,11 +210,11 @@ export function apply(rawContext: unknown, rawConfig: MemoryConfig | LiveHostCon
       await coordinator.dispose()
       runtime.dispose()
     }
-  }, 'dsh-plugin-memory.lifecycle-root()')
+  }, 'suveng-dsh-plugin-memory.lifecycle-root()')
   ctx.effect(() => {
     const loader = ctx.get('loader') as { await?(): Promise<unknown> } | undefined
     return registerTools(ctx, runtime, coordinator, extensions, loader?.await?.())
-  }, 'dsh-plugin-memory: Source tool lifecycle')
+  }, 'suveng-dsh-plugin-memory: Source tool lifecycle')
   registerCommands(ctx.commands, runtime, coordinator)
   registerGuidance(ctx, resolved)
   ctx.inject(['connection', 'webServer'], (webContext) => {

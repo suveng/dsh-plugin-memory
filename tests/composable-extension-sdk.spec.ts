@@ -14,7 +14,7 @@ function source(typeId = 'example'): MemorySourceDefinition {
       apiVersion: COMPOSABLE_MEMORY_API_VERSION,
       kind: 'source',
       typeId,
-      packageName: `dsh-plugin-memory-source-${typeId}`,
+      packageName: `suveng-dsh-plugin-memory-source-${typeId}`,
       role: 'external-memory',
       capabilities: ['project'],
       consistency: 'exact-snapshot',
@@ -41,7 +41,7 @@ function strategy(typeId = 'example'): MemoryStrategyDefinition {
       apiVersion: COMPOSABLE_MEMORY_API_VERSION,
       kind: 'strategy',
       typeId,
-      packageName: `dsh-plugin-memory-strategy-${typeId}`,
+      packageName: `suveng-dsh-plugin-memory-strategy-${typeId}`,
       deterministic: true,
       supportedSourceRoles: ['external-memory'],
       maxSources: 4,
@@ -97,7 +97,7 @@ describe('Composable Memory extension SDK', () => {
     const { ctx, runtime } = await host()
     const definition = source()
     const fiber = ctx.plugin({
-      name: 'dsh-plugin-memory-source-example',
+      name: 'suveng-dsh-plugin-memory-source-example',
       inject: ['memoryMemory'],
       apply(pluginContext) {
         installMemory(pluginContext, { sources: [definition] }, { instanceId: 'example-work', artifactDigest: 'sha256:fixture' })
@@ -109,7 +109,7 @@ describe('Composable Memory extension SDK', () => {
       revision: 1,
       sources: [{
         instanceKey: 'source:example-work',
-        provenance: { packageName: 'dsh-plugin-memory-source-example', entryId: 'example-work', artifactDigest: 'sha256:fixture' },
+        provenance: { packageName: 'suveng-dsh-plugin-memory-source-example', entryId: 'example-work', artifactDigest: 'sha256:fixture' },
       }],
       strategies: [],
     })
@@ -169,7 +169,7 @@ describe('Composable Memory extension SDK', () => {
       entries.set(child.fiber, entryId)
       install(child)
     } })
-    const shim = 'include:dsh-market:mkt-client-dsh-plugin-memory-source-example'
+    const shim = 'include:dsh-market:mkt-client-suveng-dsh-plugin-memory-source-example'
     const starter = located('include:memory-source-example', child => installMemory(child, { sources: [source()] }))
     const shims = [undefined, ' ', shim, 'example-explicit'].map(instanceId =>
       located(shim, child => installMemory(child, { sources: [source()] }, instanceId === undefined ? {} : { instanceId })))

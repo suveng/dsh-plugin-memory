@@ -13,7 +13,7 @@ import {
 const directories: string[] = []
 
 function temporary(): string {
-  const directory = mkdtempSync(join(tmpdir(), 'dsh-plugin-memory-sync-config-'))
+  const directory = mkdtempSync(join(tmpdir(), 'suveng-dsh-plugin-memory-sync-config-'))
   directories.push(directory)
   return directory
 }

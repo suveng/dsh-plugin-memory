@@ -8,7 +8,7 @@ import { compareVersions, VersionUpdateManager, type DshBundleChange, type DshBu
 const temporary: string[] = []
 
 function directory(label: string): string {
-  const path = mkdtempSync(join(tmpdir(), `dsh-plugin-memory-${label}-`))
+  const path = mkdtempSync(join(tmpdir(), `suveng-dsh-plugin-memory-${label}-`))
   temporary.push(path)
   return path
 }
@@ -53,8 +53,8 @@ describe('VersionUpdateManager', () => {
     const dshHome = directory('link-home')
     const profile = join(dshHome, 'profiles', 'web')
     mkdirSync(profile, { recursive: true })
-    json(join(root, 'package.json'), { name: 'dsh-plugin-memory', version: '0.1.2' })
-    json(join(profile, 'package.json'), { name: 'dsh-profile-web', dependencies: { 'dsh-plugin-memory': `link:${root}` } })
+    json(join(root, 'package.json'), { name: 'suveng-dsh-plugin-memory', version: '0.1.2' })
+    json(join(profile, 'package.json'), { name: 'dsh-profile-web', dependencies: { 'suveng-dsh-plugin-memory': `link:${root}` } })
     const manager = new VersionUpdateManager({
       packageManifestPath: join(root, 'package.json'),
       dshHome,
@@ -65,7 +65,7 @@ describe('VersionUpdateManager', () => {
     })
 
     const status = await manager.check()
-    expect(status.components.find(component => component.id === 'dsh-plugin-memory')).toMatchObject({
+    expect(status.components.find(component => component.id === 'suveng-dsh-plugin-memory')).toMatchObject({
       current: '0.1.2', latest: '0.1.3', outdated: true, installMode: 'link', installProfile: 'web', installPath: root, updateSupported: false, updateHint: 'link',
     })
   })
@@ -90,7 +90,7 @@ describe('VersionUpdateManager', () => {
       current: '0.2.3',
       latest: '0.2.3',
     })
-    expect(status.components.find(component => component.id === 'dsh-plugin-memory')).toMatchObject({
+    expect(status.components.find(component => component.id === 'suveng-dsh-plugin-memory')).toMatchObject({
       installMode: 'manual',
       installPath: root,
     })
@@ -98,12 +98,12 @@ describe('VersionUpdateManager', () => {
 
   it('updates an npm-managed plugin only inside its owning DSH profile', async () => {
     const profile = directory('npm-profile')
-    const packageRoot = join(profile, 'node_modules', 'dsh-plugin-memory')
+    const packageRoot = join(profile, 'node_modules', 'suveng-dsh-plugin-memory')
     mkdirSync(packageRoot, { recursive: true })
-    json(join(profile, 'package.json'), { name: 'dsh-profile-web', dependencies: { 'dsh-plugin-memory': '^0.1.2' } })
-    json(join(packageRoot, 'package.json'), { name: 'dsh-plugin-memory', version: '0.1.2' })
+    json(join(profile, 'package.json'), { name: 'dsh-profile-web', dependencies: { 'suveng-dsh-plugin-memory': '^0.1.2' } })
+    json(join(packageRoot, 'package.json'), { name: 'suveng-dsh-plugin-memory', version: '0.1.2' })
     const run = vi.fn<ProcessRunner>(async () => {
-      json(join(packageRoot, 'package.json'), { name: 'dsh-plugin-memory', version: '0.1.3' })
+      json(join(packageRoot, 'package.json'), { name: 'suveng-dsh-plugin-memory', version: '0.1.3' })
       return { stdout: 'updated', stderr: '', exitCode: 0 }
     })
     const manager = new VersionUpdateManager({
@@ -116,22 +116,22 @@ describe('VersionUpdateManager', () => {
     })
 
     const status = await manager.check()
-    expect(status.components.find(component => component.id === 'dsh-plugin-memory')).toMatchObject({
+    expect(status.components.find(component => component.id === 'suveng-dsh-plugin-memory')).toMatchObject({
       installMode: 'npm',
       installProfile: 'web',
       installPath: profile,
     })
-    await expect(manager.update('dsh-plugin-memory')).resolves.toMatchObject({ updated: true, previousVersion: '0.1.2', currentVersion: '0.1.3', restartRequired: true })
+    await expect(manager.update('suveng-dsh-plugin-memory')).resolves.toMatchObject({ updated: true, previousVersion: '0.1.2', currentVersion: '0.1.3', restartRequired: true })
     expect(manager.currentDshMemoryVersion).toBe('0.1.3')
-    expect(run).toHaveBeenCalledWith(expect.stringMatching(/pnpm$/), ['add', 'dsh-plugin-memory@0.1.3', '--save-exact'], expect.objectContaining({ timeoutMs: 600_000, maxOutputBytes: 16 * 1024, cwd: profile }))
+    expect(run).toHaveBeenCalledWith(expect.stringMatching(/pnpm$/), ['add', 'suveng-dsh-plugin-memory@0.1.3', '--save-exact'], expect.objectContaining({ timeoutMs: 600_000, maxOutputBytes: 16 * 1024, cwd: profile }))
   })
 
   function npmFixture(current: string, tags: Record<string, string | undefined>) {
     const profile = directory('npm-channel')
-    const packageRoot = join(profile, 'node_modules', 'dsh-plugin-memory')
+    const packageRoot = join(profile, 'node_modules', 'suveng-dsh-plugin-memory')
     mkdirSync(packageRoot, { recursive: true })
-    json(join(profile, 'package.json'), { name: 'dsh-profile-web', dependencies: { 'dsh-plugin-memory': current } })
-    json(join(packageRoot, 'package.json'), { name: 'dsh-plugin-memory', version: current })
+    json(join(profile, 'package.json'), { name: 'dsh-profile-web', dependencies: { 'suveng-dsh-plugin-memory': current } })
+    json(join(packageRoot, 'package.json'), { name: 'suveng-dsh-plugin-memory', version: current })
     const fetch = vi.fn(async (_name: string, tag = 'latest') => tags[tag])
     const run = vi.fn<ProcessRunner>(async () => ({ stdout: '', stderr: '', exitCode: 0 }))
     const options = {
@@ -144,63 +144,63 @@ describe('VersionUpdateManager', () => {
 
   it('finds beta updates without exposing prereleases to stable users', async () => {
     const beta = npmFixture('0.5.0-beta.1', { latest: '0.4.0', beta: '0.5.0-beta.2' })
-    expect((await beta.manager.check()).components.find(item => item.id === 'dsh-plugin-memory')).toMatchObject({ current: '0.5.0-beta.1', latest: '0.5.0-beta.2', outdated: true })
+    expect((await beta.manager.check()).components.find(item => item.id === 'suveng-dsh-plugin-memory')).toMatchObject({ current: '0.5.0-beta.1', latest: '0.5.0-beta.2', outdated: true })
     expect(beta.fetch.mock.calls.map(call => call[1])).toEqual(['latest', 'beta'])
     const stable = npmFixture('0.4.0', { latest: '0.4.1', beta: '0.5.0-beta.2' })
-    expect((await stable.manager.check()).components.find(item => item.id === 'dsh-plugin-memory')).toMatchObject({ latest: '0.4.1', outdated: true })
+    expect((await stable.manager.check()).components.find(item => item.id === 'suveng-dsh-plugin-memory')).toMatchObject({ latest: '0.4.1', outdated: true })
     expect(stable.fetch).toHaveBeenCalledTimes(1)
-    expect(stable.fetch).toHaveBeenCalledWith('dsh-plugin-memory', 'latest')
+    expect(stable.fetch).toHaveBeenCalledWith('suveng-dsh-plugin-memory', 'latest')
     expect(stable.run).not.toHaveBeenCalled()
   })
 
   it('follows the rc channel for an installed release candidate', async () => {
     const candidate = npmFixture('0.5.0-rc.1', { latest: '0.4.7', rc: '0.5.0-rc.2' })
-    expect((await candidate.manager.check()).components.find(item => item.id === 'dsh-plugin-memory')).toMatchObject({ current: '0.5.0-rc.1', latest: '0.5.0-rc.2', outdated: true })
+    expect((await candidate.manager.check()).components.find(item => item.id === 'suveng-dsh-plugin-memory')).toMatchObject({ current: '0.5.0-rc.1', latest: '0.5.0-rc.2', outdated: true })
     expect(candidate.fetch.mock.calls.map(call => call[1])).toEqual(['latest', 'rc'])
   })
 
   it('offers the final stable version to beta users but never downgrades to an older stable version', async () => {
     const beta = npmFixture('0.5.0-beta.1', { latest: '0.5.0', beta: '0.5.0-beta.2' })
-    expect((await beta.manager.check()).components.find(item => item.id === 'dsh-plugin-memory')).toMatchObject({ latest: '0.5.0', outdated: true })
+    expect((await beta.manager.check()).components.find(item => item.id === 'suveng-dsh-plugin-memory')).toMatchObject({ latest: '0.5.0', outdated: true })
     const older = npmFixture('0.5.0-beta.1', { latest: '0.4.0' })
-    await expect(older.manager.update('dsh-plugin-memory')).resolves.toMatchObject({ updated: false, currentVersion: '0.5.0-beta.1' })
+    await expect(older.manager.update('suveng-dsh-plugin-memory')).resolves.toMatchObject({ updated: false, currentVersion: '0.5.0-beta.1' })
     expect(older.run).not.toHaveBeenCalled()
   })
 
   it('rejects a mis-tagged prerelease instead of silently enrolling a stable user', async () => {
     const stable = npmFixture('0.4.0', { latest: '0.5.0-beta.2' })
-    expect((await stable.manager.check()).components.find(item => item.id === 'dsh-plugin-memory')).toMatchObject({ outdated: false, checkError: 'latest-unavailable' })
-    await expect(stable.manager.update('dsh-plugin-memory')).rejects.toThrow('Unable to verify')
+    expect((await stable.manager.check()).components.find(item => item.id === 'suveng-dsh-plugin-memory')).toMatchObject({ outdated: false, checkError: 'latest-unavailable' })
+    await expect(stable.manager.update('suveng-dsh-plugin-memory')).rejects.toThrow('Unable to verify')
     expect(stable.run).not.toHaveBeenCalled()
   })
 
   it('installs the exact checked beta and verifies the profile link instead of pnpm’s old package directory', async () => {
     const value = npmFixture('0.5.0-beta.1', { latest: '0.4.0', beta: '0.5.0-beta.2' })
-    const oldManifest = join(value.profile, 'node_modules/.pnpm/old/node_modules/dsh-plugin-memory/package.json')
-    mkdirSync(join(value.profile, 'node_modules/.pnpm/old/node_modules/dsh-plugin-memory'), { recursive: true })
-    json(oldManifest, { name: 'dsh-plugin-memory', version: '0.5.0-beta.1' })
+    const oldManifest = join(value.profile, 'node_modules/.pnpm/old/node_modules/suveng-dsh-plugin-memory/package.json')
+    mkdirSync(join(value.profile, 'node_modules/.pnpm/old/node_modules/suveng-dsh-plugin-memory'), { recursive: true })
+    json(oldManifest, { name: 'suveng-dsh-plugin-memory', version: '0.5.0-beta.1' })
     const manager = new VersionUpdateManager({ ...value.options, packageManifestPath: oldManifest })
     value.run.mockImplementation(async () => {
-      json(join(value.packageRoot, 'package.json'), { name: 'dsh-plugin-memory', version: '0.5.0-beta.2' })
+      json(join(value.packageRoot, 'package.json'), { name: 'suveng-dsh-plugin-memory', version: '0.5.0-beta.2' })
       return { stdout: 'installed', stderr: '', exitCode: 0 }
     })
-    await expect(manager.update('dsh-plugin-memory')).resolves.toMatchObject({ previousVersion: '0.5.0-beta.1', currentVersion: '0.5.0-beta.2', updated: true, restartRequired: true })
-    expect(value.run).toHaveBeenCalledWith('/fake/pnpm', ['add', 'dsh-plugin-memory@0.5.0-beta.2', '--save-exact'], expect.objectContaining({ cwd: value.profile }))
+    await expect(manager.update('suveng-dsh-plugin-memory')).resolves.toMatchObject({ previousVersion: '0.5.0-beta.1', currentVersion: '0.5.0-beta.2', updated: true, restartRequired: true })
+    expect(value.run).toHaveBeenCalledWith('/fake/pnpm', ['add', 'suveng-dsh-plugin-memory@0.5.0-beta.2', '--save-exact'], expect.objectContaining({ cwd: value.profile }))
   })
 
   it('does not report success when pnpm exits cleanly without installing the requested version', async () => {
     const value = npmFixture('0.5.0-beta.1', { beta: '0.5.0-beta.2' })
-    await expect(value.manager.update('dsh-plugin-memory')).rejects.toThrow('did not install the requested version')
+    await expect(value.manager.update('suveng-dsh-plugin-memory')).rejects.toThrow('did not install the requested version')
     expect(value.manager.currentDshMemoryVersion).toBe('0.5.0-beta.1')
   })
 
   it('preserves the known version on installation or registry failure', async () => {
     const value = npmFixture('0.5.0-beta.1', { beta: '0.5.0-beta.2' })
     value.run.mockResolvedValue({ stdout: '', stderr: 'fixture network failure', exitCode: 1 })
-    await expect(value.manager.update('dsh-plugin-memory')).rejects.toThrow('fixture network failure')
+    await expect(value.manager.update('suveng-dsh-plugin-memory')).rejects.toThrow('fixture network failure')
     expect(value.manager.currentDshMemoryVersion).toBe('0.5.0-beta.1')
     value.fetch.mockRejectedValue(new Error('registry unavailable'))
-    expect((await value.manager.check()).components.find(item => item.id === 'dsh-plugin-memory')).toMatchObject({ outdated: false, checkError: 'latest-unavailable' })
+    expect((await value.manager.check()).components.find(item => item.id === 'suveng-dsh-plugin-memory')).toMatchObject({ outdated: false, checkError: 'latest-unavailable' })
   })
 
   function goFixture(location: 'gobin' | 'gopath' | 'download' = 'gobin') {
@@ -415,7 +415,7 @@ describe('VersionUpdateManager', () => {
       ...(windowsShims ? { memoryCliPath: () => shim, resolveExecutable: (name: string) => name === shim ? shim : name === 'npm' ? npm : undefined } : {}),
     })
     expect((await manager.check()).components.find(item => item.id === 'memory')).toMatchObject({ current: '0.2.8', installMode: 'npm', updateSupported: true, updateHint: 'npm' })
-    expect((await manager.check()).components.map(item => item.id)).toEqual(['dsh-plugin-memory', 'memory'])
+    expect((await manager.check()).components.map(item => item.id)).toEqual(['suveng-dsh-plugin-memory', 'memory'])
     await expect(manager.update('memory')).resolves.toMatchObject({ previousVersion: '0.2.8', currentVersion: '0.2.9', updated: true })
     const launcher = windowsShims ? f.launcher : realpathSync(f.launcher)
     const nodeCalls = f.run.mock.calls.filter(([command]) => command === process.execPath)
@@ -432,10 +432,10 @@ describe('VersionUpdateManager', () => {
 
   function subpackageFixture() {
     const f = npmFixture('0.5.2', { latest: '0.5.3' })
-    const bundled = 'dsh-plugin-memory-source-runtime' as const
-    const direct = 'dsh-plugin-memory-provider-native' as const
-    json(join(f.packageRoot, 'package.json'), { name: 'dsh-plugin-memory', version: '0.5.2', dependencies: { [bundled]: '0.5.1', [direct]: '0.5.1', unrelated: '1.0.0' } })
-    json(join(f.profile, 'package.json'), { name: 'dsh-profile-web', dependencies: { 'dsh-plugin-memory': '0.5.2', [direct]: '0.5.2' } })
+    const bundled = 'suveng-dsh-plugin-memory-source-runtime' as const
+    const direct = 'suveng-dsh-plugin-memory-provider-native' as const
+    json(join(f.packageRoot, 'package.json'), { name: 'suveng-dsh-plugin-memory', version: '0.5.2', dependencies: { [bundled]: '0.5.1', [direct]: '0.5.1', unrelated: '1.0.0' } })
+    json(join(f.profile, 'package.json'), { name: 'dsh-profile-web', dependencies: { 'suveng-dsh-plugin-memory': '0.5.2', [direct]: '0.5.2' } })
     const bundledRoot = join(f.packageRoot, 'node_modules', bundled)
     const directRoot = join(f.profile, 'node_modules', direct)
     for (const path of [bundledRoot, directRoot]) mkdirSync(path, { recursive: true })
@@ -446,7 +446,7 @@ describe('VersionUpdateManager', () => {
 
   it('shows actual subpackage versions and separates Starter pins from direct Profile dependencies', async () => {
     const f = subpackageFixture()
-    const packages = (await f.manager.check()).components.find(item => item.id === 'dsh-plugin-memory')!.packages!
+    const packages = (await f.manager.check()).components.find(item => item.id === 'suveng-dsh-plugin-memory')!.packages!
     expect(packages).toHaveLength(2)
     expect(packages.find(item => item.id === f.bundled)).toMatchObject({ kind: 'source', current: '0.5.1', expectedVersion: '0.5.1', latest: '0.5.3', managedBy: 'starter', updateSupported: false })
     expect(packages.find(item => item.id === f.direct)).toMatchObject({ kind: 'provider', current: '0.5.2', expectedVersion: '0.5.1', managedBy: 'profile', updateSupported: true })
@@ -457,13 +457,13 @@ describe('VersionUpdateManager', () => {
     const f = subpackageFixture()
     f.run.mockImplementation(async () => {
       json(join(f.directRoot, 'package.json'), { name: f.direct, version: '0.5.3' })
-      json(join(f.profile, 'package.json'), { name: 'dsh-profile-web', dependencies: { 'dsh-plugin-memory': '0.5.2', [f.direct]: '0.5.3' } })
+      json(join(f.profile, 'package.json'), { name: 'dsh-profile-web', dependencies: { 'suveng-dsh-plugin-memory': '0.5.2', [f.direct]: '0.5.3' } })
       return { stdout: 'updated', stderr: '', exitCode: 0 }
     })
     await expect(f.manager.update(f.direct)).resolves.toMatchObject({ component: f.direct, previousVersion: '0.5.2', currentVersion: '0.5.3', restartRequired: true })
     expect(f.run).toHaveBeenCalledWith('/fake/pnpm', ['add', `${f.direct}@0.5.3`, '--save-exact'], expect.objectContaining({ cwd: f.profile }))
     expect(f.manager.currentDshMemoryVersion).toBe('0.5.2')
-    const main = (await f.manager.check()).components.find(item => item.id === 'dsh-plugin-memory')!
+    const main = (await f.manager.check()).components.find(item => item.id === 'suveng-dsh-plugin-memory')!
     expect(main.restartRequired).toBe(true)
     expect(main.packages!.find(item => item.id === f.direct)).toMatchObject({ current: '0.5.3', outdated: false, restartRequired: true })
     expect(main.packages!.find(item => item.id === f.bundled)).toMatchObject({ current: '0.5.1', restartRequired: false })
@@ -472,9 +472,9 @@ describe('VersionUpdateManager', () => {
   it('rejects Starter dependencies, uninstalled package names, and source links as independent update targets', async () => {
     const f = subpackageFixture()
     await expect(f.manager.update(f.bundled)).rejects.toThrow('through its Starter')
-    await expect(f.manager.update('dsh-plugin-memory-source-uninstalled')).rejects.toThrow('Unknown version component')
-    json(join(f.profile, 'package.json'), { name: 'dsh-profile-web', dependencies: { 'dsh-plugin-memory': '0.5.2', [f.direct]: `link:${f.directRoot}` } })
-    expect((await f.manager.check()).components.find(item => item.id === 'dsh-plugin-memory')!.packages!.find(item => item.id === f.direct)).toMatchObject({ installMode: 'link', updateSupported: false })
+    await expect(f.manager.update('suveng-dsh-plugin-memory-source-uninstalled')).rejects.toThrow('Unknown version component')
+    json(join(f.profile, 'package.json'), { name: 'dsh-profile-web', dependencies: { 'suveng-dsh-plugin-memory': '0.5.2', [f.direct]: `link:${f.directRoot}` } })
+    expect((await f.manager.check()).components.find(item => item.id === 'suveng-dsh-plugin-memory')!.packages!.find(item => item.id === f.direct)).toMatchObject({ installMode: 'link', updateSupported: false })
     await expect(f.manager.update(f.direct)).rejects.toThrow('original installation method')
     expect(f.run).not.toHaveBeenCalled()
   })
@@ -482,7 +482,7 @@ describe('VersionUpdateManager', () => {
   it('keeps other package versions available if one package registry request fails', async () => {
     const f = subpackageFixture()
     f.fetch.mockImplementation(async name => { if (name === f.direct) throw new Error('offline'); return '0.5.3' })
-    const main = (await f.manager.check()).components.find(item => item.id === 'dsh-plugin-memory')!
+    const main = (await f.manager.check()).components.find(item => item.id === 'suveng-dsh-plugin-memory')!
     expect(main.latest).toBe('0.5.3')
     expect(main.packages!.find(item => item.id === f.direct)).toMatchObject({ current: '0.5.2', checkError: 'latest-unavailable' })
     expect(main.packages!.find(item => item.id === f.bundled)).toMatchObject({ latest: '0.5.3', outdated: true })
@@ -492,30 +492,30 @@ describe('VersionUpdateManager', () => {
     const f = npmFixture('0.5.2', { latest: '0.5.3' })
     let finish!: () => void
     f.run.mockImplementation(async () => { await new Promise<void>(resolve => { finish = resolve }); return { stdout: '', stderr: 'failed', exitCode: 1 } })
-    const first = f.manager.update('dsh-plugin-memory')
+    const first = f.manager.update('suveng-dsh-plugin-memory')
     await vi.waitFor(() => expect(finish).toBeTypeOf('function'))
-    await expect(f.manager.update('dsh-plugin-memory')).rejects.toThrow('already in progress')
+    await expect(f.manager.update('suveng-dsh-plugin-memory')).rejects.toThrow('already in progress')
     finish()
     await expect(first).rejects.toThrow('failed')
     f.run.mockResolvedValue({ stdout: '', stderr: 'retry reached installer', exitCode: 1 })
-    await expect(f.manager.update('dsh-plugin-memory')).rejects.toThrow('retry reached installer')
+    await expect(f.manager.update('suveng-dsh-plugin-memory')).rejects.toThrow('retry reached installer')
   })
 })
 
 describe('Starter updates through DSH\'s plugin manager', () => {
   function profileFixture(options: { pnpm?: boolean; installer?: Partial<DshBundleInstaller> | null; runningProfile?: (profile: string) => string | undefined; packageManager?: boolean; gate?: Promise<void>; added?: Record<string, { bundle: boolean }>; pluginCommand?: DshPluginCommand | null } = {}) {
     const profile = directory('dsh-profile')
-    const packageRoot = join(profile, 'node_modules', 'dsh-plugin-memory')
+    const packageRoot = join(profile, 'node_modules', 'suveng-dsh-plugin-memory')
     mkdirSync(packageRoot, { recursive: true })
     const added = Object.entries(options.added ?? {})
-    json(join(profile, 'package.json'), { name: 'dsh-profile-desktop', dependencies: { 'dsh-plugin-memory': '0.5.21', ...Object.fromEntries(added.map(([name]) => [name, '0.5.1'])) } })
-    json(join(packageRoot, 'package.json'), { name: 'dsh-plugin-memory', version: '0.5.21' })
+    json(join(profile, 'package.json'), { name: 'dsh-profile-desktop', dependencies: { 'suveng-dsh-plugin-memory': '0.5.21', ...Object.fromEntries(added.map(([name]) => [name, '0.5.1'])) } })
+    json(join(packageRoot, 'package.json'), { name: 'suveng-dsh-plugin-memory', version: '0.5.21' })
     // Packages the profile added on its own, beside the Starter.
     for (const [name, { bundle }] of added) {
       mkdirSync(join(profile, 'node_modules', name), { recursive: true })
       json(join(profile, 'node_modules', name, 'package.json'), { name, version: '0.5.1', ...(bundle ? { dsh: { bundle: { patch: './cordis.patch.yml' } } } : {}) })
     }
-    const installed = new Map<string, string>([['dsh-plugin-memory', '0.5.21'], ...added.map(([name]): [string, string] => [name, '0.5.1'])])
+    const installed = new Map<string, string>([['suveng-dsh-plugin-memory', '0.5.21'], ...added.map(([name]): [string, string] => [name, '0.5.1'])])
     const record = (name: string, version: string) => {
       const manifest = JSON.parse(readFileSync(join(profile, 'package.json'), 'utf8')) as { dependencies: Record<string, string> }
       json(join(profile, 'package.json'), { ...manifest, dependencies: { ...manifest.dependencies, [name]: version } })
@@ -534,7 +534,7 @@ describe('Starter updates through DSH\'s plugin manager', () => {
     const listBundles = vi.fn(async () => [{ name: 'other-bundle', version: '1.0.0' }, ...[...installed].map(([name, version]) => ({ name, version }))])
     const installer = options.installer === null ? undefined : { installBundle, listBundles, ...options.installer }
     const run = vi.fn<ProcessRunner>(async () => {
-      json(join(packageRoot, 'package.json'), { name: 'dsh-plugin-memory', version: '0.5.22' })
+      json(join(packageRoot, 'package.json'), { name: 'suveng-dsh-plugin-memory', version: '0.5.22' })
       return { stdout: 'updated', stderr: '', exitCode: 0 }
     })
     const manager = new VersionUpdateManager({
@@ -551,7 +551,7 @@ describe('Starter updates through DSH\'s plugin manager', () => {
       // null stands for a DSH whose installation exports no plugin command.
       ...(options.pluginCommand === undefined ? {} : { pluginCommand: async () => options.pluginCommand ?? undefined }),
     })
-    const starter = async () => (await manager.check()).components.find(component => component.id === 'dsh-plugin-memory')
+    const starter = async () => (await manager.check()).components.find(component => component.id === 'suveng-dsh-plugin-memory')
     /** What `dsh plugin add <name>@<version>` leaves: the profile record and the package. */
     const installedByDsh = (name: string, version: string) => {
       const path = join(profile, 'node_modules', name, 'package.json')
@@ -564,11 +564,11 @@ describe('Starter updates through DSH\'s plugin manager', () => {
   it('offers the update without pnpm on PATH and installs the exact version through DSH', async () => {
     const f = profileFixture()
     await expect(f.starter()).resolves.toMatchObject({ updateSupported: true, updateHint: 'dsh', outdated: true, latest: '0.5.22' })
-    await expect(f.manager.update('dsh-plugin-memory')).resolves.toMatchObject({
+    await expect(f.manager.update('suveng-dsh-plugin-memory')).resolves.toMatchObject({
       updated: true, previousVersion: '0.5.21', currentVersion: '0.5.22', restartRequired: true, output: 'Packages: +1\nDone',
     })
     // An exact version installs at once, outside pnpm's release-age window, and the bundle selection stays.
-    expect(f.installBundle).toHaveBeenCalledExactlyOnceWith('dsh-plugin-memory@0.5.22', { enabled: false })
+    expect(f.installBundle).toHaveBeenCalledExactlyOnceWith('suveng-dsh-plugin-memory@0.5.22', { enabled: false })
     expect(f.run).not.toHaveBeenCalled()
     expect(f.manager.currentDshMemoryVersion).toBe('0.5.22')
     await expect(f.starter()).resolves.toMatchObject({ restartRequired: true })
@@ -577,7 +577,7 @@ describe('Starter updates through DSH\'s plugin manager', () => {
   it('prefers DSH\'s installer over a pnpm on PATH', async () => {
     const f = profileFixture({ pnpm: true })
     await expect(f.starter()).resolves.toMatchObject({ updateHint: 'dsh' })
-    await f.manager.update('dsh-plugin-memory')
+    await f.manager.update('suveng-dsh-plugin-memory')
     expect(f.installBundle).toHaveBeenCalledOnce()
     expect(f.run).not.toHaveBeenCalled()
   })
@@ -585,14 +585,14 @@ describe('Starter updates through DSH\'s plugin manager', () => {
   it('never writes another profile through DSH', async () => {
     const f = profileFixture({ runningProfile: () => directory('other-profile') })
     await expect(f.starter()).resolves.toMatchObject({ updateSupported: false, updateHint: 'pnpm-missing' })
-    await expect(f.manager.update('dsh-plugin-memory')).rejects.toThrow('cannot be updated automatically')
+    await expect(f.manager.update('suveng-dsh-plugin-memory')).rejects.toThrow('cannot be updated automatically')
     expect(f.installBundle).not.toHaveBeenCalled()
   })
 
   it('runs DSH\'s installer with the pnpm on PATH where the launcher supplies none', async () => {
     const f = profileFixture({ pnpm: true, packageManager: false })
     await expect(f.starter()).resolves.toMatchObject({ updateSupported: true, updateHint: 'dsh' })
-    await f.manager.update('dsh-plugin-memory')
+    await f.manager.update('suveng-dsh-plugin-memory')
     expect(f.installBundle).toHaveBeenCalledOnce()
     expect(f.run).not.toHaveBeenCalled()
   })
@@ -601,28 +601,28 @@ describe('Starter updates through DSH\'s plugin manager', () => {
     // npm DSH started from a shell without pnpm: DSH's own Plugins page cannot install either.
     const f = profileFixture({ packageManager: false })
     await expect(f.starter()).resolves.toMatchObject({ updateSupported: false, updateHint: 'pnpm-missing' })
-    await expect(f.manager.update('dsh-plugin-memory')).rejects.toThrow('cannot be updated automatically')
+    await expect(f.manager.update('suveng-dsh-plugin-memory')).rejects.toThrow('cannot be updated automatically')
     expect(f.installBundle).not.toHaveBeenCalled()
   })
 
   it('updates an optional Strategy the profile added on its own through DSH, and leaves other packages to pnpm', async () => {
-    const f = profileFixture({ added: { 'dsh-plugin-memory-strategy-general': { bundle: true }, 'dsh-plugin-memory-provider-mem0': { bundle: false } } })
+    const f = profileFixture({ added: { 'suveng-dsh-plugin-memory-strategy-general': { bundle: true }, 'suveng-dsh-plugin-memory-provider-mem0': { bundle: false } } })
     const packages = (await f.starter())?.packages ?? []
-    expect(packages.find(item => item.id === 'dsh-plugin-memory-strategy-general')).toMatchObject({ managedBy: 'profile', outdated: true, updateSupported: true, updateHint: 'dsh' })
+    expect(packages.find(item => item.id === 'suveng-dsh-plugin-memory-strategy-general')).toMatchObject({ managedBy: 'profile', outdated: true, updateSupported: true, updateHint: 'dsh' })
     // Not a bundle, so only pnpm can replace it, and no pnpm is on PATH.
-    expect(packages.find(item => item.id === 'dsh-plugin-memory-provider-mem0')).toMatchObject({ managedBy: 'profile', updateSupported: false, updateHint: 'pnpm-missing' })
-    await expect(f.manager.update('dsh-plugin-memory-strategy-general')).resolves.toMatchObject({ component: 'dsh-plugin-memory-strategy-general', previousVersion: '0.5.1', currentVersion: '0.5.22', updated: true, restartRequired: true })
-    expect(f.installBundle).toHaveBeenCalledExactlyOnceWith('dsh-plugin-memory-strategy-general@0.5.22', { enabled: false })
+    expect(packages.find(item => item.id === 'suveng-dsh-plugin-memory-provider-mem0')).toMatchObject({ managedBy: 'profile', updateSupported: false, updateHint: 'pnpm-missing' })
+    await expect(f.manager.update('suveng-dsh-plugin-memory-strategy-general')).resolves.toMatchObject({ component: 'suveng-dsh-plugin-memory-strategy-general', previousVersion: '0.5.1', currentVersion: '0.5.22', updated: true, restartRequired: true })
+    expect(f.installBundle).toHaveBeenCalledExactlyOnceWith('suveng-dsh-plugin-memory-strategy-general@0.5.22', { enabled: false })
     // The Starter's own version is unchanged.
     expect(f.manager.currentDshMemoryVersion).toBe('0.5.21')
-    await expect(f.manager.update('dsh-plugin-memory-provider-mem0')).rejects.toThrow('must be updated through its Starter or original installation method')
+    await expect(f.manager.update('suveng-dsh-plugin-memory-provider-mem0')).rejects.toThrow('must be updated through its Starter or original installation method')
   })
 
   it('keeps the pnpm path when the profile has no plugin manager', async () => {
     const f = profileFixture({ pnpm: true, installer: null })
     await expect(f.starter()).resolves.toMatchObject({ updateSupported: true, updateHint: 'pnpm' })
-    await expect(f.manager.update('dsh-plugin-memory')).resolves.toMatchObject({ updated: true, currentVersion: '0.5.22' })
-    expect(f.run).toHaveBeenCalledWith('/fake/pnpm', ['add', 'dsh-plugin-memory@0.5.22', '--save-exact'], expect.objectContaining({ cwd: f.profile }))
+    await expect(f.manager.update('suveng-dsh-plugin-memory')).resolves.toMatchObject({ updated: true, currentVersion: '0.5.22' })
+    expect(f.run).toHaveBeenCalledWith('/fake/pnpm', ['add', 'suveng-dsh-plugin-memory@0.5.22', '--save-exact'], expect.objectContaining({ cwd: f.profile }))
   })
 
   // DSH 0.2.1 with hot reload: another version replaces an installed package only after it is removed.
@@ -631,32 +631,32 @@ describe('Starter updates through DSH\'s plugin manager', () => {
   it('replaces the Starter through DSH\'s own plugin command where DSH refuses to install over it', async () => {
     let f!: ReturnType<typeof profileFixture>
     // `dsh plugin add` records the exact version in the profile and links the new package.
-    const command = vi.fn<DshPluginCommand>(async () => { f.installedByDsh('dsh-plugin-memory', '0.5.22'); return { exitCode: 0, output: 'Packages: +1\nDone\n', logPath: '/profile/.plugin-manager/logs/1/pnpm.log' } })
+    const command = vi.fn<DshPluginCommand>(async () => { f.installedByDsh('suveng-dsh-plugin-memory', '0.5.22'); return { exitCode: 0, output: 'Packages: +1\nDone\n', logPath: '/profile/.plugin-manager/logs/1/pnpm.log' } })
     const installBundle = refusesInstalled()
     f = profileFixture({ installer: { installBundle }, pluginCommand: command })
-    await expect(f.manager.update('dsh-plugin-memory')).resolves.toMatchObject({ updated: true, previousVersion: '0.5.21', currentVersion: '0.5.22', restartRequired: true, output: 'Packages: +1\nDone' })
-    expect(installBundle).toHaveBeenCalledExactlyOnceWith('dsh-plugin-memory@0.5.22', { enabled: false })
-    expect(command).toHaveBeenCalledExactlyOnceWith(['add', 'dsh-plugin-memory@0.5.22', '--save-exact'])
+    await expect(f.manager.update('suveng-dsh-plugin-memory')).resolves.toMatchObject({ updated: true, previousVersion: '0.5.21', currentVersion: '0.5.22', restartRequired: true, output: 'Packages: +1\nDone' })
+    expect(installBundle).toHaveBeenCalledExactlyOnceWith('suveng-dsh-plugin-memory@0.5.22', { enabled: false })
+    expect(command).toHaveBeenCalledExactlyOnceWith(['add', 'suveng-dsh-plugin-memory@0.5.22', '--save-exact'])
     expect(f.run).not.toHaveBeenCalled()
     expect(f.manager.restartStatus()).toEqual({ running: '0.5.21', installed: '0.5.22' })
   })
 
   it('replaces a Strategy the profile added on its own the same way', async () => {
     let f!: ReturnType<typeof profileFixture>
-    const command = vi.fn<DshPluginCommand>(async () => { f.installedByDsh('dsh-plugin-memory-strategy-general', '0.5.22'); return { exitCode: 0, output: '' } })
-    f = profileFixture({ installer: { installBundle: refusesInstalled() }, pluginCommand: command, added: { 'dsh-plugin-memory-strategy-general': { bundle: true } } })
-    await expect(f.manager.update('dsh-plugin-memory-strategy-general')).resolves.toMatchObject({ updated: true, currentVersion: '0.5.22', restartRequired: true })
-    expect(command).toHaveBeenCalledExactlyOnceWith(['add', 'dsh-plugin-memory-strategy-general@0.5.22', '--save-exact'])
+    const command = vi.fn<DshPluginCommand>(async () => { f.installedByDsh('suveng-dsh-plugin-memory-strategy-general', '0.5.22'); return { exitCode: 0, output: '' } })
+    f = profileFixture({ installer: { installBundle: refusesInstalled() }, pluginCommand: command, added: { 'suveng-dsh-plugin-memory-strategy-general': { bundle: true } } })
+    await expect(f.manager.update('suveng-dsh-plugin-memory-strategy-general')).resolves.toMatchObject({ updated: true, currentVersion: '0.5.22', restartRequired: true })
+    expect(command).toHaveBeenCalledExactlyOnceWith(['add', 'suveng-dsh-plugin-memory-strategy-general@0.5.22', '--save-exact'])
   })
 
   it('names the DSH a release needs where DSH\'s plugin command refuses it as incompatible', async () => {
     const command = vi.fn<DshPluginCommand>(async () => ({
-      exitCode: 1, output: 'dsh: dsh-plugin-memory@0.5.22 is incompatible', logPath: '/profile/.plugin-manager/logs/2/pnpm.log',
+      exitCode: 1, output: 'dsh: suveng-dsh-plugin-memory@0.5.22 is incompatible', logPath: '/profile/.plugin-manager/logs/2/pnpm.log',
       // DSH 0.2.1 names what the release requires: `engines.dsh` where it states one, else each DSH peer.
       incompatible: [{ runtimeVersion: '0.2.1-rc.1', requirements: { 'engines.dsh': '^0.3.0', '@deepseek-ai/dsh-app-boot': '^0.3.0' } }],
     }))
     const f = profileFixture({ installer: { installBundle: refusesInstalled() }, pluginCommand: command })
-    await expect(f.manager.update('dsh-plugin-memory')).rejects.toThrow('DSH could not install dsh-plugin-memory@0.5.22: incompatible-version (requires DSH ^0.3.0, @deepseek-ai/dsh-app-boot ^0.3.0; this DSH is 0.2.1-rc.1)')
+    await expect(f.manager.update('suveng-dsh-plugin-memory')).rejects.toThrow('DSH could not install suveng-dsh-plugin-memory@0.5.22: incompatible-version (requires DSH ^0.3.0, @deepseek-ai/dsh-app-boot ^0.3.0; this DSH is 0.2.1-rc.1)')
     // DSH restored the profile, so this Host still runs and records the version it had.
     expect(f.manager.currentDshMemoryVersion).toBe('0.5.21')
     expect(f.manager.restartStatus()).toBeUndefined()
@@ -665,16 +665,16 @@ describe('Starter updates through DSH\'s plugin manager', () => {
   it('reports the error line and the log of a plugin command that fails', async () => {
     const command = vi.fn<DshPluginCommand>(async () => ({
       exitCode: 1, kind: 'network', logPath: '/profile/.plugin-manager/logs/3/pnpm.log',
-      output: ' WARN  GET https://registry.npmjs.org/dsh-plugin-memory error (ECONNRESET). Will retry.\n ERR_PNPM_META_FETCH_FAIL  GET https://registry.npmjs.org/dsh-plugin-memory: request failed\n',
+      output: ' WARN  GET https://registry.npmjs.org/suveng-dsh-plugin-memory error (ECONNRESET). Will retry.\n ERR_PNPM_META_FETCH_FAIL  GET https://registry.npmjs.org/suveng-dsh-plugin-memory: request failed\n',
     }))
     const f = profileFixture({ installer: { installBundle: refusesInstalled() }, pluginCommand: command })
-    await expect(f.manager.update('dsh-plugin-memory')).rejects.toThrow('DSH could not install dsh-plugin-memory@0.5.22: operation-error (network: ERR_PNPM_META_FETCH_FAIL  GET https://registry.npmjs.org/dsh-plugin-memory: request failed); log: /profile/.plugin-manager/logs/3/pnpm.log')
+    await expect(f.manager.update('suveng-dsh-plugin-memory')).rejects.toThrow('DSH could not install suveng-dsh-plugin-memory@0.5.22: operation-error (network: ERR_PNPM_META_FETCH_FAIL  GET https://registry.npmjs.org/suveng-dsh-plugin-memory: request failed); log: /profile/.plugin-manager/logs/3/pnpm.log')
     expect(f.manager.currentDshMemoryVersion).toBe('0.5.21')
   })
 
   it('names the command to run where DSH refuses and offers no plugin command', async () => {
     const f = profileFixture({ pnpm: true, installer: { installBundle: refusesInstalled() }, pluginCommand: null })
-    await expect(f.manager.update('dsh-plugin-memory')).rejects.toThrow('This DSH does not install over an installed plugin and offers no plugin command here; quit DSH, run `dsh plugin --profile desktop add dsh-plugin-memory@0.5.22`, then start DSH again')
+    await expect(f.manager.update('suveng-dsh-plugin-memory')).rejects.toThrow('This DSH does not install over an installed plugin and offers no plugin command here; quit DSH, run `dsh plugin --profile desktop add suveng-dsh-plugin-memory@0.5.22`, then start DSH again')
     // A pnpm on PATH does not stand in for DSH's checks.
     expect(f.run).not.toHaveBeenCalled()
     expect(f.manager.currentDshMemoryVersion).toBe('0.5.21')
@@ -682,9 +682,9 @@ describe('Starter updates through DSH\'s plugin manager', () => {
 
   it('reports DSH\'s failure reason and keeps the known version', async () => {
     const f = profileFixture({ installer: { installBundle: vi.fn(async (): Promise<DshBundleChange> => ({
-      application: 'failed', error: { code: 'operation-error', diagnostic: '\nERR_PNPM_FETCH_404 dsh-plugin-memory@0.5.22 is not in this registry\nmore lines' },
+      application: 'failed', error: { code: 'operation-error', diagnostic: '\nERR_PNPM_FETCH_404 suveng-dsh-plugin-memory@0.5.22 is not in this registry\nmore lines' },
     })) } })
-    await expect(f.manager.update('dsh-plugin-memory')).rejects.toThrow('DSH could not install dsh-plugin-memory@0.5.22: operation-error (ERR_PNPM_FETCH_404 dsh-plugin-memory@0.5.22 is not in this registry)')
+    await expect(f.manager.update('suveng-dsh-plugin-memory')).rejects.toThrow('DSH could not install suveng-dsh-plugin-memory@0.5.22: operation-error (ERR_PNPM_FETCH_404 suveng-dsh-plugin-memory@0.5.22 is not in this registry)')
     expect(f.manager.currentDshMemoryVersion).toBe('0.5.21')
     await expect(f.starter()).resolves.toMatchObject({ restartRequired: false, updateSupported: true })
   })
@@ -694,22 +694,22 @@ describe('Starter updates through DSH\'s plugin manager', () => {
       application: 'failed',
       error: { code: 'incompatible-version', incompatible: [{ runtimeVersion: '0.2.0-rc.2', peers: { '@deepseek-ai/dsh': '^0.3.0' } }] },
     })) } })
-    await expect(f.manager.update('dsh-plugin-memory')).rejects.toThrow('DSH could not install dsh-plugin-memory@0.5.22: incompatible-version (requires @deepseek-ai/dsh ^0.3.0; this DSH is 0.2.0-rc.2)')
+    await expect(f.manager.update('suveng-dsh-plugin-memory')).rejects.toThrow('DSH could not install suveng-dsh-plugin-memory@0.5.22: incompatible-version (requires @deepseek-ai/dsh ^0.3.0; this DSH is 0.2.0-rc.2)')
     expect(f.manager.currentDshMemoryVersion).toBe('0.5.21')
   })
 
   it('reports an installer that throws, such as a busy profile lock', async () => {
     const f = profileFixture({ installer: { installBundle: vi.fn(async (): Promise<DshBundleChange> => { throw new Error('lock wait timed out') }) } })
-    await expect(f.manager.update('dsh-plugin-memory')).rejects.toThrow('DSH could not install dsh-plugin-memory@0.5.22: lock wait timed out')
+    await expect(f.manager.update('suveng-dsh-plugin-memory')).rejects.toThrow('DSH could not install suveng-dsh-plugin-memory@0.5.22: lock wait timed out')
     // The update guard is released for a retry.
-    await expect(f.manager.update('dsh-plugin-memory')).rejects.toThrow('lock wait timed out')
+    await expect(f.manager.update('suveng-dsh-plugin-memory')).rejects.toThrow('lock wait timed out')
   })
 
   it('answers a check made while the update finishes with its outcome', async () => {
     // DSH swaps in the new browser client as soon as the files change; that client checks at once.
     let finish!: () => void
     const f = profileFixture({ gate: new Promise<void>(resolve => { finish = resolve }) })
-    const update = f.manager.update('dsh-plugin-memory')
+    const update = f.manager.update('suveng-dsh-plugin-memory')
     const check = f.starter()
     await vi.waitFor(() => expect(f.installBundle).toHaveBeenCalledOnce())
     finish()
@@ -718,31 +718,31 @@ describe('Starter updates through DSH\'s plugin manager', () => {
   })
 
   it('reports what waits for a restart: an installed Starter however it arrived, and packages updated on their own', async () => {
-    const f = profileFixture({ added: { 'dsh-plugin-memory-strategy-general': { bundle: true } } })
+    const f = profileFixture({ added: { 'suveng-dsh-plugin-memory-strategy-general': { bundle: true } } })
     expect(f.manager.restartStatus()).toBeUndefined()
-    await f.manager.update('dsh-plugin-memory-strategy-general')
-    expect(f.manager.restartStatus()).toEqual({ running: '0.5.21', packages: ['dsh-plugin-memory-strategy-general'] })
+    await f.manager.update('suveng-dsh-plugin-memory-strategy-general')
+    expect(f.manager.restartStatus()).toEqual({ running: '0.5.21', packages: ['suveng-dsh-plugin-memory-strategy-general'] })
     // `dsh plugin` rewrites the hoisted package in place while this Host keeps the code it loaded.
-    f.installedByDsh('dsh-plugin-memory', '0.5.23')
-    expect(f.manager.restartStatus()).toEqual({ running: '0.5.21', installed: '0.5.23', packages: ['dsh-plugin-memory-strategy-general'] })
+    f.installedByDsh('suveng-dsh-plugin-memory', '0.5.23')
+    expect(f.manager.restartStatus()).toEqual({ running: '0.5.21', installed: '0.5.23', packages: ['suveng-dsh-plugin-memory-strategy-general'] })
     expect(f.manager.runningVersion).toBe('0.5.21')
   })
 
   it('shows a Starter `dsh plugin` installed as installed, waiting for the restart, with no update to offer', async () => {
     const f = profileFixture()
-    f.installedByDsh('dsh-plugin-memory', '0.5.22')
+    f.installedByDsh('suveng-dsh-plugin-memory', '0.5.22')
     await expect(f.starter()).resolves.toMatchObject({ current: '0.5.22', latest: '0.5.22', outdated: false, restartRequired: true })
     expect(f.manager.restartStatus()).toEqual({ running: '0.5.21', installed: '0.5.22' })
-    await expect(f.manager.update('dsh-plugin-memory')).resolves.toMatchObject({ previousVersion: '0.5.22', updated: false, restartRequired: true })
+    await expect(f.manager.update('suveng-dsh-plugin-memory')).resolves.toMatchObject({ previousVersion: '0.5.22', updated: false, restartRequired: true })
     expect(f.installBundle).not.toHaveBeenCalled()
   })
 
   it('drops the reminder once the Starter on disk is the running one again', async () => {
     const f = profileFixture()
-    await f.manager.update('dsh-plugin-memory')
+    await f.manager.update('suveng-dsh-plugin-memory')
     expect(f.manager.restartStatus()).toEqual({ running: '0.5.21', installed: '0.5.22' })
-    // `dsh plugin add dsh-plugin-memory@0.5.21` puts back the version this Host runs.
-    f.installedByDsh('dsh-plugin-memory', '0.5.21')
+    // `dsh plugin add suveng-dsh-plugin-memory@0.5.21` puts back the version this Host runs.
+    f.installedByDsh('suveng-dsh-plugin-memory', '0.5.21')
     expect(f.manager.restartStatus()).toBeUndefined()
     await expect(f.starter()).resolves.toMatchObject({ current: '0.5.21', outdated: true, restartRequired: false })
   })
@@ -750,50 +750,50 @@ describe('Starter updates through DSH\'s plugin manager', () => {
   it('names the pnpm error line and the DSH log, not the warnings before them', async () => {
     const f = profileFixture({ installer: { installBundle: vi.fn(async (): Promise<DshBundleChange> => ({
       application: 'failed',
-      error: { code: 'operation-error', diagnostic: ' WARN  GET http://127.0.0.1:9/dsh-plugin-memory error (ECONNREFUSED). Will retry in 100 milliseconds. 1 retries left.\n ERR_PNPM_META_FETCH_FAIL  GET http://127.0.0.1:9/dsh-plugin-memory: request to http://127.0.0.1:9/dsh-plugin-memory failed, reason: connect ECONNREFUSED\nProgress: resolved 1' },
+      error: { code: 'operation-error', diagnostic: ' WARN  GET http://127.0.0.1:9/suveng-dsh-plugin-memory error (ECONNREFUSED). Will retry in 100 milliseconds. 1 retries left.\n ERR_PNPM_META_FETCH_FAIL  GET http://127.0.0.1:9/suveng-dsh-plugin-memory: request to http://127.0.0.1:9/suveng-dsh-plugin-memory failed, reason: connect ECONNREFUSED\nProgress: resolved 1' },
       packageResult: { output: '', logPath: '/profile/.plugin-manager/logs/1/pnpm.log', kind: 'network' },
     })) } })
-    await expect(f.manager.update('dsh-plugin-memory')).rejects.toThrow('DSH could not install dsh-plugin-memory@0.5.22: operation-error (network: ERR_PNPM_META_FETCH_FAIL  GET http://127.0.0.1:9/dsh-plugin-memory: request to http://127.0.0.1:9/dsh-plugin-memory failed, reason: connect ECONNREFUSED); log: /profile/.plugin-manager/logs/1/pnpm.log')
+    await expect(f.manager.update('suveng-dsh-plugin-memory')).rejects.toThrow('DSH could not install suveng-dsh-plugin-memory@0.5.22: operation-error (network: ERR_PNPM_META_FETCH_FAIL  GET http://127.0.0.1:9/suveng-dsh-plugin-memory: request to http://127.0.0.1:9/suveng-dsh-plugin-memory failed, reason: connect ECONNREFUSED); log: /profile/.plugin-manager/logs/1/pnpm.log')
   })
 
   it('keeps the recorded Starter when a failed install leaves its files behind, and reports the failure', async () => {
     // DSH restores the profile record when an install fails; files it downloaded can stay.
     const f = profileFixture({ installer: { installBundle: vi.fn(async (): Promise<DshBundleChange> => {
-      json(join(f.profile, 'node_modules', 'dsh-plugin-memory', 'package.json'), { name: 'dsh-plugin-memory', version: '0.5.22' })
+      json(join(f.profile, 'node_modules', 'suveng-dsh-plugin-memory', 'package.json'), { name: 'suveng-dsh-plugin-memory', version: '0.5.22' })
       return { application: 'failed', error: { code: 'incompatible-version', incompatible: [{ runtimeVersion: '0.2.0-rc.2', peers: { '@deepseek-ai/dsh': '^0.3.0' } }] } }
     }) } })
-    await expect(f.manager.update('dsh-plugin-memory')).rejects.toThrow('incompatible-version')
+    await expect(f.manager.update('suveng-dsh-plugin-memory')).rejects.toThrow('incompatible-version')
     await expect(f.starter()).resolves.toMatchObject({ current: '0.5.21', latest: '0.5.22', outdated: true, restartRequired: false })
     expect(f.manager.restartStatus()).toBeUndefined()
     // A page DSH swapped in meanwhile reads how the update ended.
     const status = await f.manager.check()
-    expect(status.lastUpdate).toMatchObject({ component: 'dsh-plugin-memory', error: expect.stringContaining('incompatible-version') })
+    expect(status.lastUpdate).toMatchObject({ component: 'suveng-dsh-plugin-memory', error: expect.stringContaining('incompatible-version') })
     expect(status.lastUpdate).not.toHaveProperty('result')
   })
 
   it('reports a finished update to a page DSH swapped in meanwhile', async () => {
     const f = profileFixture()
-    await f.manager.update('dsh-plugin-memory')
-    expect((await f.manager.check()).lastUpdate).toMatchObject({ component: 'dsh-plugin-memory', result: { updated: true, previousVersion: '0.5.21', currentVersion: '0.5.22', restartRequired: true } })
+    await f.manager.update('suveng-dsh-plugin-memory')
+    expect((await f.manager.check()).lastUpdate).toMatchObject({ component: 'suveng-dsh-plugin-memory', result: { updated: true, previousVersion: '0.5.21', currentVersion: '0.5.22', restartRequired: true } })
   })
 
   it('stops naming a package once it is back to the version it replaced', async () => {
-    const f = profileFixture({ added: { 'dsh-plugin-memory-strategy-general': { bundle: true } } })
-    await f.manager.update('dsh-plugin-memory-strategy-general')
-    expect(f.manager.restartStatus()).toEqual({ running: '0.5.21', packages: ['dsh-plugin-memory-strategy-general'] })
-    // `dsh plugin add dsh-plugin-memory-strategy-general@0.5.1` puts the loaded version back.
-    f.installedByDsh('dsh-plugin-memory-strategy-general', '0.5.1')
+    const f = profileFixture({ added: { 'suveng-dsh-plugin-memory-strategy-general': { bundle: true } } })
+    await f.manager.update('suveng-dsh-plugin-memory-strategy-general')
+    expect(f.manager.restartStatus()).toEqual({ running: '0.5.21', packages: ['suveng-dsh-plugin-memory-strategy-general'] })
+    // `dsh plugin add suveng-dsh-plugin-memory-strategy-general@0.5.1` puts the loaded version back.
+    f.installedByDsh('suveng-dsh-plugin-memory-strategy-general', '0.5.1')
     expect(f.manager.restartStatus()).toBeUndefined()
     const packages = (await f.starter())?.packages ?? []
-    expect(packages.find(item => item.id === 'dsh-plugin-memory-strategy-general')).toMatchObject({ current: '0.5.1', restartRequired: false })
+    expect(packages.find(item => item.id === 'suveng-dsh-plugin-memory-strategy-general')).toMatchObject({ current: '0.5.1', restartRequired: false })
   })
 
   it('does not report success when DSH leaves another version installed', async () => {
     const f = profileFixture({ installer: {
       installBundle: vi.fn(async (): Promise<DshBundleChange> => ({ application: 'restart-required' })),
-      listBundles: vi.fn(async () => [{ name: 'dsh-plugin-memory', version: '0.5.21' }]),
+      listBundles: vi.fn(async () => [{ name: 'suveng-dsh-plugin-memory', version: '0.5.21' }]),
     } })
-    await expect(f.manager.update('dsh-plugin-memory')).rejects.toThrow('did not install the requested version 0.5.22; found 0.5.21')
+    await expect(f.manager.update('suveng-dsh-plugin-memory')).rejects.toThrow('did not install the requested version 0.5.22; found 0.5.21')
     expect(f.manager.currentDshMemoryVersion).toBe('0.5.21')
   })
 })

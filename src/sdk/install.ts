@@ -40,5 +40,5 @@ export function installMemory(ctx: Context, contribution: MemoryInstallContribut
   const entryId = stableEntryId(ctx, options.instanceId)
   ctx.effect(() => ctx.memoryMemory.installContributions(contribution, {
     ...options, instanceId: entryId,
-  }), `dsh-plugin-memory: install ${entryId}`)
+  }), `suveng-dsh-plugin-memory: install ${entryId}`)
 }

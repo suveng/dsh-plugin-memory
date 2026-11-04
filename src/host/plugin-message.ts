@@ -4,14 +4,14 @@ import type { HostUserMessage } from './dsh.ts'
 
 declare module '@deepseek-ai/dsh-llm' {
   interface MessageSourceMap {
-    'dsh-plugin-memory': {
-      kind: 'dsh-plugin-memory'
+    'suveng-dsh-plugin-memory': {
+      kind: 'suveng-dsh-plugin-memory'
       form: 'recall' | 'instructions'
     }
   }
 }
 
-export const MEMORY_PLUGIN_SOURCE = 'dsh-plugin-memory'
+export const MEMORY_PLUGIN_SOURCE = 'suveng-dsh-plugin-memory'
 
 /** A user-role message this plugin adds to a step, marked with its own source. */
 export function createPluginMessage(text: string, form: 'recall' | 'instructions'): HostUserMessage {
@@ -22,6 +22,6 @@ export function createPluginMessage(text: string, form: 'recall' | 'instructions
     source: {
       kind: MEMORY_PLUGIN_SOURCE,
       form,
-    } satisfies MessageSourceMap['dsh-plugin-memory'],
+    } satisfies MessageSourceMap['suveng-dsh-plugin-memory'],
   })
 }

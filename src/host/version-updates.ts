@@ -2,7 +2,7 @@ import { accessSync, constants, existsSync, readFileSync, readdirSync, realpathS
 import { homedir } from 'node:os'
 import { delimiter, dirname, isAbsolute, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { findMemoryCommand, memoryNpmLauncher, nodeLauncherEnvironment, resolveMemoryInvocation } from 'dsh-plugin-memory-source-memory-spaces/native-cli'
+import { findMemoryCommand, memoryNpmLauncher, nodeLauncherEnvironment, resolveMemoryInvocation } from 'suveng-dsh-plugin-memory-source-memory-spaces/native-cli'
 import { runProcess, type ProcessOptions, type ProcessResult, type ProcessRunner } from './process.ts'
 import type { VersionComponentId, VersionComponentStatus, VersionInstallMode, VersionPackageId, VersionPackageStatus, VersionRestartStatus, VersionStatus, VersionUpdateOutcome, VersionUpdateResult } from "./protocol.ts"
 
@@ -151,9 +151,9 @@ export interface DshBundleChange {
   packageResult?: { output?: string; logPath?: string; kind?: string }
 }
 
-const DSH_MEMORY_PACKAGE = 'dsh-plugin-memory'
+const DSH_MEMORY_PACKAGE = 'suveng-dsh-plugin-memory'
 const MNEMON_NPM_PACKAGE = '@mnemon-dev/mnemon'
-const SUBPACKAGE = /^dsh-plugin-memory-(source|strategy|provider)-[a-z0-9][a-z0-9._-]*$/
+const SUBPACKAGE = /^suveng-dsh-plugin-memory-(source|strategy|provider)-[a-z0-9][a-z0-9._-]*$/
 
 export function isVersionComponentId(value: unknown): value is VersionComponentId {
   return typeof value === 'string' && (value === 'memory' || value === DSH_MEMORY_PACKAGE || SUBPACKAGE.test(value))
@@ -285,7 +285,7 @@ async function fetchJson(url: string): Promise<unknown> {
   try {
     const response = await fetch(url, {
       signal: controller.signal,
-      headers: { accept: 'application/json', 'user-agent': 'dsh-plugin-memory-version-check' },
+      headers: { accept: 'application/json', 'user-agent': 'suveng-dsh-plugin-memory-version-check' },
     })
     if (!response.ok) return undefined
     return await response.json()
@@ -678,8 +678,8 @@ export class VersionUpdateManager {
       ...(this.lastUpdate === undefined ? {} : { lastUpdate: this.lastUpdate }),
       components: [
         {
-          id: 'dsh-plugin-memory',
-          name: 'dsh-plugin-memory',
+          id: 'suveng-dsh-plugin-memory',
+          name: 'suveng-dsh-plugin-memory',
           ...(dshInstall.profileName === undefined ? {} : { installProfile: dshInstall.profileName }),
           installPath: dshInstall.locationDir,
           current: installed,
@@ -758,7 +758,7 @@ export class VersionUpdateManager {
     if (child !== undefined && !child.updateSupported) throw new Error('This subpackage must be updated through its Starter or original installation method')
     const previousVersion = child?.current ?? this.currentDshMemoryVersion
     const latest = await this.latestPackageVersion(component, previousVersion)
-    if (latest === undefined) throw new Error('Unable to verify the latest dsh-plugin-memory release')
+    if (latest === undefined) throw new Error('Unable to verify the latest suveng-dsh-plugin-memory release')
     if (compareVersions(previousVersion, latest) >= 0) {
       const restartRequired = component === DSH_MEMORY_PACKAGE ? previousVersion !== this.runningVersion : this.replaced(component, previousVersion)
       return { component, previousVersion, currentVersion: previousVersion, updated: false, restartRequired }
@@ -772,7 +772,7 @@ export class VersionUpdateManager {
       if (install.mode === 'npm' && install.profileDir !== undefined) return this.updateThroughPluginCommand(install.profileDir, install.profileName, component, previousVersion, latest)
     }
     const pnpm = this.executable('pnpm')
-    if (install.mode !== 'npm' || install.profileDir === undefined || pnpm === undefined) throw new Error('This dsh-plugin-memory installation cannot be updated automatically')
+    if (install.mode !== 'npm' || install.profileDir === undefined || pnpm === undefined) throw new Error('This suveng-dsh-plugin-memory installation cannot be updated automatically')
     const output = await resultOrThrow(this.processRunner, pnpm, ['add', `${component}@${latest}`, '--save-exact'], UPDATE_TIMEOUT_MS, { cwd: install.profileDir })
     // The running module may still reside in pnpm's old versioned directory.
     // Read the profile's current public link, not that stale package path.

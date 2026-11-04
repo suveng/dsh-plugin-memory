@@ -5,8 +5,8 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { loadMemoryClientArtifact, MemoryCompositionRunner } from 'dsh-plugin-memory/testing'
-import * as runtime from 'dsh-plugin-memory-source-runtime'
+import { loadMemoryClientArtifact, MemoryCompositionRunner } from 'suveng-dsh-plugin-memory/testing'
+import * as runtime from 'suveng-dsh-plugin-memory-source-runtime'
 import * as focus from '../lib/external-strategy.js'
 
 const require = createRequire(import.meta.url)
@@ -16,11 +16,11 @@ const dependencies = {
   'react-dom': await vi.importActual('react-dom'),
   '@deepseek-ai/dsh-client-ui-primitives': await vi.importActual('@deepseek-ai/dsh-client-ui-primitives'),
 }
-const core = loadMemoryClientArtifact<typeof import('dsh-plugin-memory/client')>(require.resolve('dsh-plugin-memory/client'), dependencies)
-const sourceDependencies = { ...dependencies, 'dsh-plugin-memory/client': core, 'markdown-to-jsx': require('markdown-to-jsx') }
-const runtimeClient = loadMemoryClientArtifact<typeof import('dsh-plugin-memory-source-runtime/client')>(require.resolve('dsh-plugin-memory-source-runtime/client'), sourceDependencies)
-const documentsClient = loadMemoryClientArtifact<typeof import('dsh-plugin-memory-source-documents/client')>(require.resolve('dsh-plugin-memory-source-documents/client'), sourceDependencies)
-const spacesClient = loadMemoryClientArtifact<typeof import('dsh-plugin-memory-source-memory-spaces/client')>(require.resolve('dsh-plugin-memory-source-memory-spaces/client'), sourceDependencies)
+const core = loadMemoryClientArtifact<typeof import('suveng-dsh-plugin-memory/client')>(require.resolve('suveng-dsh-plugin-memory/client'), dependencies)
+const sourceDependencies = { ...dependencies, 'suveng-dsh-plugin-memory/client': core, 'markdown-to-jsx': require('markdown-to-jsx') }
+const runtimeClient = loadMemoryClientArtifact<typeof import('suveng-dsh-plugin-memory-source-runtime/client')>(require.resolve('suveng-dsh-plugin-memory-source-runtime/client'), sourceDependencies)
+const documentsClient = loadMemoryClientArtifact<typeof import('suveng-dsh-plugin-memory-source-documents/client')>(require.resolve('suveng-dsh-plugin-memory-source-documents/client'), sourceDependencies)
+const spacesClient = loadMemoryClientArtifact<typeof import('suveng-dsh-plugin-memory-source-memory-spaces/client')>(require.resolve('suveng-dsh-plugin-memory-source-memory-spaces/client'), sourceDependencies)
 afterEach(cleanup)
 
 describe('compiled Source clients with compiled Core and no source aliases', () => {
@@ -32,8 +32,8 @@ describe('compiled Source clients with compiled Core and no source aliases', () 
       memoryPageStyles: Object.fromEntries(Object.entries(core.memoryPageStyles).filter(([key]) => !key.startsWith('runtime'))),
       memorySidebarStyles: Object.fromEntries(Object.entries(core.memorySidebarStyles).filter(([key]) => !key.startsWith('runtime'))),
     }
-    const owned = loadMemoryClientArtifact<typeof import('dsh-plugin-memory-source-runtime/client')>(require.resolve('dsh-plugin-memory-source-runtime/client'), {
-      ...sourceDependencies, 'dsh-plugin-memory/client': oldKit,
+    const owned = loadMemoryClientArtifact<typeof import('suveng-dsh-plugin-memory-source-runtime/client')>(require.resolve('suveng-dsh-plugin-memory-source-runtime/client'), {
+      ...sourceDependencies, 'suveng-dsh-plugin-memory/client': oldKit,
     })
     try {
       await runner.mount(focus, { instanceId: 'focus', config: { sourceKeys: ['source:work'], mode: 'eager' } })
@@ -42,7 +42,7 @@ describe('compiled Source clients with compiled Core and no source aliases', () 
       const view = render(<owned.RuntimeSourcePage sourceTypeId="runtime" sourceInstanceKey="source:work" sourceInstances={[]} locale="en" writable management={management} />)
       expect(await screen.findByRole('heading', { name: core.translateEn('runtime.title') })).not.toBeNull()
       expect(view.container.querySelector('[class*="runtimeSummaryCard"]')).not.toBeNull()
-      const style = document.querySelector('style[data-plugin-css="dsh-plugin-memory-source-runtime/presentation/page.module.css"]')
+      const style = document.querySelector('style[data-plugin-css="suveng-dsh-plugin-memory-source-runtime/presentation/page.module.css"]')
       expect(style?.textContent).toContain('runtimeSummaryCard')
     } finally { cleanup(); await runner.dispose(); rmSync(directory, { recursive: true, force: true }) }
   })

@@ -47,7 +47,7 @@ interface MemoryWorkspaceHostProps {
   localeRuntime: MemoryClientContext['locale']
   sourcePageDirectory: MemorySourcePageDirectory
   navigation?: MemoryWorkspaceNavigation
-  /** Opens the dsh-plugin-memory page under DSH Plugins while that page offers navigation. */
+  /** Opens the suveng-dsh-plugin-memory page under DSH Plugins while that page offers navigation. */
   configuration?: MemoryActionSeat
   /** Moves when a component is switched through DSH's plugin manager, or memory changes on the configuration page. */
   componentChanges?: MemoryChangeSignal

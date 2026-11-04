@@ -1,5 +1,5 @@
 import type { JSX, ReactNode } from 'react'
-import type { MemoryJsonValue } from 'dsh-plugin-memory/contracts'
+import type { MemoryJsonValue } from 'suveng-dsh-plugin-memory/contracts'
 import type { MemorySourceManagementClient } from './source-contracts.ts'
 import { I18nContext, LocaleContext } from './page-kit.tsx'
 import { translateEn, translateZh } from './locales.ts'

@@ -3,11 +3,11 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import type { Context } from '@deepseek-ai/cordis'
 import { afterEach, describe, expect, it } from 'vitest'
-import * as runtimePlugin from 'dsh-plugin-memory-source-runtime'
-import * as documentsPlugin from 'dsh-plugin-memory-source-documents'
-import * as spacesPlugin from 'dsh-plugin-memory-source-memory-spaces'
-import * as strategyPlugin from 'dsh-plugin-memory-strategy-default-three-tier'
-import native from 'dsh-plugin-memory-provider-native'
+import * as runtimePlugin from 'suveng-dsh-plugin-memory-source-runtime'
+import * as documentsPlugin from 'suveng-dsh-plugin-memory-source-documents'
+import * as spacesPlugin from 'suveng-dsh-plugin-memory-source-memory-spaces'
+import * as strategyPlugin from 'suveng-dsh-plugin-memory-strategy-default-three-tier'
+import native from 'suveng-dsh-plugin-memory-provider-native'
 import { MemoryCompositionRunner } from '../src/sdk/testing.ts'
 
 /**
@@ -47,8 +47,8 @@ describe('dshmarket client-only shim Entries (#359)', () => {
     const runner = await starterComposition()
     const before = await sourceKeys(runner)
     expect(before).toEqual(['source:include:memory-source-documents', 'source:include:memory-source-memory-spaces', 'source:include:memory-source-runtime'])
-    await runner.mount(runtimePlugin, { instanceId: shimEntry('dsh-plugin-memory-source-runtime') })
-    await runner.mount(documentsPlugin, { instanceId: shimEntry('dsh-plugin-memory-source-documents') })
+    await runner.mount(runtimePlugin, { instanceId: shimEntry('suveng-dsh-plugin-memory-source-runtime') })
+    await runner.mount(documentsPlugin, { instanceId: shimEntry('suveng-dsh-plugin-memory-source-documents') })
     // Two working-context Sources would make the default layered Strategy refuse every turn.
     const turn = await runner.beginTurn()
     expect(turn.view.sourcePresentations?.length).toBeGreaterThan(0)
@@ -59,7 +59,7 @@ describe('dshmarket client-only shim Entries (#359)', () => {
   it('mounts Memory Spaces there without its Providers and without an error', async () => {
     const runner = await starterComposition()
     const before = await sourceKeys(runner)
-    await runner.mount(spacesPlugin, { instanceId: shimEntry('dsh-plugin-memory-source-memory-spaces') })
+    await runner.mount(spacesPlugin, { instanceId: shimEntry('suveng-dsh-plugin-memory-source-memory-spaces') })
     expect(await sourceKeys(runner)).toEqual(before)
   })
 

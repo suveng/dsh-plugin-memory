@@ -22,17 +22,17 @@ import type { ResolvedConfig } from './config.ts'
 import {
   DOCUMENTS_ACTIVE_LIMIT_BYTES, DOCUMENTS_DIRECTORY, DOCUMENTS_INDEX_FILE, DOCUMENTS_LOCK_FILE, DOCUMENTS_LOCK_STALE_MS, DOCUMENT_FILENAME_PATTERN,
   parseDocumentIndex, type DocumentIndex, type DocumentRecord,
-} from 'dsh-plugin-memory-source-documents/contracts'
+} from 'suveng-dsh-plugin-memory-source-documents/contracts'
 import {
   MEMORY_SPACE_DATABASE_FILE, MEMORY_SPACE_ID_PATTERN, MEMORY_SPACE_NAME_MAX_LENGTH, MEMORY_SPACE_REGISTRY_FILE, MEMORY_SPACES_DIRECTORY, MEMORY_ACTIVE_STORE_FILE,
   parseMemorySpaceRegistry, type MemorySpaceRegistryEntry, type MemorySpaceRegistryFile,
-} from 'dsh-plugin-memory-source-memory-spaces/contracts'
-import { MemorySpaceIdentity } from 'dsh-plugin-memory-source-memory-spaces/space-identity'
+} from 'suveng-dsh-plugin-memory-source-memory-spaces/contracts'
+import { MemorySpaceIdentity } from 'suveng-dsh-plugin-memory-source-memory-spaces/space-identity'
 import {
   RUNTIME_ARCHIVE_DIRECTORY, RUNTIME_DIRECTORY, RUNTIME_ENTRY_MAX_BYTES, RUNTIME_LOCK_FILE, RUNTIME_LOCK_STALE_MS, RUNTIME_MEMORIES_FILE,
   RUNTIME_MEMORY_LIMITS, RUNTIME_MEMORY_VERSION, RUNTIME_PROJECTION_FILES,
   parseRuntimeBranches, runtimeBytes, runtimeProjection, type RuntimeMemoryEntry, type RuntimeMemoryLimits, type RuntimeMemoryTarget,
-} from 'dsh-plugin-memory-source-runtime/contracts'
+} from 'suveng-dsh-plugin-memory-source-runtime/contracts'
 import { createStorageRoot, type StorageRoot } from './storage-root.ts'
 import { MEMORY_PACK_COMPONENTS, type MemoryEntryOrigin, type MemoryMachineIdentity, type MemoryPackComponent, type MemoryPackComponentSummary, type MemoryPackExport, type MemoryPackImportMode, type MemoryPackImportResult, type MemoryPackManifest, type MemoryPackPreview, type MemoryPackScope, type MemoryPackTarget, type MemoryRuntimeMergeReport, type MemoryTombstone, type MemoryTombstoneFile } from "./protocol.ts"
 import { MemoryMachineStore } from './machine-identity.ts'
@@ -55,7 +55,7 @@ export const MEMORY_PACK_VERSION = 1
 // 0.5.24 and earlier shipped: those versions refuse a Pack whose writer differs,
 // so a fresh Pack has to keep opening there. Readers accept either name.
 export const MEMORY_PACK_SOURCE_PLUGIN = 'dsh-mnemon'
-const MEMORY_PACK_SOURCE_PLUGINS = [MEMORY_PACK_SOURCE_PLUGIN, 'dsh-plugin-memory']
+const MEMORY_PACK_SOURCE_PLUGINS = [MEMORY_PACK_SOURCE_PLUGIN, 'suveng-dsh-plugin-memory']
 export const MEMORY_PACK_MIME = 'application/zip'
 export const MEMORY_PACK_MAX_ARCHIVE_BYTES = 48 * 1024 * 1024
 export const MEMORY_PACK_MAX_EXPANDED_BYTES = 256 * 1024 * 1024
@@ -888,7 +888,7 @@ export function documentVersions(files: Readonly<Record<string, Uint8Array>>): R
  * only a sync channel knows, and it decides only for a document both hold. One the branch did
  * not change since then keeps this machine's version, edited or not. One only the branch
  * changed is the newer version of the same document and replaces the one here, unless its
- * revision is lower than this machine's, as an older dsh-plugin-memory can publish; that one is kept
+ * revision is lower than this machine's, as an older suveng-dsh-plugin-memory can publish; that one is kept
  * beside it, as a merge without `base` keeps every document whose text differs.
  */
 function mergeDocuments(root: string, pack: ParsedPack, base?: Readonly<Record<string, string>>): { index: DocumentIndex; files: Map<string, Uint8Array> } {

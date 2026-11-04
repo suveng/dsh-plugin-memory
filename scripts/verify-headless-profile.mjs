@@ -91,7 +91,7 @@ const server = createServer(async (request, response) => {
   }
 })
 
-const temporaryRoot = await mkdtemp(join(tmpdir(), 'dsh-plugin-memory-headless-'))
+const temporaryRoot = await mkdtemp(join(tmpdir(), 'suveng-dsh-plugin-memory-headless-'))
 const dshHome = join(temporaryRoot, 'dsh-home')
 const storageRoot = join(temporaryRoot, 'memory-data')
 const workspaceRoot = join(temporaryRoot, 'workspace')
@@ -143,14 +143,14 @@ try {
   const manifest = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
   // Root owns the disabled enhancement Entries. Adding their self-registering
   // bundles as separate Profile layers would intentionally duplicate ids.
-  const plugins = Object.keys(manifest.dependencies).filter(name => name.startsWith('dsh-plugin-memory-') && !extensionNameSet.has(name))
+  const plugins = Object.keys(manifest.dependencies).filter(name => name.startsWith('suveng-dsh-plugin-memory-') && !extensionNameSet.has(name))
   const packages = options.has('--package')
     ? [options.get('--package')]
     : [`link:${root}`, ...plugins.map(name => `link:${join(root, 'plugins', name)}`)]
   const install = await run(['plugin', '--profile', 'headless', 'add', ...packages,
     ...(options.has('--registry') ? ['--registry', options.get('--registry')] : []),
   ], { env, timeoutMs: 120_000 })
-  assertSuccess('installing dsh-plugin-memory into the Headless profile', install)
+  assertSuccess('installing suveng-dsh-plugin-memory into the Headless profile', install)
 
   // The verification exercises Memory composition, not DSH's native PTY
   // transport. Disable the unrelated shell stack so the check remains

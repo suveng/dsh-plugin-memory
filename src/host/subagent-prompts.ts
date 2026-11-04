@@ -3,8 +3,8 @@
  * schema its result must match, and the helpers that write a run's data into its task.
  * tests/subagent.spec.ts pins this text as the children read it.
  */
-import type { Insight, MemorySpaceMetadataSample } from 'dsh-plugin-memory-source-memory-spaces/contracts'
-import { RUNTIME_ENTRY_DELIMITER, RUNTIME_PROJECTION_FILES, type RuntimeMemoryMaintenancePlan } from 'dsh-plugin-memory-source-runtime/contracts'
+import type { Insight, MemorySpaceMetadataSample } from 'suveng-dsh-plugin-memory-source-memory-spaces/contracts'
+import { RUNTIME_ENTRY_DELIMITER, RUNTIME_PROJECTION_FILES, type RuntimeMemoryMaintenancePlan } from 'suveng-dsh-plugin-memory-source-runtime/contracts'
 
 export const WRITE_ACTIONS = ['stored', 'updated', 'added', 'replaced', 'removed', 'skipped', 'forgotten', 'linked', 'created', 'merged', 'accepted', 'candidate', 'partial', 'unknown', 'failed'] as const
 

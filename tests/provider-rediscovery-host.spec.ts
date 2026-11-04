@@ -3,8 +3,8 @@ import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { defineMemorySpaceProvider, MEMORY_SPACE_PROVIDER_API_VERSION, NORMALIZED_RELEVANCE_SCORE } from 'dsh-plugin-memory-source-memory-spaces/provider-sdk'
-import type { MemorySpaceCatalog } from 'dsh-plugin-memory-source-memory-spaces/contracts'
+import { defineMemorySpaceProvider, MEMORY_SPACE_PROVIDER_API_VERSION, NORMALIZED_RELEVANCE_SCORE } from 'suveng-dsh-plugin-memory-source-memory-spaces/provider-sdk'
+import type { MemorySpaceCatalog } from 'suveng-dsh-plugin-memory-source-memory-spaces/contracts'
 import { resolveConfig, type ResolvedConfig } from '../src/host/config.ts'
 import { LiveMemoryRuntime, PROVIDER_REDISCOVERY_TIMING, type MemoryRuntimeGraph } from '../src/host/runtime.ts'
 import type { MemoryRuntime } from '../src/core/runtime.ts'
@@ -165,7 +165,7 @@ describe('The start-up pass on a real composition (#373)', () => {
     return defineMemorySpaceProvider<undefined>({ id: 'banks', apply(ctx, host) {
       host.install(ctx, {
         manifest: { apiVersion: MEMORY_SPACE_PROVIDER_API_VERSION, kind: 'provider', typeId: 'banks',
-          packageName: 'dsh-plugin-memory-provider-banks-host-test', version: '1.0.0', label: 'Banks', summary: 'Simulated Provider; real Host and Source.',
+          packageName: 'suveng-dsh-plugin-memory-provider-banks-host-test', version: '1.0.0', label: 'Banks', summary: 'Simulated Provider; real Host and Source.',
           origin: 'third-party', locality: 'remote', workspaceBinding: 'provider-global', fields: [], secrets: [], scoreSemantics: 'normalized-relevance',
           capabilities,
         },

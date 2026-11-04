@@ -7,7 +7,7 @@ import type { MemoryTranslate } from './locales.ts'
 import { MemoryIcon } from './memory-icon.tsx'
 
 /** The npm package whose page under DSH Plugins carries the Memory configuration. */
-export const MEMORY_PACKAGE_NAME = 'dsh-plugin-memory'
+export const MEMORY_PACKAGE_NAME = 'suveng-dsh-plugin-memory'
 
 interface MemoryPluginActionsProps extends PluginDetailProps {
   /** Opens the memory workspace in its current placement; absent while no placement can show it. */
@@ -18,7 +18,7 @@ interface MemoryPluginActionsProps extends PluginDetailProps {
 }
 
 /**
- * Head controls on the dsh-plugin-memory page under Plugins: a way back to the memory
+ * Head controls on the suveng-dsh-plugin-memory page under Plugins: a way back to the memory
  * workspace. They also report the rows DSH lists below the configuration.
  */
 export function MemoryPluginActions({ subject, workspace, componentList, t }: MemoryPluginActionsProps): JSX.Element | null {

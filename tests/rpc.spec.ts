@@ -7,7 +7,7 @@ import type { LiveMemoryRuntime, MemoryRuntimeGraph } from '../src/host/runtime.
 import { MemorySubagentCoordinator } from '../src/host/subagent.ts'
 import type { VersionUpdateManager } from '../src/host/version-updates.ts'
 import { compositionFixture } from './fixtures/composition.ts'
-import openviking from 'dsh-plugin-memory-provider-openviking'
+import openviking from 'suveng-dsh-plugin-memory-provider-openviking'
 
 const cleanup: Array<() => Promise<void>> = []
 afterEach(async () => { for (const release of cleanup.splice(0)) await release() })
@@ -34,7 +34,7 @@ function protocolFixture(options: Config = {}) {
   })
   const generation = {
     managementCatalog: vi.fn(async () => ({ generationId: 'g1', sources: ['runtime', 'documents', 'memory-spaces'].map(type => ({
-      sourceInstanceKey: 'source:memory-source-' + type, sourceTypeId: type, packageName: 'dsh-plugin-memory-source-' + type,
+      sourceInstanceKey: 'source:memory-source-' + type, sourceTypeId: type, packageName: 'suveng-dsh-plugin-memory-source-' + type,
       role: type, availability: 'ready', revision: 'r1', capabilities: ['status'], management: { label: type, description: type },
     })) })),
     executeManagement: vi.fn(async (_request: unknown) => ({ revision: 'r2', value: {} })),
@@ -56,11 +56,11 @@ function protocolFixture(options: Config = {}) {
     sync: {
       status: vi.fn(async () => ({
         configured: false,
-        config: { branch: 'memory-sync', subdir: 'memory/', hasToken: false, authorName: 'dsh-plugin-memory sync', authorEmail: 'memory@localhost' },
+        config: { branch: 'memory-sync', subdir: 'memory/', hasToken: false, authorName: 'suveng-dsh-plugin-memory sync', authorEmail: 'memory@localhost' },
         configPath: '/fixture/data/state/sync-git.json', mirrorPath: '/fixture/data/state/sync/git',
         git: { available: true, required: '2.20' }, remote: { reachable: false, branchExists: false },
       })),
-      configure: vi.fn(() => ({ branch: 'memory-sync', subdir: 'memory/', hasToken: false, authorName: 'dsh-plugin-memory sync', authorEmail: 'memory@localhost' })),
+      configure: vi.fn(() => ({ branch: 'memory-sync', subdir: 'memory/', hasToken: false, authorName: 'suveng-dsh-plugin-memory sync', authorEmail: 'memory@localhost' })),
       push: vi.fn(async () => ({ pushed: false })),
       preview: vi.fn(async () => ({ commit: 'a'.repeat(40) })),
       pull: vi.fn(async () => ({ imported: true })),
@@ -95,7 +95,7 @@ describe('Memory RPC Source boundaries', () => {
     const write = createWriteHandler(f.live)
     const catalog = await read('source-management-catalog', { workspaceId: 'workspace', sessionId: 's1' })
     expect(catalog).toMatchObject({ ok: true, value: { sources: expect.arrayContaining([expect.objectContaining({
-      sourceInstanceKey: 'source:memory-source-runtime', packageName: 'dsh-plugin-memory-source-runtime',
+      sourceInstanceKey: 'source:memory-source-runtime', packageName: 'suveng-dsh-plugin-memory-source-runtime',
     })]) } })
     const snapshot = await read('source-management-read', { workspaceId: 'workspace', sourceInstanceKey: 'source:memory-source-runtime', operation: 'snapshot' })
     expect(snapshot.ok).toBe(true)
@@ -520,9 +520,9 @@ describe('Host assistance and channels', () => {
     expect(await createWriteHandler(f.runtime, undefined, versions)('version-update', { component: 'memory' })).toMatchObject({ ok: true })
     expect(await createWriteHandler(f.runtime, undefined, versions)('version-update', { component: 'other' })).toMatchObject({ ok: false })
     expect(versions.update).toHaveBeenCalledOnce()
-    expect(await createWriteHandler(f.runtime, undefined, versions)('version-update', { component: 'dsh-plugin-memory-source-runtime' })).toMatchObject({ ok: true })
-    expect(versions.update).toHaveBeenLastCalledWith('dsh-plugin-memory-source-runtime')
-    expect(await createWriteHandler(f.runtime, undefined, versions)('version-update', { component: 'dsh-plugin-memory-source-runtime@latest' })).toMatchObject({ ok: false })
+    expect(await createWriteHandler(f.runtime, undefined, versions)('version-update', { component: 'suveng-dsh-plugin-memory-source-runtime' })).toMatchObject({ ok: true })
+    expect(versions.update).toHaveBeenLastCalledWith('suveng-dsh-plugin-memory-source-runtime')
+    expect(await createWriteHandler(f.runtime, undefined, versions)('version-update', { component: 'suveng-dsh-plugin-memory-source-runtime@latest' })).toMatchObject({ ok: false })
     const readonly = protocolFixture({ writeEnabled: false })
     expect(await createWriteHandler(readonly.runtime, undefined, versions)('version-update', { component: 'memory' })).toMatchObject({ ok: false })
     expect(versions.update).toHaveBeenCalledTimes(2)

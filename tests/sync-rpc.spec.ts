@@ -52,7 +52,7 @@ function gitHubAuth(): MemoryGitHubAuth {
 }
 
 function temporary(label: string): string {
-  const directory = mkdtempSync(join(tmpdir(), 'dsh-plugin-memory-' + label + '-'))
+  const directory = mkdtempSync(join(tmpdir(), 'suveng-dsh-plugin-memory-' + label + '-'))
   directories.push(directory)
   return directory
 }
@@ -88,7 +88,7 @@ describe.skipIf(!available)('Memory Git sync over RPC', { timeout: 90_000 }, () 
     const configured = await first.sync('configure', { repoUrl: remote, token: TOKEN })
     expect(configured).toMatchObject({
       ok: true,
-      value: { repoUrl: remote, branch: 'memory-sync', subdir: 'memory/', hasToken: true, authorName: 'dsh-plugin-memory sync', authorEmail: 'memory@localhost' },
+      value: { repoUrl: remote, branch: 'memory-sync', subdir: 'memory/', hasToken: true, authorName: 'suveng-dsh-plugin-memory sync', authorEmail: 'memory@localhost' },
     })
     // The answer names the credential without ever carrying it.
     expect(JSON.stringify(configured)).not.toContain(TOKEN)

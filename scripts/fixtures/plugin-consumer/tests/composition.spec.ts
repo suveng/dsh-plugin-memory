@@ -4,14 +4,14 @@ import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import type { Context } from '@deepseek-ai/cordis'
 import { describe, expect, it } from 'vitest'
-import { MemoryCompositionRunner, type MemoryTestTurn } from 'dsh-plugin-memory/testing'
-import * as spaces from 'dsh-plugin-memory-source-memory-spaces'
-import * as runtime from 'dsh-plugin-memory-source-runtime'
-import * as threeTier from 'dsh-plugin-memory-strategy-default-three-tier'
-import * as scoped from 'dsh-plugin-memory-strategy-scoped'
-import * as light from 'dsh-plugin-memory-strategy-light-context'
-import * as capture from 'dsh-plugin-memory-strategy-auto-capture'
-import * as general from 'dsh-plugin-memory-strategy-general'
+import { MemoryCompositionRunner, type MemoryTestTurn } from 'suveng-dsh-plugin-memory/testing'
+import * as spaces from 'suveng-dsh-plugin-memory-source-memory-spaces'
+import * as runtime from 'suveng-dsh-plugin-memory-source-runtime'
+import * as threeTier from 'suveng-dsh-plugin-memory-strategy-default-three-tier'
+import * as scoped from 'suveng-dsh-plugin-memory-strategy-scoped'
+import * as light from 'suveng-dsh-plugin-memory-strategy-light-context'
+import * as capture from 'suveng-dsh-plugin-memory-strategy-auto-capture'
+import * as general from 'suveng-dsh-plugin-memory-strategy-general'
 import * as notes from '../lib/external-source.js'
 import * as focus from '../lib/external-strategy.js'
 import * as externalBudget from '../lib/external-strategy-extension.js'
@@ -33,7 +33,7 @@ describe('external consumer of packed artifacts', () => {
       }
       expect(runner.inspect().evaluation).toMatchObject({ state: 'rejected', diagnostics: [{ message: expect.stringContaining('source.durable-evidence') }] })
       await runner.mount(spaces, { instanceId: 'spaces', config: { dataDir: join(directory, 'spaces'),
-        providers: [{ use: 'dsh-plugin-memory-provider-holographic', instanceId: 'local-account' }] } })
+        providers: [{ use: 'suveng-dsh-plugin-memory-provider-holographic', instanceId: 'local-account' }] } })
       expect(runner.inspect().evaluation.state).toBe('ready')
       for (const id of ['global', 'project']) {
         await (await runner.managementClient('source:' + id)).mutate('mutate',
@@ -119,13 +119,13 @@ describe('external consumer of packed artifacts', () => {
 
   it('ships Chinese plugin metadata and keeps manifest fallback for English', () => {
     const require = createRequire(import.meta.url)
-    const english = JSON.parse(readFileSync(require.resolve('dsh-plugin-memory/locale/en.json'), 'utf8'))
-    const chinese = JSON.parse(readFileSync(require.resolve('dsh-plugin-memory/locale/zh.json'), 'utf8'))
-    const manifest = JSON.parse(readFileSync(require.resolve('dsh-plugin-memory/package.json'), 'utf8'))
+    const english = JSON.parse(readFileSync(require.resolve('suveng-dsh-plugin-memory/locale/en.json'), 'utf8'))
+    const chinese = JSON.parse(readFileSync(require.resolve('suveng-dsh-plugin-memory/locale/zh.json'), 'utf8'))
+    const manifest = JSON.parse(readFileSync(require.resolve('suveng-dsh-plugin-memory/package.json'), 'utf8'))
     expect(english.meta).toEqual({})
-    expect(manifest.name).toBe('dsh-plugin-memory')
+    expect(manifest.name).toBe('suveng-dsh-plugin-memory')
     expect(manifest.description).toMatch(/Composable, view-based context/)
-    expect(chinese.meta.title).toBe('可组合记忆 (dsh-plugin-memory)')
+    expect(chinese.meta.title).toBe('可组合记忆 (suveng-dsh-plugin-memory)')
     expect(chinese.meta.description).toMatch(/可组合视图上下文/)
   })
 
@@ -184,7 +184,7 @@ describe('external consumer of packed artifacts', () => {
     try {
       await runner.mount(focus, { instanceId: 'focus', config: { sourceKeys: ['source:spaces'], mode: 'routed' } })
       await runner.mount(spaces, { instanceId: 'spaces', config: { dataDir: directory,
-        providers: [{ use: 'dsh-plugin-memory-provider-holographic', instanceId: 'local-account' }] } })
+        providers: [{ use: 'suveng-dsh-plugin-memory-provider-holographic', instanceId: 'local-account' }] } })
       const management = await runner.managementClient('source:spaces')
       await management.mutate('provider-service-update', { providerId: 'local-account', settings: {}, enabled: true }, { confirmed: true })
       const turn = await runner.beginTurn()

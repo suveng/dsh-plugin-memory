@@ -25,9 +25,9 @@ function published(name, version, extra = {}) {
 describe('independent package versioning', () => {
   it('bumps one changed plugin and the exact aggregate without republishing compatible peers', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'memory-changesets-'))
-    const sourceName = 'dsh-plugin-memory-source-memory-spaces'
-    const changedName = 'dsh-plugin-memory-provider-changed'
-    const unchangedName = 'dsh-plugin-memory-provider-unchanged'
+    const sourceName = 'suveng-dsh-plugin-memory-source-memory-spaces'
+    const changedName = 'suveng-dsh-plugin-memory-provider-changed'
+    const unchangedName = 'suveng-dsh-plugin-memory-provider-unchanged'
     try {
       await mkdir(join(directory, '.changeset'), { recursive: true })
       await mkdir(join(directory, 'plugins', sourceName), { recursive: true })
@@ -36,12 +36,12 @@ describe('independent package versioning', () => {
       await writeFile(join(directory, 'pnpm-workspace.yaml'), 'packages:\n  - .\n  - plugins/*\n')
       await writeFile(join(directory, '.changeset/config.json'), await readFile(join(repositoryRoot, '.changeset/config.json'), 'utf8'))
       await writeFile(join(directory, '.changeset/one-plugin.md'), `---\n"${changedName}": patch\n---\n\nFix one Provider.\n`)
-      await json(join(directory, 'package.json'), published('dsh-plugin-memory', '0.5.1', {
+      await json(join(directory, 'package.json'), published('suveng-dsh-plugin-memory', '0.5.1', {
         dependencies: { [sourceName]: '0.5.1', [changedName]: '0.5.1', [unchangedName]: '0.5.1' },
       }))
       await json(join(directory, 'plugins', sourceName, 'package.json'), published(sourceName, '0.5.1', {
-        peerDependencies: { 'dsh-plugin-memory': '^0.5.0' },
-        devDependencies: { 'dsh-plugin-memory': '^0.5.0', [changedName]: '^0.5.0', [unchangedName]: '^0.5.0' },
+        peerDependencies: { 'suveng-dsh-plugin-memory': '^0.5.0' },
+        devDependencies: { 'suveng-dsh-plugin-memory': '^0.5.0', [changedName]: '^0.5.0', [unchangedName]: '^0.5.0' },
       }))
       await json(join(directory, 'plugins', changedName, 'package.json'), published(changedName, '0.5.1', {
         peerDependencies: { [sourceName]: '^0.5.0' },
@@ -63,8 +63,8 @@ describe('independent package versioning', () => {
       expect(changed.version).toBe('0.5.2')
       expect(source).toMatchObject({
         version: '0.5.1',
-        peerDependencies: { 'dsh-plugin-memory': '^0.5.0' },
-        devDependencies: { 'dsh-plugin-memory': '^0.5.0', [changedName]: '^0.5.0', [unchangedName]: '^0.5.0' },
+        peerDependencies: { 'suveng-dsh-plugin-memory': '^0.5.0' },
+        devDependencies: { 'suveng-dsh-plugin-memory': '^0.5.0', [changedName]: '^0.5.0', [unchangedName]: '^0.5.0' },
       })
       expect(unchanged).toMatchObject({
         version: '0.5.1',
@@ -77,19 +77,19 @@ describe('independent package versioning', () => {
   })
 
   it('accepts a release PR that consumed its changesets and rejects incomplete version coverage', () => {
-    const pluginName = 'dsh-plugin-memory-source-example'
+    const pluginName = 'suveng-dsh-plugin-memory-source-example'
     const packages = [
       {
         directory: `/fixture/plugins/${pluginName}`,
-        manifest: published(pluginName, '0.5.2', { peerDependencies: { 'dsh-plugin-memory': '^0.5.1' } }),
+        manifest: published(pluginName, '0.5.2', { peerDependencies: { 'suveng-dsh-plugin-memory': '^0.5.1' } }),
       },
       {
         directory: '/fixture',
-        manifest: published('dsh-plugin-memory', '0.5.2', { dependencies: { [pluginName]: '0.5.2' } }),
+        manifest: published('suveng-dsh-plugin-memory', '0.5.2', { dependencies: { [pluginName]: '0.5.2' } }),
       },
     ]
     const plan = createReleasePlan(packages, { baseVersions: new Map([
-      ['dsh-plugin-memory', '0.5.1'],
+      ['suveng-dsh-plugin-memory', '0.5.1'],
       [pluginName, '0.5.1'],
     ]) })
     const paths = ['package.json', `plugins/${pluginName}/package.json`]
@@ -102,33 +102,33 @@ describe('independent package versioning', () => {
       ? { ...item, manifest: { ...item.manifest, version: '0.5.1' } }
       : { ...item, manifest: { ...item.manifest, dependencies: { [pluginName]: '0.5.1' } } })
     const incompletePlan = createReleasePlan(incompletePackages, { baseVersions: new Map([
-      ['dsh-plugin-memory', '0.5.1'],
+      ['suveng-dsh-plugin-memory', '0.5.1'],
       [pluginName, '0.5.1'],
     ]) })
     expect(() => assertVersionedReleaseIntent(incompletePlan, paths, { ignoredPackageJson: new Set() }, []))
-      .toThrow(/without a version bump: dsh-plugin-memory-source-example/u)
+      .toThrow(/without a version bump: suveng-dsh-plugin-memory-source-example/u)
   })
 
   it('asks an introduced package for a release intent without turning the change into a release', () => {
-    const introduced = 'dsh-plugin-memory-strategy-example'
+    const introduced = 'suveng-dsh-plugin-memory-strategy-example'
     const packages = [
       {
         directory: `/fixture/plugins/${introduced}`,
-        manifest: published(introduced, '0.5.0', { peerDependencies: { 'dsh-plugin-memory': '^0.5.1' } }),
+        manifest: published(introduced, '0.5.0', { peerDependencies: { 'suveng-dsh-plugin-memory': '^0.5.1' } }),
       },
       {
         directory: '/fixture',
-        manifest: published('dsh-plugin-memory', '0.5.1', { dependencies: { [introduced]: '0.5.0' } }),
+        manifest: published('suveng-dsh-plugin-memory', '0.5.1', { dependencies: { [introduced]: '0.5.0' } }),
       },
     ]
-    const baseVersions = new Map([['dsh-plugin-memory', '0.5.1']])
+    const baseVersions = new Map([['suveng-dsh-plugin-memory', '0.5.1']])
     expect(() => createReleasePlan(packages, { baseVersions })).toThrow(/Starter version must advance/u)
 
     const plan = createReleasePlan(packages, { baseVersions: introducedPackageBaseVersions(packages, baseVersions) })
     expect(plan.releasePackages).toEqual([])
     const changed = publicationInputsChanged(plan, ['package.json', `plugins/${introduced}/package.json`, `plugins/${introduced}/src/index.ts`])
-    expect([...changed].sort()).toEqual(['dsh-plugin-memory', introduced])
-    expect(() => assertReleaseIntentCoverage(changed, [{ name: 'dsh-plugin-memory', type: 'patch' }])).toThrow(introduced)
-    expect(() => assertReleaseIntentCoverage(changed, [{ name: 'dsh-plugin-memory', type: 'patch' }, { name: introduced, type: 'patch' }])).not.toThrow()
+    expect([...changed].sort()).toEqual(['suveng-dsh-plugin-memory', introduced])
+    expect(() => assertReleaseIntentCoverage(changed, [{ name: 'suveng-dsh-plugin-memory', type: 'patch' }])).toThrow(introduced)
+    expect(() => assertReleaseIntentCoverage(changed, [{ name: 'suveng-dsh-plugin-memory', type: 'patch' }, { name: introduced, type: 'patch' }])).not.toThrow()
   })
 })

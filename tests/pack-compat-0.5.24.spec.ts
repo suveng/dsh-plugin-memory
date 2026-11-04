@@ -12,7 +12,7 @@ import { UpstreamPackManager } from './fixtures/upstream-0.5.24-pack.mjs'
 /**
  * Both directions of the archive format, driven by the released implementation itself.
  *
- * `tests/fixtures/upstream-0.5.24-pack.mjs` is the Pack code of dsh-plugin-memory 0.5.24, lifted
+ * `tests/fixtures/upstream-0.5.24-pack.mjs` is the Pack code of suveng-dsh-plugin-memory 0.5.24, lifted
  * verbatim from the published tarball, so these cases answer the question a person actually
  * asks: a backup written here opens in the version they already have, and a backup written
  * there opens here. Reconstructing the old rules by hand would only prove they were copied
@@ -24,7 +24,7 @@ const now = () => new Date('2026-08-14T12:00:00.000Z')
 const COMPONENTS = ['runtime', 'documents', 'memory-spaces']
 
 function temporary(label: string): string {
-  const directory = mkdtempSync(join(tmpdir(), `dsh-plugin-memory-${label}-`))
+  const directory = mkdtempSync(join(tmpdir(), `suveng-dsh-plugin-memory-${label}-`))
   directories.push(directory)
   return directory
 }
@@ -109,7 +109,7 @@ afterEach(async () => {
   for (const directory of directories.splice(0)) rmSync(directory, { recursive: true, force: true })
 })
 
-describe('the Pack format shared with dsh-plugin-memory 0.5.24', () => {
+describe('the Pack format shared with suveng-dsh-plugin-memory 0.5.24', () => {
   it('writes an archive the released 0.5.24 opens, and lands every component in it', async () => {
     const source = await machine('compat-ours', 7)
     const exported = await source.mine.exportPack('full')

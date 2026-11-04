@@ -185,7 +185,7 @@ describe('the skills line under a turn', () => {
     view.rerender(tail('B'))
     expect(idle.size).toBe(1)
     await act(async () => { for (const callback of idle.values()) callback({ didTimeout: false, timeRemaining: () => 20 }) })
-    expect(call.mock.calls).toEqual([['/dsh-plugin-memory-read', 'skill-activity', { sessionId: 'B' }]])
+    expect(call.mock.calls).toEqual([['/suveng-dsh-plugin-memory-read', 'skill-activity', { sessionId: 'B' }]])
   })
 
   it('keeps the settling cadence during fast A/B/A switches instead of restarting a read', async () => {

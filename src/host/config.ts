@@ -3,10 +3,10 @@ import { DEFAULT_IDLE_REVIEW, DEFAULT_SKILLS_CONFIG } from './protocol.ts'
 import { isAbsolute } from 'node:path'
 import { normalizeDisplayMode } from './display-mode.ts'
 import { schema as MemoryViewConfig, preferences as validateMemoryViewPreferences } from './view-preferences.ts'
-import { resolveEmbedding, resolvePersistenceStrategy, resolveRecallQuality } from 'dsh-plugin-memory-source-memory-spaces'
-import { MEMORY_PLACEMENT_CAPABILITIES, MEMORY_SPACE_ID_PATTERN } from 'dsh-plugin-memory-source-memory-spaces/contracts'
+import { resolveEmbedding, resolvePersistenceStrategy, resolveRecallQuality } from 'suveng-dsh-plugin-memory-source-memory-spaces'
+import { MEMORY_PLACEMENT_CAPABILITIES, MEMORY_SPACE_ID_PATTERN } from 'suveng-dsh-plugin-memory-source-memory-spaces/contracts'
 
-export { resolveEmbedding, resolvePersistenceStrategy, resolveRecallQuality } from 'dsh-plugin-memory-source-memory-spaces'
+export { resolveEmbedding, resolvePersistenceStrategy, resolveRecallQuality } from 'suveng-dsh-plugin-memory-source-memory-spaces'
 import {
   DEFAULT_IDLE_REVIEW_MS,
   DEFAULT_EMBEDDING_ENDPOINT,
@@ -265,10 +265,10 @@ const CUSTOM_PACK_ID = /^[a-zA-Z0-9][a-zA-Z0-9_-]*$/
 
 function validateCustomDataDir(value: string): string {
   const dataDir = optionalText(value)
-  if (dataDir === undefined) throw new Error('dsh-plugin-memory: custom Pack dataDir is required')
-  if (dataDir.includes('\0')) throw new Error('dsh-plugin-memory: dataDir must not contain a null byte')
+  if (dataDir === undefined) throw new Error('suveng-dsh-plugin-memory: custom Pack dataDir is required')
+  if (dataDir.includes('\0')) throw new Error('suveng-dsh-plugin-memory: dataDir must not contain a null byte')
   if (!isAbsolute(dataDir) && dataDir !== '~' && !dataDir.startsWith('~/')) {
-    throw new Error('dsh-plugin-memory: custom Pack dataDir must be absolute or start with ~/')
+    throw new Error('suveng-dsh-plugin-memory: custom Pack dataDir must be absolute or start with ~/')
   }
   return dataDir
 }
@@ -279,13 +279,13 @@ function resolveCustomPacks(value: CustomPackConfig[] | undefined, legacyDataDir
   for (const candidate of value ?? []) {
     const id = optionalText(candidate.id)
     const name = optionalText(candidate.name)
-    if (id === undefined || !CUSTOM_PACK_ID.test(id)) throw new Error('dsh-plugin-memory: custom Pack id must match [a-zA-Z0-9][a-zA-Z0-9_-]*')
-    if (ids.has(id)) throw new Error(`dsh-plugin-memory: duplicate custom Pack id: ${id}`)
-    if (name === undefined || name.length > 100) throw new Error('dsh-plugin-memory: custom Pack name must contain 1..100 characters')
+    if (id === undefined || !CUSTOM_PACK_ID.test(id)) throw new Error('suveng-dsh-plugin-memory: custom Pack id must match [a-zA-Z0-9][a-zA-Z0-9_-]*')
+    if (ids.has(id)) throw new Error(`suveng-dsh-plugin-memory: duplicate custom Pack id: ${id}`)
+    if (name === undefined || name.length > 100) throw new Error('suveng-dsh-plugin-memory: custom Pack name must contain 1..100 characters')
     ids.add(id)
     packs.push({ id, name, dataDir: validateCustomDataDir(candidate.dataDir) })
   }
-  if (packs.length > 32) throw new Error('dsh-plugin-memory: at most 32 custom Packs may be configured')
+  if (packs.length > 32) throw new Error('suveng-dsh-plugin-memory: at most 32 custom Packs may be configured')
   if (legacyDataDir !== undefined && !packs.some(pack => pack.dataDir === legacyDataDir)) {
     let id = 'legacy'
     let suffix = 2
@@ -297,15 +297,15 @@ function resolveCustomPacks(value: CustomPackConfig[] | undefined, legacyDataDir
 
 function resolveTaskAgentModel(value: TaskAgentModelConfig | undefined): ResolvedTaskAgentModelConfig {
   const mode = value?.mode ?? 'inherit'
-  if (mode !== 'inherit' && mode !== 'fixed') throw new Error(`dsh-plugin-memory: unsupported task Agent model mode: ${String(mode)}`)
+  if (mode !== 'inherit' && mode !== 'fixed') throw new Error(`suveng-dsh-plugin-memory: unsupported task Agent model mode: ${String(mode)}`)
   const follow = value?.followConversation
-  if (follow !== undefined && typeof follow !== 'boolean') throw new Error('dsh-plugin-memory: taskAgentModel.followConversation must be a boolean')
+  if (follow !== undefined && typeof follow !== 'boolean') throw new Error('suveng-dsh-plugin-memory: taskAgentModel.followConversation must be a boolean')
   // A fixed route names its own model, so only an inherited one can follow a conversation.
   if (mode === 'inherit') return follow === true ? { mode, followConversation: true } : { mode }
   const provider = optionalText(value?.provider)
   const model = optionalText(value?.model)
-  if (provider === undefined || model === undefined) throw new Error('dsh-plugin-memory: a fixed task Agent model requires both provider and model')
-  if (provider.length > 200 || model.length > 300) throw new Error('dsh-plugin-memory: task Agent provider or model id is too long')
+  if (provider === undefined || model === undefined) throw new Error('suveng-dsh-plugin-memory: a fixed task Agent model requires both provider and model')
+  if (provider.length > 200 || model.length > 300) throw new Error('suveng-dsh-plugin-memory: task Agent provider or model id is too long')
   return { mode, provider, model }
 }
 
@@ -314,13 +314,13 @@ function resolveRuntimeMemory(value: RuntimeMemoryConfig | undefined): SharedRes
   const userLimitBytes = value?.userLimitBytes ?? DEFAULT_RUNTIME_USER_LIMIT_BYTES
   const maintenanceMaxTokens = value?.maintenanceMaxTokens ?? DEFAULT_RUNTIME_MAINTENANCE_MAX_TOKENS
   if (!Number.isInteger(memoryLimitBytes) || memoryLimitBytes < 1 || memoryLimitBytes > MAX_RUNTIME_MEMORY_LIMIT_BYTES) {
-    throw new Error(`dsh-plugin-memory: Runtime MEMORY.md limit must be an integer within 1..${MAX_RUNTIME_MEMORY_LIMIT_BYTES} bytes`)
+    throw new Error(`suveng-dsh-plugin-memory: Runtime MEMORY.md limit must be an integer within 1..${MAX_RUNTIME_MEMORY_LIMIT_BYTES} bytes`)
   }
   if (!Number.isInteger(userLimitBytes) || userLimitBytes < 1 || userLimitBytes > MAX_RUNTIME_MEMORY_LIMIT_BYTES) {
-    throw new Error(`dsh-plugin-memory: Runtime USER.md limit must be an integer within 1..${MAX_RUNTIME_MEMORY_LIMIT_BYTES} bytes`)
+    throw new Error(`suveng-dsh-plugin-memory: Runtime USER.md limit must be an integer within 1..${MAX_RUNTIME_MEMORY_LIMIT_BYTES} bytes`)
   }
   if (!Number.isInteger(maintenanceMaxTokens) || maintenanceMaxTokens < 1 || maintenanceMaxTokens > MAX_RUNTIME_MAINTENANCE_MAX_TOKENS) {
-    throw new Error(`dsh-plugin-memory: Runtime maintenance maxTokens must be an integer within 1..${MAX_RUNTIME_MAINTENANCE_MAX_TOKENS}`)
+    throw new Error(`suveng-dsh-plugin-memory: Runtime maintenance maxTokens must be an integer within 1..${MAX_RUNTIME_MAINTENANCE_MAX_TOKENS}`)
   }
   return { memoryLimitBytes, userLimitBytes, maintenanceMaxTokens }
 }
@@ -330,7 +330,7 @@ const MEMORY_PARTICIPATION_MODES = new Set(['off', 'manual', 'automatic'])
 
 function memoryComponentId(value: string | undefined, fallback: string, label: string): string {
   const id = optionalText(value) ?? fallback
-  if (!MEMORY_COMPONENT_ID.test(id)) throw new Error(`dsh-plugin-memory: ${label} must match [a-z][a-z0-9-]{0,127}`)
+  if (!MEMORY_COMPONENT_ID.test(id)) throw new Error(`suveng-dsh-plugin-memory: ${label} must match [a-z][a-z0-9-]{0,127}`)
   return id
 }
 
@@ -342,7 +342,7 @@ function resolveMemoryTopology(value: MemoryTopologyConfig | undefined): SharedR
   }
   const candidates = { ...defaults, ...value?.layers }
   const entries = Object.entries(candidates)
-  if (entries.length > 64) throw new Error('dsh-plugin-memory: memory topology accepts at most 64 layers')
+  if (entries.length > 64) throw new Error('suveng-dsh-plugin-memory: memory topology accepts at most 64 layers')
   const layers = Object.fromEntries(entries.map(([rawId, candidate]) => {
     const id = memoryComponentId(rawId, rawId, 'memory layer id')
     const participation = {
@@ -352,7 +352,7 @@ function resolveMemoryTopology(value: MemoryTopologyConfig | undefined): SharedR
       maintenance: candidate?.participation?.maintenance ?? 'automatic',
     }
     for (const [channel, mode] of Object.entries(participation)) {
-      if (!MEMORY_PARTICIPATION_MODES.has(mode)) throw new Error(`dsh-plugin-memory: unsupported ${channel} participation mode: ${String(mode)}`)
+      if (!MEMORY_PARTICIPATION_MODES.has(mode)) throw new Error(`suveng-dsh-plugin-memory: unsupported ${channel} participation mode: ${String(mode)}`)
     }
     const adapterIds = [...new Set(candidate?.adapterIds?.map(adapterId => memoryComponentId(adapterId, adapterId, 'memory adapter id')) ?? [])]
     return [id, { enabled: candidate?.enabled ?? true, participation, adapterIds }]
@@ -370,20 +370,20 @@ export function resolveConfig(config: Config = {}): ResolvedConfig {
   const legacyDataDir = optionalText(config.dataDir)
   const legacyPacks = resolveCustomPacks(config.customPacks, legacyDataDir)
   const requestedPackId = optionalText(config.customPackId)
-  if (requestedPackId !== undefined && !CUSTOM_PACK_ID.test(requestedPackId)) throw new Error('dsh-plugin-memory: customPackId is invalid')
+  if (requestedPackId !== undefined && !CUSTOM_PACK_ID.test(requestedPackId)) throw new Error('suveng-dsh-plugin-memory: customPackId is invalid')
   const store = optionalText(config.store)
   const storageScope = config.storageScope ?? (legacyDataDir === undefined && legacyPacks.length === 0 ? 'global' : 'custom')
-  if (!['global', 'workspace', 'custom', 'workspaces'].includes(storageScope)) throw new Error('dsh-plugin-memory: unsupported storageScope')
+  if (!['global', 'workspace', 'custom', 'workspaces'].includes(storageScope)) throw new Error('suveng-dsh-plugin-memory: unsupported storageScope')
   const runtimeUserScope = config.runtimeUserScope ?? 'storage'
-  if (runtimeUserScope !== 'storage' && runtimeUserScope !== 'global') throw new Error(`dsh-plugin-memory: unsupported Runtime USER.md scope: ${String(runtimeUserScope)}`)
+  if (runtimeUserScope !== 'storage' && runtimeUserScope !== 'global') throw new Error(`suveng-dsh-plugin-memory: unsupported Runtime USER.md scope: ${String(runtimeUserScope)}`)
   const selectedPack = requestedPackId === undefined
     ? legacyPacks.find(pack => pack.dataDir === legacyDataDir) ?? (legacyPacks.length === 1 ? legacyPacks[0] : undefined)
     : legacyPacks.find(pack => pack.id === requestedPackId)
-  if (requestedPackId !== undefined && selectedPack === undefined) throw new Error(`dsh-plugin-memory: unknown custom Pack: ${requestedPackId}`)
+  if (requestedPackId !== undefined && selectedPack === undefined) throw new Error(`suveng-dsh-plugin-memory: unknown custom Pack: ${requestedPackId}`)
   const dataDir = selectedPack?.dataDir ?? legacyDataDir
-  if (storageScope === 'custom' && dataDir === undefined) throw new Error('dsh-plugin-memory: a custom dataDir is required when storageScope is custom')
+  if (storageScope === 'custom' && dataDir === undefined) throw new Error('suveng-dsh-plugin-memory: a custom dataDir is required when storageScope is custom')
   if (store !== undefined && !MEMORY_SPACE_ID_PATTERN.test(store)) {
-    throw new Error('dsh-plugin-memory: store must match [a-zA-Z0-9][a-zA-Z0-9_-]*')
+    throw new Error('suveng-dsh-plugin-memory: store must match [a-zA-Z0-9][a-zA-Z0-9_-]*')
   }
   return {
     storageScope,

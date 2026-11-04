@@ -1,5 +1,5 @@
 ---
-"dsh-plugin-memory": patch
+"suveng-dsh-plugin-memory": patch
 ---
 
 Install the sub-packages through `file:` dependencies instead of `link:` overrides.

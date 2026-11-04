@@ -18,7 +18,7 @@ import type {
   MemorySyncLastRun, MemorySyncPreview, MemorySyncPullResult, MemorySyncPushResult, MemorySyncRemoteIssue,
   MemoryMachineIdentity, MemorySyncRemoteStatus, MemorySyncStatus, MemoryTombstone, MemoryTombstoneFile,
 } from './protocol.ts'
-import { RUNTIME_MEMORY_LIMITS, type RuntimeMemoryLimits } from 'dsh-plugin-memory-source-runtime/contracts'
+import { RUNTIME_MEMORY_LIMITS, type RuntimeMemoryLimits } from 'suveng-dsh-plugin-memory-source-runtime/contracts'
 import { MEMORY_PACK_COMPONENTS, MEMORY_SYNC_DEFAULT_AUTHOR_EMAIL, MEMORY_SYNC_DEFAULT_AUTHOR_NAME, MEMORY_SYNC_TOKEN_ENV } from './protocol.ts'
 import { MemoryGitHubAuth } from './github-auth.ts'
 import { MemorySyncError } from './sync-error.ts'
@@ -963,7 +963,7 @@ export class MemoryGitSync {
   }
 
   /**
-   * Without an agreement on record, as after an update from dsh-plugin-memory 0.5.28, which remembered
+   * Without an agreement on record, as after an update from suveng-dsh-plugin-memory 0.5.28, which remembered
    * only when it last synced: that run's commit holds the documents as the branch held them,
    * which this machine had just published or merged in. Read from there while the branch
    * descends from it, they keep the first sync after the update from taking a document this

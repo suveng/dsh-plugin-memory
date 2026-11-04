@@ -11,11 +11,11 @@ import { MemoryIcon } from './memory-icon.tsx'
 import css from './MemoryWorkspace.module.css'
 
 export const MEMORY_MAIN_PANEL_ID = 'memory' as MainPanelId
-const ICON_SELECTOR = '[data-dsh-plugin="dsh-plugin-memory"][data-dsh-part="sidebar-icon"]'
+const ICON_SELECTOR = '[data-dsh-plugin="suveng-dsh-plugin-memory"][data-dsh-part="sidebar-icon"]'
 
 /** The native Sidebar owns the surrounding button, label, tooltip and state. */
 function MemorySidebarIcon({ size }: Pick<PropsRuntime<'sidebar.panellist'>, 'size'>): JSX.Element {
-  return <MemoryIcon size={size} data-dsh-plugin="dsh-plugin-memory" data-dsh-part="sidebar-icon" />
+  return <MemoryIcon size={size} data-dsh-plugin="suveng-dsh-plugin-memory" data-dsh-part="sidebar-icon" />
 }
 
 /** DSH selects this seat; the shell registration retains Source render authority. */

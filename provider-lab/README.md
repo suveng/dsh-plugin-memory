@@ -1,7 +1,7 @@
 # Provider Lab
 
 This localhost-only lab exercises every long-term Memory Provider supported by
-`dsh-plugin-memory`. Private server deployments run in Docker; Holographic remains
+`suveng-dsh-plugin-memory`. Private server deployments run in Docker; Holographic remains
 in-process. Mnemon Native and ByteRover use their local CLI contracts.
 
 ## Safety boundary

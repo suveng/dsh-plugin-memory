@@ -32,14 +32,14 @@ function entry(entryId: string, packageName: string, roles: MemoryPluginEntryVie
 
 const off = { enabled: false, active: false } as const
 const on = { enabled: true, active: true } as const
-const main = (typeId: string, overrides: Partial<MemoryPluginEntryView> = {}) => entry('memory-strategy-' + typeId, 'dsh-plugin-memory-strategy-' + typeId, ['strategy'], typeId, {
+const main = (typeId: string, overrides: Partial<MemoryPluginEntryView> = {}) => entry('memory-strategy-' + typeId, 'suveng-dsh-plugin-memory-strategy-' + typeId, ['strategy'], typeId, {
   provides: [{ id: 'strategy', exclusive: false }, { id: 'strategy.' + typeId, exclusive: false }], requires: ['source'], ...overrides,
 })
 const threeTier = main('default-three-tier')
 const general = main('general')
-const capture = entry('memory-strategy-auto-capture', 'dsh-plugin-memory-strategy-auto-capture', ['strategy-extension'], 'auto-capture')
+const capture = entry('memory-strategy-auto-capture', 'suveng-dsh-plugin-memory-strategy-auto-capture', ['strategy-extension'], 'auto-capture')
 const focus = entry('focus', 'acme-memory-focus', ['strategy-extension'], 'focus')
-const source = (layer: string, overrides: Partial<MemoryPluginEntryView> = {}) => entry('memory-source-' + layer, 'dsh-plugin-memory-source-' + layer, ['source'], layer, {
+const source = (layer: string, overrides: Partial<MemoryPluginEntryView> = {}) => entry('memory-source-' + layer, 'suveng-dsh-plugin-memory-source-' + layer, ['source'], layer, {
   ...on, provides: [{ id: 'source', exclusive: false }, ...layer === 'memory-spaces' ? [{ id: 'source.durable-evidence', exclusive: false }] : []], ...overrides,
 })
 /** Active capture as shipped: it keeps durable evidence in Memory Spaces. */
@@ -63,8 +63,8 @@ function fixture(entries: MemoryPluginEntryView[], options: { failApply?: boolea
   }
   const applied: MemoryViewConfigurationRequest[] = []
   const call = vi.fn(async (channel: string, endpoint: string, payload: unknown) => {
-    if (channel === '/dsh-plugin-memory-view' && endpoint === 'dashboard') return { ok: true as const, value: structuredClone(dashboard) }
-    if (channel === '/dsh-plugin-memory-view-settings' && endpoint === 'apply') {
+    if (channel === '/suveng-dsh-plugin-memory-view' && endpoint === 'dashboard') return { ok: true as const, value: structuredClone(dashboard) }
+    if (channel === '/suveng-dsh-plugin-memory-view-settings' && endpoint === 'apply') {
       await options.holdApply
       if (options.failApply) return { ok: false as const, error: { code: 'internal' as const, message: 'selected memory Strategy type is unavailable', details: {} } }
       const request = (payload as { configuration: MemoryViewConfigurationRequest }).configuration
@@ -215,7 +215,7 @@ describe('memory composition board', () => {
     expect(within(row('Runtime Memory')).queryByTitle(/depends on it|Needs/u)).toBeNull()
     const spaces = openDetails('Memory Spaces')
     expect(within(spaces).getByText('Shipped')).toBeTruthy()
-    expect(within(spaces).getByText('dsh-plugin-memory-source-memory-spaces')).toBeTruthy()
+    expect(within(spaces).getByText('suveng-dsh-plugin-memory-source-memory-spaces')).toBeTruthy()
     expect(within(spaces).getByText('Needed by').nextElementSibling!.textContent).toBe('Active capture')
     expect(within(spaces).getByText('Turning off also turns off: “Active capture”')).toBeTruthy()
     // The page's switch is the row's.
@@ -227,7 +227,7 @@ describe('memory composition board', () => {
   })
 
   it('turns off what cannot run beside a component it turns on, and names the conflict on its page', async () => {
-    const light = entry('memory-strategy-light-context', 'dsh-plugin-memory-strategy-light-context', ['strategy-extension'], 'light-context', { ...on, provides: [{ id: 'strategy.projection', exclusive: true }], requires: ['strategy'] })
+    const light = entry('memory-strategy-light-context', 'suveng-dsh-plugin-memory-strategy-light-context', ['strategy-extension'], 'light-context', { ...on, provides: [{ id: 'strategy.projection', exclusive: true }], requires: ['strategy'] })
     const compact = entry('compact', 'acme-memory-compact', ['strategy-extension'], 'compact', { provides: [{ id: 'strategy.projection', exclusive: true }], requires: ['strategy'] })
     const { applied, connection } = fixture([threeTier, light, compact])
     render(<Composition connection={connection} language="en" t={translateEn} />)
@@ -457,7 +457,7 @@ describe('memory composition board', () => {
 
   it('edits the options a component declares on its page, and undoes them', async () => {
     const limit = { key: 'maxProjectionCharacters', input: 'number' as const, defaultValue: 4096, minimum: 1, maximum: 10_000_000, label: { en: 'Projection limit', 'zh-CN': '投影上限' } }
-    const light = entry('memory-strategy-light-context', 'dsh-plugin-memory-strategy-light-context', ['strategy-extension'], 'light-context', { fields: [limit] })
+    const light = entry('memory-strategy-light-context', 'suveng-dsh-plugin-memory-strategy-light-context', ['strategy-extension'], 'light-context', { fields: [limit] })
     const { applied, connection } = fixture([threeTier, light])
     render(<Composition connection={connection} language="en" t={translateEn} />)
     // A component with options has a gear, which opens its page.
@@ -490,8 +490,8 @@ describe('memory composition board', () => {
   it('chooses the Sources an option lists from the running ones, and puts an option back to its default', async () => {
     const resident = { key: 'residentSourceKeys', input: 'source-list' as const, label: { en: 'Resident sources', 'zh-CN': '常驻 Source' } }
     const sources = [
-      { sourceInstanceKey: 'runtime/default', sourceTypeId: 'runtime', packageName: 'dsh-plugin-memory-source-runtime', role: 'hot-context', label: 'Runtime Memory' },
-      { sourceInstanceKey: 'memory-spaces/default', sourceTypeId: 'memory-spaces', packageName: 'dsh-plugin-memory-source-memory-spaces', role: 'durable-evidence', label: 'Memory Spaces' },
+      { sourceInstanceKey: 'runtime/default', sourceTypeId: 'runtime', packageName: 'suveng-dsh-plugin-memory-source-runtime', role: 'hot-context', label: 'Runtime Memory' },
+      { sourceInstanceKey: 'memory-spaces/default', sourceTypeId: 'memory-spaces', packageName: 'suveng-dsh-plugin-memory-source-memory-spaces', role: 'durable-evidence', label: 'Memory Spaces' },
     ]
     const { applied, connection } = fixture([{ ...threeTier, ...off }, main('general', { ...on, fields: [resident], config: { residentSourceKeys: ['memory-spaces/default'] } }), source('runtime'), source('memory-spaces')], { sources, strategyTypeId: 'general' })
     render(<Composition connection={connection} language="en" t={translateEn} />)
@@ -550,7 +550,7 @@ describe('memory composition board', () => {
 
   it('shows one component\'s page alone, as DSH\'s row page does, with related pages over it', async () => {
     const { applied, connection } = fixture([threeTier, needy, source('runtime'), source('memory-spaces')])
-    render(<Composition connection={connection} language="en" system={system(allLayers)} page="dsh-plugin-memory-strategy-auto-capture" t={translateEn} />)
+    render(<Composition connection={connection} language="en" system={system(allLayers)} page="suveng-dsh-plugin-memory-strategy-auto-capture" t={translateEn} />)
     // The page stands in place of the board: its state, switch and relations.
     const own = await screen.findByRole('switch', { name: 'Active capture' })
     expect(screen.queryByRole('region', { name: 'Memory composition' })).toBeNull()

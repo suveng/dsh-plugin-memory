@@ -26,7 +26,7 @@ const configPath = join(profileDir, 'cordis.yml')
 const settings = process.argv[3] === 'settings'
 const isolated = process.argv.includes('--isolated')
 const otherBundle = process.argv.includes('--other-bundle')
-const selected = isolated ? (otherBundle ? ['fixture-other'] : []) : ['dsh-plugin-memory']
+const selected = isolated ? (otherBundle ? ['fixture-other'] : []) : ['suveng-dsh-plugin-memory']
 const modules = isolated ? join(temporary, 'profiles/.generations/starter/node_modules') : join(profileDir, 'node_modules')
 const profile = { name: 'fixture', dir: profileDir, patchPath, installAnchor, cwd: temporary, home: temporary,
   startedBundles: selected, overlays: [], telemetryDisabledEnv: '1' }
@@ -35,16 +35,16 @@ let ctx
 try {
   await mkdir(profileDir, { recursive: true })
   const manifest = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
-  const names = ['dsh-plugin-memory', ...Object.keys(manifest.dependencies).filter(name => name.startsWith('dsh-plugin-memory-'))]
+  const names = ['suveng-dsh-plugin-memory', ...Object.keys(manifest.dependencies).filter(name => name.startsWith('suveng-dsh-plugin-memory-'))]
   assert.equal(names.length, 19)
   for (const name of names) {
     const directory = join(modules, name)
     await mkdir(directory, { recursive: true })
     await writeFile(join(directory, 'package.json'), JSON.stringify({ name, version: '0.0.0', type: 'module', main: './index.js',
-      ...(name === 'dsh-plugin-memory' ? { dependencies: manifest.dependencies, exports: { '.': './index.js', './starter': './starter.js', './bundle': './bundle.js' }, dsh: { bundle: { patch: './cordis.patch.yml' } } } : {}) }))
+      ...(name === 'suveng-dsh-plugin-memory' ? { dependencies: manifest.dependencies, exports: { '.': './index.js', './starter': './starter.js', './bundle': './bundle.js' }, dsh: { bundle: { patch: './cordis.patch.yml' } } } : {}) }))
     await writeFile(join(directory, 'index.js'), `
 export const name = ${JSON.stringify(name)}
-export const inject = ${JSON.stringify(name === 'dsh-plugin-memory' || name.startsWith('dsh-plugin-memory-provider-') ? [] : ['memoryMemory'])}
+export const inject = ${JSON.stringify(name === 'suveng-dsh-plugin-memory' || name.startsWith('suveng-dsh-plugin-memory-provider-') ? [] : ['memoryMemory'])}
 export async function apply(ctx, config) {
   const state = ctx.root.bundleFixture
   ctx.effect(() => {
@@ -52,8 +52,8 @@ export async function apply(ctx, config) {
     return () => { const count = state.active.get(name) - 1; if (count) state.active.set(name, count); else state.active.delete(name) }
   })
   state.configs.set(name, config)
-  if (name === 'dsh-plugin-memory') ctx.provide('memoryMemory', {})
-  if (name === 'dsh-plugin-memory-source-memory-spaces') for (const provider of config.providers) await ctx.plugin(await import(provider.use)).await()
+  if (name === 'suveng-dsh-plugin-memory') ctx.provide('memoryMemory', {})
+  if (name === 'suveng-dsh-plugin-memory-source-memory-spaces') for (const provider of config.providers) await ctx.plugin(await import(provider.use)).await()
 }
 `)
   }
@@ -63,7 +63,7 @@ export async function apply(ctx, config) {
       source = source.replaceAll(`'${name}'`, JSON.stringify(pathToFileURL(runtimeRequire.resolve(name)).href))
     }
     source = source.replace('../package.json', './package.json').replace('./starter-resolution.ts', './starter-resolution.js')
-    await writeFile(join(modules, 'dsh-plugin-memory', filename.replace('.ts', '.js')), ts.transpile(source, { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext }))
+    await writeFile(join(modules, 'suveng-dsh-plugin-memory', filename.replace('.ts', '.js')), ts.transpile(source, { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext }))
   }
   if (otherBundle) {
     const other = join(modules, 'fixture-other')
@@ -76,11 +76,11 @@ export async function apply(ctx, config) {
   }
   if (isolated) {
     await mkdir(join(profileDir, 'node_modules'), { recursive: true })
-    await symlink(join(modules, 'dsh-plugin-memory'), join(profileDir, 'node_modules/dsh-plugin-memory'), process.platform === 'win32' ? 'junction' : 'dir')
+    await symlink(join(modules, 'suveng-dsh-plugin-memory'), join(profileDir, 'node_modules/suveng-dsh-plugin-memory'), process.platform === 'win32' ? 'junction' : 'dir')
   }
   if (otherBundle) await symlink(join(modules, 'fixture-other'), join(profileDir, 'node_modules/fixture-other'), process.platform === 'win32' ? 'junction' : 'dir')
-  await writeFile(join(profileDir, 'node_modules/dsh-plugin-memory/cordis.patch.yml'), await readFile(join(root, 'cordis.patch.yml')))
-  await writeFile(join(profileDir, 'package.json'), JSON.stringify({ private: true, dependencies: { 'dsh-plugin-memory': '0.0.0', ...(otherBundle ? { 'fixture-other': '1.0.0' } : {}) }, dsh: { profile: { bundles: selected } } }))
+  await writeFile(join(profileDir, 'node_modules/suveng-dsh-plugin-memory/cordis.patch.yml'), await readFile(join(root, 'cordis.patch.yml')))
+  await writeFile(join(profileDir, 'package.json'), JSON.stringify({ private: true, dependencies: { 'suveng-dsh-plugin-memory': '0.0.0', ...(otherBundle ? { 'fixture-other': '1.0.0' } : {}) }, dsh: { profile: { bundles: selected } } }))
   // Keep the profile's Connection container independent from the Starter.
   await writeFile(configPath, '- id: connection\n  name: cordis:group\n  group: true\n  config: []\n')
   const retained = '# Operator comment\n- id: memory\n  config:\n    timeoutMs: 4321\n- id: memory-strategy-auto-capture\n  disabled: false\n- id: memory-source-documents\n  disabled: true\n'
@@ -96,7 +96,7 @@ export async function apply(ctx, config) {
     assert.notEqual(duplicated.find(row => row.id === 'memory').config.timeoutMs, 4321,
       'The config editor sees the first duplicate while the override updates the other one')
     // The documented recovery preserves overrides and uses the automatically loaded bundle once.
-    await writeFile(patchPath, '- id: memory-bundle\n  name: dsh-plugin-memory/bundle\n  disabled: false\n' + retained)
+    await writeFile(patchPath, '- id: memory-bundle\n  name: suveng-dsh-plugin-memory/bundle\n  disabled: false\n' + retained)
   }
   const ConfigEditor = settings ? (await load('@deepseek-ai/dsh-config-editor')).default : undefined
   let Manager
@@ -127,14 +127,14 @@ export async function apply(ctx, config) {
   }
   const stop = async () => { await ctx?.fiber.dispose(); ctx = undefined; assert.equal(state.active.size, 0) }
   // The general main Strategy ships off until it is selected.
-  const enabledNames = names.filter(name => !['dsh-plugin-memory-source-documents', 'dsh-plugin-memory-strategy-general', 'dsh-plugin-memory-strategy-light-context', 'dsh-plugin-memory-strategy-scoped'].includes(name))
+  const enabledNames = names.filter(name => !['suveng-dsh-plugin-memory-source-documents', 'suveng-dsh-plugin-memory-strategy-general', 'suveng-dsh-plugin-memory-strategy-light-context', 'suveng-dsh-plugin-memory-strategy-scoped'].includes(name))
   const assertActive = expected => {
     assert.deepEqual([...state.active].sort(), expected.map(name => [name, 1]).sort())
     assert.equal([...ctx.loader.entries()].filter(entry => entry.options.id === 'memory-bundle').length, 1)
   }
   const assertEnabled = () => {
     assertActive(enabledNames)
-    assert.equal(state.configs.get('dsh-plugin-memory').timeoutMs, 4321)
+    assert.equal(state.configs.get('suveng-dsh-plugin-memory').timeoutMs, 4321)
   }
   const assertRetained = async () => {
     const saved = await readFile(patchPath, 'utf8')
@@ -154,7 +154,7 @@ export async function apply(ctx, config) {
       assert.equal((await ctx.pluginManager.setBundleEnabled('fixture-other', false)).application, 'applied')
       assert.equal(ctx.get('otherFixture'), undefined)
     }
-    const result = await ctx.pluginManager.setBundleEnabled('dsh-plugin-memory', true)
+    const result = await ctx.pluginManager.setBundleEnabled('suveng-dsh-plugin-memory', true)
     assert.equal(result.application, 'applied', JSON.stringify(result))
     if (otherBundle) {
       // A host that recomputes the routes from the selected bundles can drop a
@@ -171,18 +171,18 @@ export async function apply(ctx, config) {
   if (settings) {
     const core = [...ctx.loader.entries()].find(entry => entry.options.id === 'memory')
     await ctx.configEditor.edit(core, current => ({ ...current, skills: { evolution: true } }))
-    assert.equal(state.configs.get('dsh-plugin-memory').skills.evolution, true)
+    assert.equal(state.configs.get('suveng-dsh-plugin-memory').skills.evolution, true)
     const rows = flatten(app.composeEntries([patches()]))
     for (const id of ['memory-bundle', 'memory']) assert.equal(rows.filter(row => row.id === id).length, 1)
     assert.equal(rows.find(row => row.id === 'memory').config.skills.evolution, true)
     await stop(); await start()
     assertEnabled()
-    assert.equal(state.configs.get('dsh-plugin-memory').skills.evolution, true)
+    assert.equal(state.configs.get('suveng-dsh-plugin-memory').skills.evolution, true)
     console.log('Config editor saved and reloaded Skills evolution with unique bundle/core IDs (#470).')
   }
   if (Manager) {
     const manager = ctx.pluginManager
-    const components = (await manager.listBundles()).find(bundle => bundle.name === 'dsh-plugin-memory').rows
+    const components = (await manager.listBundles()).find(bundle => bundle.name === 'suveng-dsh-plugin-memory').rows
     const plugins = await manager.listPlugins()
     // Native groups are lifecycle containers, deliberately absent from the
     // manager's inventory. Strict mode reproduces DSH 0.2.0's bundle-list mismatch
@@ -195,11 +195,11 @@ export async function apply(ctx, config) {
       assert.deepEqual(components.filter(row => !plugins.some(plugin => plugin.entryId === row.entryId)), [],
         'Every advertised bundle component must be addressable by the published manager')
     }
-    const core = plugins.find(entry => entry.moduleName === 'dsh-plugin-memory')
+    const core = plugins.find(entry => entry.moduleName === 'suveng-dsh-plugin-memory')
     assert.equal(core.patchId, 'memory')
-    for (const name of ['dsh-plugin-memory-source-runtime', 'dsh-plugin-memory-source-memory-spaces', 'dsh-plugin-memory-strategy-auto-capture']) {
+    for (const name of ['suveng-dsh-plugin-memory-source-runtime', 'suveng-dsh-plugin-memory-source-memory-spaces', 'suveng-dsh-plugin-memory-strategy-auto-capture']) {
       const component = plugins.find(entry => entry.moduleName === name)
-      const children = name === 'dsh-plugin-memory-source-memory-spaces' ? names.filter(item => item.startsWith('dsh-plugin-memory-provider-')) : []
+      const children = name === 'suveng-dsh-plugin-memory-source-memory-spaces' ? names.filter(item => item.startsWith('suveng-dsh-plugin-memory-provider-')) : []
       assert.equal((await manager.setPluginEnabled(component.entryId, false)).application, 'applied')
       assertActive(enabledNames.filter(item => item !== name && !children.includes(item)))
       assert.equal((await manager.setPluginEnabled(component.entryId, true)).application, 'applied')
@@ -212,24 +212,24 @@ export async function apply(ctx, config) {
       else assert.equal(state.active.size, 0, 'Disabling memory must stop every Source, Strategy and private Provider')
       await assertRetained()
     }
-    const runtime = plugins.find(entry => entry.moduleName === 'dsh-plugin-memory-source-runtime')
+    const runtime = plugins.find(entry => entry.moduleName === 'suveng-dsh-plugin-memory-source-runtime')
     assert.equal((await manager.setPluginEnabled(runtime.entryId, true)).application, 'overridden')
     assert.equal(state.active.size, 0, 'An independent Source toggle cannot bypass the disabled core')
     await stop(); await start()
     assert.equal(state.active.size, 0, 'The disabled core must survive restart')
-    const restartedCore = (await ctx.pluginManager.listPlugins()).find(entry => entry.moduleName === 'dsh-plugin-memory')
+    const restartedCore = (await ctx.pluginManager.listPlugins()).find(entry => entry.moduleName === 'suveng-dsh-plugin-memory')
     assert.equal((await ctx.pluginManager.setPluginEnabled(restartedCore.entryId, true)).application, 'applied')
     assertEnabled()
     await stop(); await start(); assertEnabled()
     for (const enabled of [false, true, false]) {
-      assert.equal((await ctx.pluginManager.setBundleEnabled('dsh-plugin-memory', enabled)).application, 'applied')
+      assert.equal((await ctx.pluginManager.setBundleEnabled('suveng-dsh-plugin-memory', enabled)).application, 'applied')
       if (enabled) assertEnabled()
       else assert.equal(state.active.size, 0)
       await assertRetained()
     }
     await stop(); await start()
     assert.equal(state.active.size, 0, 'The deselected bundle must survive restart')
-    assert.equal((await ctx.pluginManager.setBundleEnabled('dsh-plugin-memory', true)).application, 'applied')
+    assert.equal((await ctx.pluginManager.setBundleEnabled('suveng-dsh-plugin-memory', true)).application, 'applied')
     assertEnabled()
     await stop(); await start(); assertEnabled()
   }
@@ -247,7 +247,7 @@ export async function apply(ctx, config) {
   const loaded = app.loadProfileDirectory('dsh', profileDir, installAnchor)
   const schema = (await app.generateConfigSchema(loaded, [...loaded.layers.map(layer => layer.patches), loaded.patches], installAnchor))['x-cordis']
   const bundle = schema.entries.find(entry => entry.id === 'memory-bundle')
-  assert.equal(bundle?.name, 'dsh-plugin-memory/bundle')
+  assert.equal(bundle?.name, 'suveng-dsh-plugin-memory/bundle')
   assert.deepEqual(schema.diagnostics.filter(item => item.level === 'error'), [{ level: 'error', path: bundle.path,
     message: 'unrecognized Loader tree carrier; use cordis:group or cordis:include for native child collection' }])
   console.log(JSON.stringify({ dsh, packages: names.length,

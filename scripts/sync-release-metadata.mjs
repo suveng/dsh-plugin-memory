@@ -25,7 +25,7 @@ async function writeJsonIfChanged(path, value) {
 
 export async function syncReleaseMetadata(root = repositoryRoot) {
   const pluginNames = (await readdir(join(root, 'plugins'), { withFileTypes: true }))
-    .filter(entry => entry.isDirectory() && entry.name.startsWith('dsh-plugin-memory-'))
+    .filter(entry => entry.isDirectory() && entry.name.startsWith('suveng-dsh-plugin-memory-'))
     .map(entry => entry.name)
     .sort()
   const packageDirectories = [root, ...pluginNames.map(name => join(root, 'plugins', name))]
@@ -36,8 +36,8 @@ export async function syncReleaseMetadata(root = repositoryRoot) {
   })))
   const packagesByName = new Map(packages.map(item => [item.manifest.name, item]))
   assert.equal(packagesByName.size, packages.length, 'Package names must be unique')
-  const starter = packagesByName.get('dsh-plugin-memory')
-  assert(starter, 'Missing dsh-plugin-memory Starter package')
+  const starter = packagesByName.get('suveng-dsh-plugin-memory')
+  assert(starter, 'Missing suveng-dsh-plugin-memory Starter package')
 
   const changed = []
   for (const item of packages) {
@@ -55,7 +55,7 @@ export async function syncReleaseMetadata(root = repositoryRoot) {
 
   for (const item of packages) {
     if (await writeJsonIfChanged(item.path, item.manifest)) changed.push(item.path)
-    if (!item.manifest.name.startsWith('dsh-plugin-memory-provider-')) continue
+    if (!item.manifest.name.startsWith('suveng-dsh-plugin-memory-provider-')) continue
     const sourcePath = join(item.directory, 'src/index.ts')
     const source = await readFile(sourcePath, 'utf8')
     const expression = new RegExp(`(packageName: '${item.manifest.name.replaceAll('-', '\\-')}', version: ')[^']+(')`)

@@ -11,7 +11,7 @@ body:
         通过 CLI/API 提交时可使用相同段落标题组织正文；补充信息可直接编辑原 Issue，机器人会更新已有提示。
         CLI/API reports may use the same section headings. Edit the original issue to add information; the bot updates its existing reminder.
 
-        提交前请先搜索确认没有重复 / Search for existing issues before submitting: [Issues](https://github.com/suveng/dsh-plugin-memory/issues?q=is%3Aissue)
+        提交前请先搜索确认没有重复 / Search for existing issues before submitting: [Issues](https://github.com/suveng/suveng-dsh-plugin-memory/issues?q=is%3Aissue)
 
         不要公开提交漏洞、token、密钥、私有记忆内容或未脱敏日志。安全问题请按 [SECURITY.md](../../SECURITY.md) 私下报告。
         Do not post vulnerabilities, tokens, credentials, private memory, or unredacted logs. Report security concerns privately through [SECURITY.md](../../SECURITY.md).
@@ -87,10 +87,10 @@ body:
     id: environment
     attributes:
       label: 环境信息 / Environment
-      description: 请提供 DSH、dsh-plugin-memory、Memory、操作系统及相关配置；与环境无关时填写 N/A。 / Provide DSH, dsh-plugin-memory, Memory, OS, and relevant configuration details, or enter N/A when environment-independent.
+      description: 请提供 DSH、suveng-dsh-plugin-memory、Memory、操作系统及相关配置；与环境无关时填写 N/A。 / Provide DSH, suveng-dsh-plugin-memory, Memory, OS, and relevant configuration details, or enter N/A when environment-independent.
       placeholder: |
         - DSH 版本 / DSH version:
-        - dsh-plugin-memory 版本或 commit / dsh-plugin-memory version or commit:
+        - suveng-dsh-plugin-memory 版本或 commit / suveng-dsh-plugin-memory version or commit:
         - Memory 版本 / Memory version:
         - 操作系统或浏览器 / OS or browser:
         - 相关配置（已脱敏）/ Related configuration (redacted):

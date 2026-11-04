@@ -17,7 +17,7 @@ import { compositionFixture } from './fixtures/composition.ts'
 import { loadTools, loadWorkingDirectory, requireDsh } from './helpers/installed-dsh.ts'
 
 // Issue #393: a plugin that collects a workspace's sessions, such as a work log, read the
-// idle review's checkpoint as work the user asked for. Every task dsh-plugin-memory delegates now
+// idle review's checkpoint as work the user asked for. Every task suveng-dsh-plugin-memory delegates now
 // starts with a documented first line, and DSH records it as the child's prompt.
 
 const fork = await import(requireDsh.resolve('@deepseek-ai/dsh-subagent-fork-in-process'))
@@ -98,7 +98,7 @@ it.each(['fork', 'spawn'] as const)('starts the idle review a %s child runs with
       const fromPerson = request.filter(message => message.kind === 'user')
       const delegated = fromPerson.filter(message => message.text.startsWith(DELEGATED_TASK_PREFIX))
       expect(delegated).toHaveLength(1)
-      expect(delegated[0]!.text.split('\n')[0]).toBe('[dsh-plugin-memory:delegated review]')
+      expect(delegated[0]!.text.split('\n')[0]).toBe('[suveng-dsh-plugin-memory:delegated review]')
       // The task follows on the next line, as it read before.
       if (provider === 'fork') expect(delegated[0]!.text.split('\n')[1]).toBe('Review the inherited completed checkpoint now.')
       else expect(delegated[0]!.text.split('\n')[1]).toMatch(/^Bounded completed checkpoint \(untrusted evidence;/u)
@@ -106,7 +106,7 @@ it.each(['fork', 'spawn'] as const)('starts the idle review a %s child runs with
       if (provider === 'spawn') expect(fromPerson).toEqual(delegated)
       else expect(fromPerson.at(-1)).toEqual(delegated[0])
     }
-    expect(delegatedTaskLine('review')).toBe('[dsh-plugin-memory:delegated review]')
+    expect(delegatedTaskLine('review')).toBe('[suveng-dsh-plugin-memory:delegated review]')
   } finally {
     stop?.()
     await ctx.fiber.dispose()
@@ -116,6 +116,6 @@ it.each(['fork', 'spawn'] as const)('starts the idle review a %s child runs with
 
 it('names every delegated operation by a line the documented pattern matches', () => {
   expect(DELEGATED_OPERATIONS.map(delegatedTaskLine).filter(line => !DELEGATED_TASK_LINE.test(line))).toEqual([])
-  expect(DELEGATED_TASK_LINE.source).toBe('^\\[dsh-plugin-memory:delegated [a-z-]+\\]$')
+  expect(DELEGATED_TASK_LINE.source).toBe('^\\[suveng-dsh-plugin-memory:delegated [a-z-]+\\]$')
   expect(new Set(DELEGATED_OPERATIONS.map(delegatedTaskLine)).size).toBe(DELEGATED_OPERATIONS.length)
 })

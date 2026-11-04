@@ -11,10 +11,10 @@ export function prepareStarterResolution(ctx: Pick<Context, 'get'>): Promise<voi
   // Direct/custom compositions may use native resolution without a profile table.
   if (profile === undefined || typeof packages?.replace !== 'function') return
   const parent = pathToFileURL(join(profile.dir, 'package.json')).href
-  const components = Object.keys(manifest.dependencies).filter(name => name.startsWith('dsh-plugin-memory-'))
+  const components = Object.keys(manifest.dependencies).filter(name => name.startsWith('suveng-dsh-plugin-memory-'))
   if (components.every(name => packages.packageOf(name, parent) !== undefined)) return
   return import('@deepseek-ai/dsh-app-boot').then(async ({ createRuntimeResolution, loadProfileDirectory, resolveBundleDir }) => {
-    const selected = loadProfileDirectory('dsh-plugin-memory', profile.dir, profile.installAnchor)
+    const selected = loadProfileDirectory('suveng-dsh-plugin-memory', profile.dir, profile.installAnchor)
     if (!selected.layers.some(layer => layer.packageName === manifest.name)) return
     // Node retains modules after a bundle is disabled. Keep the startup
     // dependency order, including stopped bundles, so their routes cannot be
@@ -22,7 +22,7 @@ export function prepareStarterResolution(ctx: Pick<Context, 'get'>): Promise<voi
     // are used only for resolution; their patches are never applied.
     const started = profile.startedBundles.map(packageName => ({
       packageName,
-      packageDir: resolveBundleDir('dsh-plugin-memory', packageName, profile.installAnchor, profile.dir),
+      packageDir: resolveBundleDir('suveng-dsh-plugin-memory', packageName, profile.installAnchor, profile.dir),
       patchPaths: [], patches: [],
     }))
     const layers = [...started, ...selected.layers.filter(layer => !profile.startedBundles.includes(layer.packageName))]

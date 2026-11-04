@@ -25,7 +25,7 @@ function createEntry(controller: MemoryWorkspaceController): { entry: HTMLButton
   const entry = document.createElement('button')
   entry.type = 'button'
   entry.dataset.dshPluginMemoryEntry = ''
-  entry.dataset.dshPlugin = 'dsh-plugin-memory'
+  entry.dataset.dshPlugin = 'suveng-dsh-plugin-memory'
   entry.dataset.dshPart = 'sidebar-entry'
   entry.className = css.entry ?? ''
   const icon = document.createElement('span')

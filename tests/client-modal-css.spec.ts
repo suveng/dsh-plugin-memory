@@ -9,7 +9,7 @@ const saveActionCss = readFileSync(new URL('../src/client/MemorySaveAction.modul
 const dialogSource = readFileSync(new URL('../src/client/MemoryDialog.tsx', import.meta.url), 'utf8')
 // Every client source of the Starter and the shipped Sources, so a dialog added in a new module is checked too.
 const root = fileURLToPath(new URL('../', import.meta.url))
-const viewSource = ['src/client', ...['runtime', 'documents', 'memory-spaces'].map(group => `plugins/dsh-plugin-memory-source-${group}/src/client`)]
+const viewSource = ['src/client', ...['runtime', 'documents', 'memory-spaces'].map(group => `plugins/suveng-dsh-plugin-memory-source-${group}/src/client`)]
   .flatMap(directory => readdirSync(join(root, directory), { recursive: true })
     .filter(path => /\.tsx?$/u.test(String(path)))
     .map(path => readFileSync(join(root, directory, String(path)), 'utf8')))
@@ -94,7 +94,7 @@ describe('responsive dialog layout invariants', () => {
 
 describe('entity rail list invariants', () => {
   it('truncates long entity names and keeps the frequency count inside the row', () => {
-    const sourceCss = readFileSync(new URL('../plugins/dsh-plugin-memory-source-memory-spaces/presentation/page.module.css', import.meta.url), 'utf8')
+    const sourceCss = readFileSync(new URL('../plugins/suveng-dsh-plugin-memory-source-memory-spaces/presentation/page.module.css', import.meta.url), 'utf8')
     expect(sourceCss).toContain('.entityList button > span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }')
     expect(sourceCss).toContain('.entityList strong { flex: none;')
   })

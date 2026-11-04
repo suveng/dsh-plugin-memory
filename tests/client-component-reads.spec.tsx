@@ -1,9 +1,9 @@
 // @vitest-environment jsdom
 import { act, cleanup, fireEvent, render, within } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { descriptor as mem0 } from 'dsh-plugin-memory-provider-mem0'
-import { descriptor as openviking } from 'dsh-plugin-memory-provider-openviking'
-import { MemorySpacesSettings } from 'dsh-plugin-memory-source-memory-spaces/client'
+import { descriptor as mem0 } from 'suveng-dsh-plugin-memory-provider-mem0'
+import { descriptor as openviking } from 'suveng-dsh-plugin-memory-provider-openviking'
+import { MemorySpacesSettings } from 'suveng-dsh-plugin-memory-source-memory-spaces/client'
 import { createComponentHosts } from '../src/client/component-host.ts'
 import { MEMORY_SPACES_PACKAGE } from '../src/client/component-settings.tsx'
 import { translateEn, type MemoryKey } from '../src/client/locales.ts'

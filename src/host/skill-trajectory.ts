@@ -1,4 +1,4 @@
-import type { TrajectoryStep, TrajectoryStats } from 'dsh-plugin-memory-source-skills/contracts'
+import type { TrajectoryStep, TrajectoryStats } from 'suveng-dsh-plugin-memory-source-skills/contracts'
 import type { HostSessionEvent } from './dsh.ts'
 import { scoreReviewActivity } from './review-activity.ts'
 import type { ReviewActivityScore, TurnSkillUse } from './protocol.ts'

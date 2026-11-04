@@ -2,9 +2,9 @@ import { randomUUID } from 'node:crypto'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, isAbsolute } from 'node:path'
 import type { Context } from '@deepseek-ai/cordis'
-import type { MemoryJsonValue, MemoryPluginDescriptor } from 'dsh-plugin-memory/contracts'
+import type { MemoryJsonValue, MemoryPluginDescriptor } from 'suveng-dsh-plugin-memory/contracts'
 
-export const name = 'dsh-plugin-memory-source-external-notes'
+export const name = 'suveng-dsh-plugin-memory-source-external-notes'
 export const inject = ['memoryMemory']
 export const memoryPlugin = {
   packageName: name,
@@ -19,11 +19,11 @@ export interface Config { path: string }
 export async function apply(ctx: Context, config: Config): Promise<void> {
   // A bundle entry is still imported when Memory is uninstalled. Cordis calls
   // apply only once memoryMemory is present, so its SDK is loaded here too.
-  const { COMPOSABLE_MEMORY_API_VERSION } = await import('dsh-plugin-memory/contracts')
+  const { COMPOSABLE_MEMORY_API_VERSION } = await import('suveng-dsh-plugin-memory/contracts')
   const {
     defineMemoryPlugin, defineMemorySource, installMemory, memoryConfigurationDigest, createMemoryMutationReceipt,
     memoryInputRecord, memoryInputText, truncateMemoryText,
-  } = await import('dsh-plugin-memory/extension-sdk')
+  } = await import('suveng-dsh-plugin-memory/extension-sdk')
   if (!isAbsolute(config.path)) throw new Error('notes path must be absolute')
   const path = config.path
   const read = () => existsSync(path) ? readFileSync(path, 'utf8') : ''

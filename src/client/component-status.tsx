@@ -5,11 +5,11 @@ import { MEMORY_SPACES_PACKAGE, RUNTIME_PACKAGE } from './component-settings.tsx
 import { SKILLS_PACKAGE } from './skills-settings.tsx'
 import { humanBytes, useT } from './page-kit.tsx'
 
-export const DOCUMENTS_PACKAGE = 'dsh-plugin-memory-source-documents'
+export const DOCUMENTS_PACKAGE = 'suveng-dsh-plugin-memory-source-documents'
 
 /**
  * The status the Memory System read for the conversation and workspace it
- * shows. Only dsh-plugin-memory's own cards read it; a card an installed component
+ * shows. Only suveng-dsh-plugin-memory's own cards read it; a card an installed component
  * contributes reads its own Source.
  */
 export const WorkbenchStatusContext = createContext<StatusView | null>(null)

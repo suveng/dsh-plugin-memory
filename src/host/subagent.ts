@@ -1,10 +1,10 @@
 import { memoryTool } from './memory-tools.ts'
 import { randomUUID } from 'node:crypto'
 import type { HostAgent, HostSubagentResult, HostSubagentRun, HostSubagentsService, ToolDefinition, ToolExecution } from "./dsh.ts"
-import type { DocumentMutation, DocumentSearchResult, DocumentSnapshot, DocumentView } from 'dsh-plugin-memory-source-documents/contracts'
-import type { RuntimeMemoryMutation, RuntimeMemoryMutationResult, RuntimeMemorySnapshot } from 'dsh-plugin-memory-source-runtime/contracts'
-import type { ModelRoute } from 'dsh-plugin-memory-source-skills/contracts'
-import type { EdgeType, Insight, MemorySpaceCatalog, MemorySpaceMetadataSample, PreparedMemoryPlacement, RememberRequest, SearchRequest } from 'dsh-plugin-memory-source-memory-spaces/contracts'
+import type { DocumentMutation, DocumentSearchResult, DocumentSnapshot, DocumentView } from 'suveng-dsh-plugin-memory-source-documents/contracts'
+import type { RuntimeMemoryMutation, RuntimeMemoryMutationResult, RuntimeMemorySnapshot } from 'suveng-dsh-plugin-memory-source-runtime/contracts'
+import type { ModelRoute } from 'suveng-dsh-plugin-memory-source-skills/contracts'
+import type { EdgeType, Insight, MemorySpaceCatalog, MemorySpaceMetadataSample, PreparedMemoryPlacement, RememberRequest, SearchRequest } from 'suveng-dsh-plugin-memory-source-memory-spaces/contracts'
 import { mutationResultCommitted } from './receipts.ts'
 import { SourceSession } from './source-session.ts'
 import { runtimeCapacityWrite, strategyDrives, viewStrategy } from './strategy-workflows.ts'
@@ -48,17 +48,17 @@ function evidenceInsights(evidence: MemoryEvidence): RecallInsight[] {
 }
 
 /**
- * Every task dsh-plugin-memory delegates to a child Agent starts with one line of its own, such as
- * `[dsh-plugin-memory:delegated review]` (#393). DSH records the task as the child's prompt from a
+ * Every task suveng-dsh-plugin-memory delegates to a child Agent starts with one line of its own, such as
+ * `[suveng-dsh-plugin-memory:delegated review]` (#393). DSH records the task as the child's prompt from a
  * person, so a plugin that reads sessions, such as one that collects a workspace's work, can
  * rely on this line, documented as stable, to leave Memory's own children out.
  */
-export const DELEGATED_TASK_PREFIX = '[dsh-plugin-memory:delegated '
-/** Every kind of task dsh-plugin-memory delegates, as its line names it. */
+export const DELEGATED_TASK_PREFIX = '[suveng-dsh-plugin-memory:delegated '
+/** Every kind of task suveng-dsh-plugin-memory delegates, as its line names it. */
 export const DELEGATED_OPERATIONS = ['write', 'answer', 'review', 'placement', 'migration', 'compaction', 'document-archive', 'metadata-maintenance', 'reconcile', 'skill'] as const
 export type DelegatedOperation = typeof DELEGATED_OPERATIONS[number]
 /** The line as the reference documents it for readers of DSH sessions. */
-export const DELEGATED_TASK_LINE = /^\[dsh-plugin-memory:delegated [a-z-]+\]$/u
+export const DELEGATED_TASK_LINE = /^\[suveng-dsh-plugin-memory:delegated [a-z-]+\]$/u
 export function delegatedTaskLine(operation: DelegatedOperation): string {
   return `${DELEGATED_TASK_PREFIX}${operation}]`
 }
@@ -213,7 +213,7 @@ function targetProblem(spaces: MemorySpaceCatalog['items'], target: string, acti
     const known = spaces.slice(0, 20).map(candidate => `${JSON.stringify(candidate.id)} (${candidate.name}${candidate.active ? '' : ', switched off'})`).join(', ')
     return `Memory Space ${JSON.stringify(target)} does not exist. Name one by its id${known === '' ? '; there is none yet.' : `: ${known}.`}`
   }
-  if (body.providerEnabled === false) return `Memory Space ${JSON.stringify(target)} uses ${body.provider.label}, which is turned off on the dsh-plugin-memory page under Plugins. Name another space.`
+  if (body.providerEnabled === false) return `Memory Space ${JSON.stringify(target)} uses ${body.provider.label}, which is turned off on the suveng-dsh-plugin-memory page under Plugins. Name another space.`
   if (body.provider.capabilities.remember !== true) return `Memory Space ${JSON.stringify(target)} (${body.provider.label}) does not take writes. Name another space.`
   if (!body.active && !activate) {
     return `Memory Space ${JSON.stringify(target)} (${body.name}) is switched off, and a write would switch it back on. If the user wants it back, switch it on first with memory_memory_body_update (active: true); otherwise name an active space.`
@@ -274,7 +274,7 @@ export class MemorySubagentCoordinator {
         return submit(request.result, execution)
       },
     })
-    if (typeof registration !== 'function') throw new Error('dsh-plugin-memory subagent result tool registration did not return a disposer')
+    if (typeof registration !== 'function') throw new Error('suveng-dsh-plugin-memory subagent result tool registration did not return a disposer')
     this.disposeResultTool = registration as () => unknown
   }
 
@@ -509,7 +509,7 @@ export class MemorySubagentCoordinator {
         maintain: strategyDrives(lease.generation.strategy.definition.manifest, 'runtime-capacity'),
         commit: () => runtime.mutate('mutate', { ...request, preserveImportance: true }, signal),
         memorySpaces: async () => {
-          if (!graph.config.writeEnabled || !this.runtimeSource.config.writeEnabled) throw new Error('dsh-plugin-memory is configured read-only')
+          if (!graph.config.writeEnabled || !this.runtimeSource.config.writeEnabled) throw new Error('suveng-dsh-plugin-memory is configured read-only')
           // Memory Spaces switched off, taking no automatic writes or not installed
           // leave the archive to the Runtime Source, as in a turn's View (#336).
           if (!allowsParticipation(graph.config, 'memory-spaces', 'write', 'automatic')
@@ -586,11 +586,11 @@ export class MemorySubagentCoordinator {
       const result = await this.enqueueRuntime({
         runtime, inspectRuntime: runtime, maintain: true, ...(request.expectedRevision === undefined ? {} : { expectedRevision: request.expectedRevision }),
         assertWritable: () => {
-          if (!graph.config.writeEnabled || !this.runtimeSource.config.writeEnabled) throw new Error('dsh-plugin-memory is configured read-only')
+          if (!graph.config.writeEnabled || !this.runtimeSource.config.writeEnabled) throw new Error('suveng-dsh-plugin-memory is configured read-only')
           assertParticipation(graph.config, 'runtime', 'write', 'manual')
         },
         commit: async () => {
-          if (!graph.config.writeEnabled || !this.runtimeSource.config.writeEnabled) throw new Error('dsh-plugin-memory is configured read-only')
+          if (!graph.config.writeEnabled || !this.runtimeSource.config.writeEnabled) throw new Error('suveng-dsh-plugin-memory is configured read-only')
           assertParticipation(graph.config, 'runtime', 'write', 'manual')
           committed = await generation.executeManagement(request)
           return committed.value as unknown as RuntimeMemoryMutationResult
@@ -867,10 +867,10 @@ ${naturalRequest(request, target === undefined ? REQUEST_LABELS : TARGETED_WRITE
     route?: ModelRoute,
     admission?: () => void,
   ): Promise<{ provider: string; runId: string; result: HostSubagentResult; receipts: CapturedToolReceipt[]; writes: CapturedToolReceipt[] }> {
-    if (this.disposed) throw new Error('dsh-plugin-memory subagent coordinator is disposed')
+    if (this.disposed) throw new Error('suveng-dsh-plugin-memory subagent coordinator is disposed')
     const provider = this.provider(preferredProvider)
     assertDshOutputSchema(outputSchema)
-    if (this.resultRuntime === undefined) throw new Error('dsh-plugin-memory subagent result tool runtime is unavailable')
+    if (this.resultRuntime === undefined) throw new Error('suveng-dsh-plugin-memory subagent result tool runtime is unavailable')
     // Keep the inherited tool inventory byte-stable. Only the child prompt
     // and arguments carry the revocable capability for this delegated run.
     const resultToolName = RESULT_TOOL_NAME
@@ -900,7 +900,7 @@ ${naturalRequest(request, target === undefined ? REQUEST_LABELS : TARGETED_WRITE
         releaseWorkflow = execution.release
         signal = execution.signal
       }
-      if (this.disposed) throw new Error('dsh-plugin-memory subagent coordinator is disposed')
+      if (this.disposed) throw new Error('suveng-dsh-plugin-memory subagent coordinator is disposed')
       const observer = this.resultRuntime.on('tools/result', ((execution: ToolExecution, result: HostToolResultObservation) => {
         if (!this.resultRequests.has(requestId)) return
         // A committed Source result remains useful reconciliation evidence even
@@ -948,7 +948,7 @@ ${naturalRequest(request, target === undefined ? REQUEST_LABELS : TARGETED_WRITE
         if (execution.parent === undefined) committedReceipts.push(receipt)
         else stagedReceipts.set(execution.parent, [...(stagedReceipts.get(execution.parent) ?? []), receipt])
       }) as never)
-      if (typeof observer !== 'function') throw new Error('dsh-plugin-memory subagent result observer registration did not return a disposer')
+      if (typeof observer !== 'function') throw new Error('suveng-dsh-plugin-memory subagent result observer registration did not return a disposer')
       disposeResultObserver = observer as () => unknown
       this.resultRequests.set(requestId, async (value, execution) => {
         signal.throwIfAborted()
@@ -1080,12 +1080,12 @@ This is the only completion channel for this run. Do not finish with a plain-tex
     }
     if (preferred === 'fork') {
       const fork = this.subagents.getProvider('fork')
-      if (!names.includes('fork') || !compatible('fork') || fork?.inheritsParentContext !== true) throw new Error('dsh-plugin-memory idle review requires the DSH fork provider with inherited parent context and structured tool isolation')
+      if (!names.includes('fork') || !compatible('fork') || fork?.inheritsParentContext !== true) throw new Error('suveng-dsh-plugin-memory idle review requires the DSH fork provider with inherited parent context and structured tool isolation')
       return 'fork'
     }
     const isolated = (name: string): boolean => compatible(name) && this.subagents.getProvider(name)?.inheritsParentContext !== true
     const selected = names.includes('spawn') && isolated('spawn') ? 'spawn' : names.find(isolated)
-    if (selected === undefined) throw new Error('dsh-plugin-memory requires a non-inheriting DSH subagent provider that limits depth and gives each child its own instructions and tools')
+    if (selected === undefined) throw new Error('suveng-dsh-plugin-memory requires a non-inheriting DSH subagent provider that limits depth and gives each child its own instructions and tools')
     return selected
   }
 
@@ -1093,7 +1093,7 @@ This is the only completion channel for this run. Do not finish with a plain-tex
     const authority = this.turnAuthority(agent, required)
     if (authority === undefined) return undefined
     const { context: turn, graph } = authority
-    const grants = turn.view.readGrants.filter(candidate => candidate.schema === 'dsh-plugin-memory.memory-spaces/v1')
+    const grants = turn.view.readGrants.filter(candidate => candidate.schema === 'suveng-dsh-plugin-memory.memory-spaces/v1')
     if (grants.length !== 1) throw new Error('The current View has no unambiguous Memory Spaces ReadGrant')
     const value = optionalObject(grants[0]!.value)
     if (value === undefined || !Array.isArray(value.memoryBodyIds) || value.memoryBodyIds.some(id => typeof id !== 'string' || id.trim() === '')) throw new Error('The current View has invalid Memory Spaces read scope')

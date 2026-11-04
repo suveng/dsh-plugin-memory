@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { MemorySettingsCard } from '../src/client/MemorySettingsCard.tsx'
 import { MemoryChangeSignal } from '../src/client/change-signal.ts'
 import { MemoryComponentListSeat } from '../src/client/component-list-seat.ts'
-import { MemorySpacesSettings } from 'dsh-plugin-memory-source-memory-spaces/client'
+import { MemorySpacesSettings } from 'suveng-dsh-plugin-memory-source-memory-spaces/client'
 import { createComponentHosts, type ComponentHosts } from '../src/client/component-host.ts'
 import { MEMORY_SPACES_PACKAGE, RUNTIME_PACKAGE, RuntimeSettings, THREE_TIER_PACKAGE, ThreeTierSettings } from '../src/client/component-settings.tsx'
 import { translateEn, translateZh, type MemoryTranslate } from '../src/client/locales.ts'
@@ -95,15 +95,15 @@ describe('MemorySettingsCard', () => {
     const descriptor = MEMORY_PROVIDER_CATALOG.find(candidate => candidate.id === 'openviking')!
     const providers = ['work-cloud', 'personal-cloud'].map(id => ({ ...descriptor, id, typeId: 'openviking', label: id }))
     const call = vi.fn(async (channel: string, endpoint: string, payload: unknown) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: {
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: {
         providers, items: providers.map(provider => ({ providerId: provider.id, enabled: true, configured: true, settings: { endpoint: 'https://memory.example/openviking', account: 'work' }, configuredSecrets: ['apiKey'] })), generatedAt: '2026-09-25T00:00:00.000Z',
       } }
-      if (channel === '/dsh-plugin-memory-write' && endpoint === 'provider-service-update') {
+      if (channel === '/suveng-dsh-plugin-memory-write' && endpoint === 'provider-service-update') {
         if (rejected) throw new Error('Synthetic user key cannot access this memory namespace')
         const request = payload as { providerId: string; settings: Record<string, string> }
         return { ok: true as const, value: { ...request, enabled: true, configured: true, configuredSecrets: ['apiKey'] } }
       }
-      if (channel === '/dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/fixture/.dsh-plugin-memory', scope: 'global' } }
+      if (channel === '/suveng-dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/fixture/.suveng-dsh-plugin-memory', scope: 'global' } }
       throw new Error(`unexpected ${channel} ${endpoint}`)
     })
     // A saved Provider tells the Memory System, so its Memory Spaces page re-reads the Providers.
@@ -115,7 +115,7 @@ describe('MemorySettingsCard', () => {
     const user = within(card).getByRole('textbox', { name: 'User Key 所属用户（跳过 Admin）' })
     fireEvent.change(user, { target: { value: rejected ? 'bob' : 'alice' } })
     fireEvent.click(within(card).getByRole('button', { name: '保存服务配置' }))
-    await waitFor(() => expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-write', 'provider-service-update', {
+    await waitFor(() => expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-write', 'provider-service-update', {
       providerId: 'work-cloud', enabled: true, settings: { endpoint: 'https://memory.example/openviking', account: 'work', discoveryUser: rejected ? 'bob' : 'alice' },
     }))
     await within(card).findByText(rejected ? /Synthetic user key cannot access/ : '服务配置已保存，记忆空间目录已同步')
@@ -272,13 +272,13 @@ describe('MemorySettingsCard', () => {
     }
     const scope = settingsScope(snapshot)
     const call = vi.fn(async (channel: string, endpoint: string) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'embedding-status') return {
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'embedding-status') return {
         ok: true as const,
         value: { available: true, model: 'qwen3-embedding:0.6b', totalInsights: 8, embedded: 6, coverage: '75%' },
       }
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'task-agent-models') return { ok: true as const, value: { groups: [], failures: [] } }
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [], items: [], generatedAt: '' } }
-      if (channel === '/dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/root/.dsh-plugin-memory', scope: 'global' as const } }
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'task-agent-models') return { ok: true as const, value: { groups: [], failures: [] } }
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [], items: [], generatedAt: '' } }
+      if (channel === '/suveng-dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/root/.suveng-dsh-plugin-memory', scope: 'global' as const } }
       throw new Error(`unexpected ${channel} ${endpoint}`)
     })
 
@@ -286,7 +286,7 @@ describe('MemorySettingsCard', () => {
     fireEvent.click(screen.getByRole('button', { name: '测试状态' }))
 
     expect(await screen.findByText('嵌入模型可用 · qwen3-embedding:0.6b · 已嵌入 6/8（75%）')).toBeTruthy()
-    expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-read', 'embedding-status', {})
+    expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-read', 'embedding-status', {})
   })
 
   it.each([false, true])('never calls a missing model or an unchecked legacy CLI available (legacy=%s, #494)', async legacy => {
@@ -294,12 +294,12 @@ describe('MemorySettingsCard', () => {
       value: { storageScope: 'global' as const }, base: {}, user: {}, revision: 1, writable: true, mode: 'host' as const })
     const message = 'Embedding model checks require Memory CLI 0.2.13 or newer. Update the configured CLI and test again.'
     const call = vi.fn(async (channel: string, endpoint: string) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'embedding-status') return legacy
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'embedding-status') return legacy
         ? { ok: false as const, error: { message } }
         : { ok: true as const, value: { available: false, model: 'missing-model', protocol: 'ollama', totalInsights: 34, embedded: 34, coverage: '100%' } }
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'task-agent-models') return { ok: true as const, value: { groups: [], failures: [] } }
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [], items: [], generatedAt: '' } }
-      if (channel === '/dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/fixture', scope: 'global' as const } }
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'task-agent-models') return { ok: true as const, value: { groups: [], failures: [] } }
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [], items: [], generatedAt: '' } }
+      if (channel === '/suveng-dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/fixture', scope: 'global' as const } }
       throw new Error(`unexpected ${channel} ${endpoint}`)
     })
     render(spaces(scope, { rpc: { call }, isLoopback: true } as ClientConnectionHandle))
@@ -321,7 +321,7 @@ describe('MemorySettingsCard', () => {
     let filled = false
     const fill = Promise.withResolvers<void>()
     const call = vi.fn(async (channel: string, endpoint: string, payload?: unknown) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'embedding-status') return {
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'embedding-status') return {
         ok: true as const,
         value: {
           available: true, model: 'nomic-embed-text', totalInsights: 158, embedded: filled ? 158 : 127, coverage: filled ? '100%' : '80%',
@@ -333,15 +333,15 @@ describe('MemorySettingsCard', () => {
           ],
         },
       }
-      if (channel === '/dsh-plugin-memory-write' && endpoint === 'embedding-fill') {
+      if (channel === '/suveng-dsh-plugin-memory-write' && endpoint === 'embedding-fill') {
         expect(payload).toEqual({ memoryBodyId: '7b3da8e7' })
         await fill.promise
         filled = true
         return { ok: true as const, value: { memoryBodyId: '7b3da8e7', filled: 31, remaining: 0, model: 'nomic-embed-text' } }
       }
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'task-agent-models') return { ok: true as const, value: { groups: [], failures: [] } }
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [], items: [], generatedAt: '' } }
-      if (channel === '/dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/root/.dsh-plugin-memory', scope: 'global' as const } }
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'task-agent-models') return { ok: true as const, value: { groups: [], failures: [] } }
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [], items: [], generatedAt: '' } }
+      if (channel === '/suveng-dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/root/.suveng-dsh-plugin-memory', scope: 'global' as const } }
       throw new Error(`unexpected ${channel} ${endpoint}`)
     })
 
@@ -388,18 +388,18 @@ describe('MemorySettingsCard', () => {
     const scope = settingsScope(snapshot)
     let available = true
     const call = vi.fn(async (channel: string, endpoint: string) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'embedding-status') return {
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'embedding-status') return {
         ok: true as const,
         value: { available, model: 'nomic-embed-text', totalInsights: 64, embedded: 33, coverage: '51%',
           spaces: [{ memoryBodyId: 'tools', name: '工具实测', active: true, totalInsights: 64, embedded: 33, coverage: '51%' }] },
       }
-      if (channel === '/dsh-plugin-memory-write' && endpoint === 'embedding-fill') {
+      if (channel === '/suveng-dsh-plugin-memory-write' && endpoint === 'embedding-fill') {
         available = false
         return { ok: false as const, error: { message: 'Ollama embedding provider not available at http://127.0.0.1:11434' } }
       }
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'task-agent-models') return { ok: true as const, value: { groups: [], failures: [] } }
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [], items: [], generatedAt: '' } }
-      if (channel === '/dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/root/.dsh-plugin-memory', scope: 'global' as const } }
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'task-agent-models') return { ok: true as const, value: { groups: [], failures: [] } }
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [], items: [], generatedAt: '' } }
+      if (channel === '/suveng-dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/root/.suveng-dsh-plugin-memory', scope: 'global' as const } }
       throw new Error(`unexpected ${channel} ${endpoint}`)
     })
 
@@ -429,15 +429,15 @@ describe('MemorySettingsCard', () => {
       { memoryBodyId: 'tools', filled: 10, remaining: 4, model: 'nomic-embed-text', stopped: 'refused' },
     ]
     const call = vi.fn(async (channel: string, endpoint: string) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'embedding-status') return {
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'embedding-status') return {
         ok: true as const,
         value: { available: true, model: 'nomic-embed-text', totalInsights: 64, embedded: 0, coverage: '0%',
           spaces: [{ memoryBodyId: 'tools', name: '工具实测', active: true, totalInsights: 64, embedded: 0, coverage: '0%' }] },
       }
-      if (channel === '/dsh-plugin-memory-write' && endpoint === 'embedding-fill') return { ok: true as const, value: results.shift()! }
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'task-agent-models') return { ok: true as const, value: { groups: [], failures: [] } }
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [], items: [], generatedAt: '' } }
-      if (channel === '/dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/root/.dsh-plugin-memory', scope: 'global' as const } }
+      if (channel === '/suveng-dsh-plugin-memory-write' && endpoint === 'embedding-fill') return { ok: true as const, value: results.shift()! }
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'task-agent-models') return { ok: true as const, value: { groups: [], failures: [] } }
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [], items: [], generatedAt: '' } }
+      if (channel === '/suveng-dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/root/.suveng-dsh-plugin-memory', scope: 'global' as const } }
       throw new Error(`unexpected ${channel} ${endpoint}`)
     })
     const connection = { rpc: { call }, isLoopback: true } as ClientConnectionHandle
@@ -481,10 +481,10 @@ describe('MemorySettingsCard', () => {
       },
     }
     const call = vi.fn(async (channel: string, endpoint: string) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'memory-system') return { ok: true as const, value: descriptor }
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'task-agent-models') return { ok: true as const, value: { groups: [], failures: [] } }
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [], items: [], generatedAt: '' } }
-      if (channel === '/dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/root/.dsh-plugin-memory', scope: 'global' as const } }
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'memory-system') return { ok: true as const, value: descriptor }
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'task-agent-models') return { ok: true as const, value: { groups: [], failures: [] } }
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [], items: [], generatedAt: '' } }
+      if (channel === '/suveng-dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/root/.suveng-dsh-plugin-memory', scope: 'global' as const } }
       throw new Error(`unexpected ${channel} ${endpoint}`)
     })
 
@@ -532,26 +532,26 @@ describe('MemorySettingsCard', () => {
       revision: 'view-1', writable: true, strategyTypeId: 'default-three-tier', currentUnavailable: 'no-session', sources: [], diagnostics: [],
       pluginInstallation: { supported: false, reason: 'loader-unavailable', suggestions: [] },
       entries: [
-        component('memory-strategy-default-three-tier', 'dsh-plugin-memory-strategy-default-three-tier', ['strategy'], { typeId: 'default-three-tier', provides: [{ id: 'strategy', exclusive: false }] }),
-        component('memory-source-runtime', 'dsh-plugin-memory-source-runtime', ['source'], { typeId: 'runtime' }),
+        component('memory-strategy-default-three-tier', 'suveng-dsh-plugin-memory-strategy-default-three-tier', ['strategy'], { typeId: 'default-three-tier', provides: [{ id: 'strategy', exclusive: false }] }),
+        component('memory-source-runtime', 'suveng-dsh-plugin-memory-source-runtime', ['source'], { typeId: 'runtime' }),
         // A Source that is off has registered nothing, so it has no type id.
-        component('memory-source-documents', 'dsh-plugin-memory-source-documents', ['source'], { enabled: false, active: false }),
-        component('memory-source-memory-spaces', 'dsh-plugin-memory-source-memory-spaces', ['source'], { enabled: false, active: false }),
+        component('memory-source-documents', 'suveng-dsh-plugin-memory-source-documents', ['source'], { enabled: false, active: false }),
+        component('memory-source-memory-spaces', 'suveng-dsh-plugin-memory-source-memory-spaces', ['source'], { enabled: false, active: false }),
       ],
     }
     const applied: MemoryViewConfigurationRequest[] = []
     const call = vi.fn(async (channel: string, endpoint: string, payload?: unknown) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'memory-system') return { ok: true as const, value: descriptor }
-      if (channel === '/dsh-plugin-memory-view' && endpoint === 'dashboard') return { ok: true as const, value: structuredClone(dashboard) }
-      if (channel === '/dsh-plugin-memory-view-settings' && endpoint === 'apply') {
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'memory-system') return { ok: true as const, value: descriptor }
+      if (channel === '/suveng-dsh-plugin-memory-view' && endpoint === 'dashboard') return { ok: true as const, value: structuredClone(dashboard) }
+      if (channel === '/suveng-dsh-plugin-memory-view-settings' && endpoint === 'apply') {
         const request = (payload as { configuration: MemoryViewConfigurationRequest }).configuration
         applied.push(request)
         dashboard = { ...dashboard, revision: 'view-2', entries: dashboard.entries.map(entry => request.entries[entry.entryId] === undefined ? entry : { ...entry, enabled: true, active: true, typeId: 'memory-spaces' }) }
         return { ok: true as const, value: { saved: true as const } }
       }
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'task-agent-models') return { ok: true as const, value: { groups: [], failures: [] } }
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [], items: [], generatedAt: '2026-09-27T00:00:00.000Z' } }
-      if (channel === '/dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/root/.dsh-plugin-memory', scope: 'global' as const } }
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'task-agent-models') return { ok: true as const, value: { groups: [], failures: [] } }
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [], items: [], generatedAt: '2026-09-27T00:00:00.000Z' } }
+      if (channel === '/suveng-dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/root/.suveng-dsh-plugin-memory', scope: 'global' as const } }
       throw new Error(`unexpected ${channel} ${endpoint}`)
     })
 
@@ -600,16 +600,16 @@ describe('MemorySettingsCard', () => {
       revision: 'view-1', writable: true, strategyTypeId: 'default-three-tier', currentUnavailable: 'no-session', sources: [], diagnostics: [],
       pluginInstallation: { supported: false, reason: 'loader-unavailable', suggestions: [] },
       entries: [
-        { ...component('memory-strategy-default-three-tier', 'dsh-plugin-memory-strategy-default-three-tier', '分层策略', ['strategy'], 'default-three-tier'), provides: [{ id: 'strategy', exclusive: false }] },
-        component('memory-source-runtime', 'dsh-plugin-memory-source-runtime', '运行时记忆', ['source'], 'runtime'),
-        component('memory-source-skills', 'dsh-plugin-memory-source-skills', '技能管理', ['source'], 'skills'),
+        { ...component('memory-strategy-default-three-tier', 'suveng-dsh-plugin-memory-strategy-default-three-tier', '分层策略', ['strategy'], 'default-three-tier'), provides: [{ id: 'strategy', exclusive: false }] },
+        component('memory-source-runtime', 'suveng-dsh-plugin-memory-source-runtime', '运行时记忆', ['source'], 'runtime'),
+        component('memory-source-skills', 'suveng-dsh-plugin-memory-source-skills', '技能管理', ['source'], 'skills'),
       ],
     }
     const call = vi.fn(async (channel: string, endpoint: string) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'memory-system') return { ok: true as const, value: descriptor }
-      if (channel === '/dsh-plugin-memory-view' && endpoint === 'dashboard') return { ok: true as const, value: structuredClone(dashboard) }
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'task-agent-models') return { ok: true as const, value: { groups: [], failures: [] } }
-      if (channel === '/dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/root/.dsh-plugin-memory', scope: 'global' as const } }
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'memory-system') return { ok: true as const, value: descriptor }
+      if (channel === '/suveng-dsh-plugin-memory-view' && endpoint === 'dashboard') return { ok: true as const, value: structuredClone(dashboard) }
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'task-agent-models') return { ok: true as const, value: { groups: [], failures: [] } }
+      if (channel === '/suveng-dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/root/.suveng-dsh-plugin-memory', scope: 'global' as const } }
       throw new Error(`unexpected ${channel} ${endpoint}`)
     })
     render(<MemorySettingsCard scope={scope} connection={{ rpc: { call }, isLoopback: true } as ClientConnectionHandle} />)
@@ -639,17 +639,17 @@ describe('MemorySettingsCard', () => {
     })
     const firstWorkspace = deferred<ReturnType<typeof catalog>>()
     const call = vi.fn(async (channel: string, endpoint: string, payload?: { workspaceId?: string }) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'provider-services') {
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'provider-services') {
         return payload?.workspaceId === 'workspace-1' ? firstWorkspace.promise : catalog('https://workspace-2.example')
       }
-      if (channel === '/dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/workspace/.dsh-plugin-memory', scope: 'workspace' as const } }
+      if (channel === '/suveng-dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/workspace/.suveng-dsh-plugin-memory', scope: 'workspace' as const } }
       throw new Error(`unexpected ${channel} ${endpoint}`)
     })
     const connection = { rpc: { call }, isLoopback: true } as ClientConnectionHandle
     const view = render(spaces(scope, connection, { workspaceId: 'workspace-1', workspaceLabel: 'One' }))
 
     view.rerender(spaces(scope, connection, { workspaceId: 'workspace-2', workspaceLabel: 'Two' }))
-    await waitFor(() => expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-read', 'provider-services', { workspaceId: 'workspace-2' }))
+    await waitFor(() => expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-read', 'provider-services', { workspaceId: 'workspace-2' }))
     const providerGroup = await screen.findByRole('group', { name: 'OpenViking 服务配置' }, { timeout: 5_000 })
     fireEvent.click(within(providerGroup).getByRole('button'))
     await waitFor(() => expect((screen.getByLabelText('服务地址') as HTMLInputElement).value).toBe('https://workspace-2.example'), { timeout: 5_000 })
@@ -675,7 +675,7 @@ describe('MemorySettingsCard', () => {
         ok: true as const, value: { ok: true as const, value: { providers: [], items: [], generatedAt: '' } },
       }
       if (channel === '/api' && remoteEndpoint === 'dshMemory/pack' && endpoint === 'target') return {
-        ok: true as const, value: { ok: true as const, value: { root: '/root/.dsh-plugin-memory', scope: 'global' as const } },
+        ok: true as const, value: { ok: true as const, value: { root: '/root/.suveng-dsh-plugin-memory', scope: 'global' as const } },
       }
       throw new Error(`unexpected ${channel} ${remoteEndpoint}/${endpoint}`)
     })
@@ -706,7 +706,7 @@ describe('MemorySettingsCard', () => {
     const mutate = vi.fn(async () => {})
     const scope = liveSettingsScope<Config>({ status: 'ready' as const, value: { storageScope: 'global' as const }, base: {}, user: {}, revision: 0, writable: true, mode: 'host' as const }, mutate)
     const call = vi.fn(async (channel: string, endpoint: string, _payload: unknown) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'task-agent-models') return {
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'task-agent-models') return {
         ok: true as const,
         value: {
           effective: { provider: 'deepseek', model: 'deepseek-chat', source: 'dsh-default' as const },
@@ -734,10 +734,10 @@ describe('MemorySettingsCard', () => {
 
     expect(selector('任务 Agent 模型').textContent).toBe('跟随全局')
     expect(await screen.findByText('deepseek / deepseek-chat')).toBeTruthy()
-    expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-read', 'task-agent-models', { includeCatalog: false })
+    expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-read', 'task-agent-models', { includeCatalog: false })
     // Choosing a custom model applies at once, starting from DSH's new-session model.
     choose('任务 Agent 模型', '自定义')
-    await waitFor(() => expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-read', 'task-agent-models', { includeCatalog: true }))
+    await waitFor(() => expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-read', 'task-agent-models', { includeCatalog: true }))
     await waitFor(() => expect(mutate).toHaveBeenCalledWith([{ op: 'set', path: ['taskAgentModel'], value: { mode: 'fixed', provider: 'deepseek', model: 'deepseek-chat' } }]))
     // Providers sharing a name are told apart by their ids; a Provider starts from its first model.
     chooseIn('memory-task-agent-provider', 'deepseek-official')
@@ -755,7 +755,7 @@ describe('MemorySettingsCard', () => {
     const mutate = vi.fn(async () => {})
     const scope = liveSettingsScope<Config>({ status: 'ready' as const, value: { storageScope: 'global' as const }, base: {}, user: {}, revision: 0, writable: true, mode: 'host' as const }, mutate)
     const call = vi.fn(async (channel: string, endpoint: string, _payload: unknown) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'task-agent-models') return { ok: true as const, value: conversationDirectory }
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'task-agent-models') return { ok: true as const, value: conversationDirectory }
       throw new Error(`unexpected ${channel} ${endpoint}`)
     })
 
@@ -764,7 +764,7 @@ describe('MemorySettingsCard', () => {
     // Following global keeps DSH's new-session model whatever the conversation runs on.
     expect(await screen.findByText('deepseek / deepseek-chat')).toBeTruthy()
     expect(screen.getByText('新会话模型')).toBeTruthy()
-    expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-read', 'task-agent-models', { includeCatalog: false, sessionId: 'session-7', workspaceId: 'workspace-3' })
+    expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-read', 'task-agent-models', { includeCatalog: false, sessionId: 'session-7', workspaceId: 'workspace-3' })
     choose('任务 Agent 模型', '跟随会话')
     await waitFor(() => expect(mutate).toHaveBeenCalledWith([{ op: 'set', path: ['taskAgentModel'], value: { mode: 'inherit', followConversation: true } }]))
     // The conversation's model reads before the Host is asked again.
@@ -783,7 +783,7 @@ describe('MemorySettingsCard', () => {
     const scope = liveSettingsScope<Config>({ status: 'ready' as const, value: { storageScope: 'global' as const, taskAgentModel: { mode: 'inherit', followConversation: true } }, base: {}, user: {}, revision: 0, writable: true, mode: 'host' as const }, mutate)
     // The whole directory never arrives, so choosing a custom model waits.
     const call = vi.fn(async (channel: string, endpoint: string, payload: unknown) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'task-agent-models') {
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'task-agent-models') {
         return (payload as { includeCatalog: boolean }).includeCatalog ? new Promise(() => {}) : { ok: true as const, value: conversationDirectory }
       }
       throw new Error(`unexpected ${channel} ${endpoint}`)
@@ -803,7 +803,7 @@ describe('MemorySettingsCard', () => {
     let full = 0
     const scope = liveSettingsScope<Config>({ status: 'ready' as const, value: { storageScope: 'global' as const, taskAgentModel: { mode: 'fixed', provider: 'openai', model: 'gpt-5' } }, base: {}, user: {}, revision: 0, writable: true, mode: 'host' as const }, vi.fn(async () => {}))
     const call = vi.fn(async (channel: string, endpoint: string, payload: unknown) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'task-agent-models') {
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'task-agent-models') {
         if ((payload as { includeCatalog: boolean }).includeCatalog && ++full === 1) return { ok: false as const, error: { code: 'unavailable', message: 'the model directory is down' } }
         return { ok: true as const, value: conversationDirectory }
       }
@@ -851,7 +851,7 @@ describe('MemorySettingsCard', () => {
     const route = new Promise<{ ok: true; value: typeof catalog }>(resolve => { resolveRoute = resolve })
     const full = new Promise<{ ok: true; value: typeof catalog }>(resolve => { resolveCatalog = resolve })
     const call = vi.fn(async (channel: string, endpoint: string, payload: unknown) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'task-agent-models') {
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'task-agent-models') {
         return (payload as { includeCatalog: boolean }).includeCatalog ? full : route
       }
       throw new Error(`unexpected ${channel} ${endpoint}`)
@@ -890,7 +890,7 @@ describe('MemorySettingsCard', () => {
     }
     const scope = settingsScope(snapshot)
     const call = vi.fn(async (channel: string, endpoint: string, payload: unknown) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'task-agent-models') return {
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'task-agent-models') return {
         ok: true as const,
         value: {
           effective: { provider: 'openai', model: 'gpt-5', source: 'fixed' as const },
@@ -911,7 +911,7 @@ describe('MemorySettingsCard', () => {
     await waitFor(() => expect(rowSelector('memory-task-agent-provider').disabled).toBe(false))
     expect(rowSelector('memory-task-agent-provider').textContent).toBe('OpenAI')
     expect(rowSelector('memory-task-agent-model').textContent).toBe('GPT-5')
-    expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-read', 'task-agent-models', { includeCatalog: true })
+    expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-read', 'task-agent-models', { includeCatalog: true })
   })
 
   it.each([undefined, 'builtin', 'buildin', 'sidebar'] as const)('applies displayMode=%s at once, while storage waits for its Apply', async displayMode => {
@@ -1086,7 +1086,7 @@ describe('MemorySettingsCard', () => {
   it('explains the grouping row only while DSH lists it below the configuration', () => {
     const scope = settingsScope({ status: 'ready' as const, value: {}, base: {}, user: {}, revision: 0, writable: true, mode: 'host' as const })
     const componentList = new MemoryComponentListSeat()
-    const note = () => screen.queryByText(/dsh-plugin-memory\/bundle is the Starter's grouping entry/u)
+    const note = () => screen.queryByText(/suveng-dsh-plugin-memory\/bundle is the Starter's grouping entry/u)
     render(<MemorySettingsCard scope={scope} t={translateEn} componentList={componentList} />)
     expect(note()).toBeNull()
     let withdraw = (): void => {}
@@ -1352,8 +1352,8 @@ describe('MemorySettingsCard', () => {
     const scope = settingsScope(snapshot)
     const providerSettings = new Promise<never>(() => {})
     const call = vi.fn((channel: string, endpoint: string) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'provider-services') return providerSettings
-      if (channel === '/dsh-plugin-memory-pack' && endpoint === 'target') return Promise.resolve({ ok: true as const, value: { root: '/active/.dsh-plugin-memory', scope: 'global' } })
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'provider-services') return providerSettings
+      if (channel === '/suveng-dsh-plugin-memory-pack' && endpoint === 'target') return Promise.resolve({ ok: true as const, value: { root: '/active/.suveng-dsh-plugin-memory', scope: 'global' } })
       return Promise.reject(new Error(`unexpected ${channel} ${endpoint}`))
     })
 
@@ -1379,12 +1379,12 @@ describe('MemorySettingsCard', () => {
       fields: [{ key: 'dataPath', label: 'Fact store path', i18nKey: 'overview.providerField.dataPath' as const, scope: 'service' as const, role: 'global-location' as const, input: 'path' as const, required: false }],
     }
     const call = vi.fn(async (channel: string, endpoint: string, payload: unknown) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [provider], items: [{ providerId: 'holographic', enabled: true, configured: true, settings: { dataPath: '/srv/dsh/holographic.json' }, configuredSecrets: [] }], generatedAt: '2026-08-17T00:00:00.000Z' } }
-      if (channel === '/dsh-plugin-memory-write' && endpoint === 'provider-service-update') {
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [provider], items: [{ providerId: 'holographic', enabled: true, configured: true, settings: { dataPath: '/srv/dsh/holographic.json' }, configuredSecrets: [] }], generatedAt: '2026-08-17T00:00:00.000Z' } }
+      if (channel === '/suveng-dsh-plugin-memory-write' && endpoint === 'provider-service-update') {
         const request = payload as { settings: Record<string, string> }
         return { ok: true as const, value: { providerId: 'holographic', enabled: true, configured: true, settings: request.settings, configuredSecrets: [] } }
       }
-      if (channel === '/dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/active/.dsh-plugin-memory', scope: 'global' } }
+      if (channel === '/suveng-dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/active/.suveng-dsh-plugin-memory', scope: 'global' } }
       throw new Error(`unexpected ${channel} ${endpoint}`)
     })
 
@@ -1419,7 +1419,7 @@ describe('MemorySettingsCard', () => {
     expect(save.disabled).toBe(false)
     fireEvent.click(save)
 
-    await waitFor(() => expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-write', 'provider-service-update', expect.objectContaining({
+    await waitFor(() => expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-write', 'provider-service-update', expect.objectContaining({
       providerId: 'holographic', enabled: true, settings: { dataPath: '/srv/dsh/holographic-v2.json' },
     })))
   })
@@ -1443,7 +1443,7 @@ describe('MemorySettingsCard', () => {
       ],
     }
     const call = vi.fn(async (channel: string, endpoint: string, payload: unknown) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'provider-services') return {
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'provider-services') return {
         ok: true as const,
         value: {
           providers: [provider],
@@ -1451,11 +1451,11 @@ describe('MemorySettingsCard', () => {
           generatedAt: '2026-08-30T00:00:00.000Z',
         },
       }
-      if (channel === '/dsh-plugin-memory-write' && endpoint === 'provider-service-update') {
+      if (channel === '/suveng-dsh-plugin-memory-write' && endpoint === 'provider-service-update') {
         const request = payload as { settings: Record<string, string> }
         return { ok: true as const, value: { providerId: 'work-account', enabled: true, configured: true, settings: request.settings, configuredSecrets: ['apiToken'] } }
       }
-      if (channel === '/dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/active/.dsh-plugin-memory', scope: 'global' } }
+      if (channel === '/suveng-dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/active/.suveng-dsh-plugin-memory', scope: 'global' } }
       throw new Error(`unexpected ${channel} ${endpoint}`)
     })
 
@@ -1470,7 +1470,7 @@ describe('MemorySettingsCard', () => {
     fireEvent.change(endpoint, { target: { value: 'https://vectors-v2.example' } })
     fireEvent.click(within(card).getByRole('button', { name: '保存服务配置' }))
 
-    await waitFor(() => expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-write', 'provider-service-update', expect.objectContaining({
+    await waitFor(() => expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-write', 'provider-service-update', expect.objectContaining({
       providerId: 'work-account', enabled: true, settings: { serverUrl: 'https://vectors-v2.example' },
     })))
   })
@@ -1494,21 +1494,21 @@ describe('MemorySettingsCard', () => {
       ],
     }
     const call = vi.fn(async (channel: string, endpoint: string) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [provider], items: [{ providerId: 'openviking', enabled: true, configured: true, settings: { endpoint: 'http://127.0.0.1:1933' }, configuredSecrets: ['apiKey'], secretValues: { apiKey: 'service-secret' } }], generatedAt: '2026-08-17T00:00:00.000Z' } }
-      if (channel === '/dsh-plugin-memory-write' && endpoint === 'provider-service-update') return { ok: true as const, value: { providerId: 'openviking', enabled: true, configured: true, settings: { endpoint: 'http://127.0.0.1:1933' }, configuredSecrets: ['apiKey'], secretValues: { apiKey: 'service-secret' } } }
-      if (channel === '/dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/workspace/.dsh-plugin-memory', scope: 'workspace' } }
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [provider], items: [{ providerId: 'openviking', enabled: true, configured: true, settings: { endpoint: 'http://127.0.0.1:1933' }, configuredSecrets: ['apiKey'], secretValues: { apiKey: 'service-secret' } }], generatedAt: '2026-08-17T00:00:00.000Z' } }
+      if (channel === '/suveng-dsh-plugin-memory-write' && endpoint === 'provider-service-update') return { ok: true as const, value: { providerId: 'openviking', enabled: true, configured: true, settings: { endpoint: 'http://127.0.0.1:1933' }, configuredSecrets: ['apiKey'], secretValues: { apiKey: 'service-secret' } } }
+      if (channel === '/suveng-dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/workspace/.suveng-dsh-plugin-memory', scope: 'workspace' } }
       throw new Error(`unexpected ${channel} ${endpoint}`)
     })
     const connection = { rpc: { call }, isLoopback: true } as ClientConnectionHandle
 
-    render(spaces(scope, connection, { sessionId: 'session-1', workspaceId: 'workspace-1', workspaceLabel: 'dsh-plugin-memory' }))
+    render(spaces(scope, connection, { sessionId: 'session-1', workspaceId: 'workspace-1', workspaceLabel: 'suveng-dsh-plugin-memory' }))
 
     await waitFor(() => expect(screen.getByText('OpenViking')).toBeTruthy())
     expect(screen.getByRole('group', { name: 'OpenViking 服务配置' })).toBeTruthy()
     const disclosure = screen.getByText('OpenViking').closest('button') as HTMLButtonElement
     expect(disclosure.getAttribute('aria-expanded')).toBe('false')
     expect(checked(screen.getByRole('switch', { name: '启用 OpenViking' }))).toBe(true)
-    expect(screen.getByText('当前工作区：dsh-plugin-memory；标记“工作区”的 Provider 配置与记忆空间使用此范围。')).toBeTruthy()
+    expect(screen.getByText('当前工作区：suveng-dsh-plugin-memory；标记“工作区”的 Provider 配置与记忆空间使用此范围。')).toBeTruthy()
     fireEvent.click(screen.getByText('OpenViking'))
     expect(disclosure.getAttribute('aria-expanded')).toBe('true')
     expect((screen.getByLabelText('服务地址') as HTMLInputElement).value).toBe('http://127.0.0.1:1933')
@@ -1531,7 +1531,7 @@ describe('MemorySettingsCard', () => {
     expect(apiKey.type).toBe('password')
     fireEvent.click(screen.getByRole('button', { name: '保存服务配置' }))
 
-    await waitFor(() => expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-write', 'provider-service-update', {
+    await waitFor(() => expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-write', 'provider-service-update', {
       providerId: 'openviking',
       settings: { endpoint: 'http://127.0.0.1:1933', apiKey: 'replacement-secret' },
       enabled: true,
@@ -1563,8 +1563,8 @@ describe('MemorySettingsCard', () => {
     }
     let service = { providerId: 'supermemory' as const, enabled: false, configured: false, settings: {}, configuredSecrets: [] as string[] }
     const call = vi.fn(async (channel: string, endpoint: string, payload: unknown) => {
-      if (channel === '/dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [provider], items: [service], generatedAt: '2026-08-17T00:00:00.000Z' } }
-      if (channel === '/dsh-plugin-memory-write' && endpoint === 'provider-service-update') {
+      if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [provider], items: [service], generatedAt: '2026-08-17T00:00:00.000Z' } }
+      if (channel === '/suveng-dsh-plugin-memory-write' && endpoint === 'provider-service-update') {
         const request = payload as { enabled: boolean; settings: Record<string, unknown> }
         service = {
           providerId: 'supermemory', enabled: request.enabled, configured: service.configured || Object.keys(request.settings).length > 0,
@@ -1573,7 +1573,7 @@ describe('MemorySettingsCard', () => {
         }
         return { ok: true as const, value: service }
       }
-      if (channel === '/dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/active/.dsh-plugin-memory', scope: 'global' } }
+      if (channel === '/suveng-dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/active/.suveng-dsh-plugin-memory', scope: 'global' } }
       throw new Error(`unexpected ${channel} ${endpoint}`)
     })
 
@@ -1599,20 +1599,20 @@ describe('MemorySettingsCard', () => {
     expect(enable.disabled).toBe(false)
     fireEvent.click(enable)
 
-    await waitFor(() => expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-write', 'provider-service-update', expect.objectContaining({
+    await waitFor(() => expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-write', 'provider-service-update', expect.objectContaining({
       providerId: 'supermemory', enabled: true, settings: { endpoint: 'https://api.supermemory.ai', apiKey: 'service-secret' },
     })))
     expect(await screen.findByText('服务配置已保存，记忆空间目录已同步')).toBeTruthy()
 
     fireEvent.click(providerToggle)
-    await waitFor(() => expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-write', 'provider-service-update', expect.objectContaining({
+    await waitFor(() => expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-write', 'provider-service-update', expect.objectContaining({
       providerId: 'supermemory', enabled: false, settings: {},
     })))
     expect(hiddenViewport.scrollTop).toBe(0)
     expect(screen.queryByLabelText('服务地址')).toBeNull()
 
     fireEvent.click(providerToggle)
-    await waitFor(() => expect(call).toHaveBeenLastCalledWith('/dsh-plugin-memory-write', 'provider-service-update', expect.objectContaining({
+    await waitFor(() => expect(call).toHaveBeenLastCalledWith('/suveng-dsh-plugin-memory-write', 'provider-service-update', expect.objectContaining({
       providerId: 'supermemory', enabled: true, settings: {},
     })))
     expect(checked(providerToggle)).toBe(true)
@@ -1629,16 +1629,16 @@ describe('MemorySettingsCard', () => {
     }
     const scope = settingsScope(snapshot)
     const call = vi.fn(async (_channel: string, endpoint: string, payload: unknown) => {
-      if (endpoint === 'target') return { ok: true as const, value: { root: '/active/.dsh-plugin-memory', scope: 'global' } }
+      if (endpoint === 'target') return { ok: true as const, value: { root: '/active/.suveng-dsh-plugin-memory', scope: 'global' } }
       if (endpoint === 'inspect') return {
         ok: true as const,
         value: {
           fileName: 'backup.zip', archiveBytes: 4, expandedBytes: 2048,
-          targetRoot: '/active/.dsh-plugin-memory', targetScope: 'global',
+          targetRoot: '/active/.suveng-dsh-plugin-memory', targetScope: 'global',
           occupied: { runtime: true, documents: true, 'memory-spaces': true },
           manifest: {
             format: 'mnemonpack', version: 1, scope: 'full', exportedAt: '2026-08-14T12:00:00.000Z',
-            source: { plugin: 'dsh-plugin-memory', pluginVersion: '0.1.0' },
+            source: { plugin: 'suveng-dsh-plugin-memory', pluginVersion: '0.1.0' },
             components: ['runtime', 'documents', 'memory-spaces'],
             summary: [
               { component: 'runtime', files: 3, bytes: 600, items: 2 },
@@ -1650,7 +1650,7 @@ describe('MemorySettingsCard', () => {
       }
       if (endpoint === 'import') return {
         ok: true as const,
-        value: { imported: true, mode: 'merge', targetRoot: '/active/.dsh-plugin-memory', components: ['runtime', 'documents', 'memory-spaces'], summary: [] },
+        value: { imported: true, mode: 'merge', targetRoot: '/active/.suveng-dsh-plugin-memory', components: ['runtime', 'documents', 'memory-spaces'], summary: [] },
       }
       throw new Error(`unexpected endpoint ${endpoint}: ${JSON.stringify(payload)}`)
     })
@@ -1659,7 +1659,7 @@ describe('MemorySettingsCard', () => {
     // The memory views read this signal; an import moves it, so they show what came in.
     const changes = new MemoryChangeSignal(0)
     render(<MemorySettingsCard scope={scope} connection={connection} componentChanges={changes} />)
-    await waitFor(() => expect(screen.getByTitle('/active/.dsh-plugin-memory')).toBeTruthy())
+    await waitFor(() => expect(screen.getByTitle('/active/.suveng-dsh-plugin-memory')).toBeTruthy())
 
     const file = new File(['pack'], 'backup.zip', { type: 'application/zip' })
     fireEvent.change(screen.getByLabelText('选择 Memory 备份 ZIP'), { target: { files: [file] } })
@@ -1670,24 +1670,24 @@ describe('MemorySettingsCard', () => {
     expect(changes.getSnapshot()).toBe(0)
 
     fireEvent.click(screen.getByRole('button', { name: '安全导入' }))
-    await waitFor(() => expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-pack', 'import', {
+    await waitFor(() => expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-pack', 'import', {
       base64: 'cGFjaw==',
     }))
-    expect(screen.getByText('已将 ZIP 安全合并到 /active/.dsh-plugin-memory。')).toBeTruthy()
+    expect(screen.getByText('已将 ZIP 安全合并到 /active/.suveng-dsh-plugin-memory。')).toBeTruthy()
     await waitFor(() => expect(changes.getSnapshot()).toBe(1))
     // The page reads its own data again too, and keeps saying what the import did.
     await waitFor(() => expect(call.mock.calls.filter(([, endpoint]) => endpoint === 'target')).toHaveLength(2))
-    expect(screen.getByText('已将 ZIP 安全合并到 /active/.dsh-plugin-memory。')).toBeTruthy()
+    expect(screen.getByText('已将 ZIP 安全合并到 /active/.suveng-dsh-plugin-memory。')).toBeTruthy()
   })
 
   it('tells the memory views after an import that reports a failure, since it can have merged first', async () => {
     const scope = settingsScope({ status: 'ready' as const, value: { storageScope: 'global' as const }, base: {}, user: {}, revision: 0, writable: true, mode: 'host' as const })
     const call = vi.fn(async (_channel: string, endpoint: string) => {
-      if (endpoint === 'target') return { ok: true as const, value: { root: '/active/.dsh-plugin-memory', scope: 'global' } }
+      if (endpoint === 'target') return { ok: true as const, value: { root: '/active/.suveng-dsh-plugin-memory', scope: 'global' } }
       if (endpoint === 'inspect') return { ok: true as const, value: {
-        fileName: 'backup.zip', archiveBytes: 4, expandedBytes: 2048, targetRoot: '/active/.dsh-plugin-memory', targetScope: 'global',
+        fileName: 'backup.zip', archiveBytes: 4, expandedBytes: 2048, targetRoot: '/active/.suveng-dsh-plugin-memory', targetScope: 'global',
         occupied: { runtime: true, documents: true, 'memory-spaces': true },
-        manifest: { format: 'mnemonpack', version: 1, scope: 'full', exportedAt: '2026-08-14T12:00:00.000Z', source: { plugin: 'dsh-plugin-memory', pluginVersion: '0.1.0' },
+        manifest: { format: 'mnemonpack', version: 1, scope: 'full', exportedAt: '2026-08-14T12:00:00.000Z', source: { plugin: 'suveng-dsh-plugin-memory', pluginVersion: '0.1.0' },
           components: ['memory-spaces'], summary: [{ component: 'memory-spaces', files: 2, bytes: 748, items: 1 }] },
       } }
       // The Host merged the archive, then reading Memory Spaces again failed.
@@ -1696,7 +1696,7 @@ describe('MemorySettingsCard', () => {
     })
     const changes = new MemoryChangeSignal(0)
     render(<MemorySettingsCard scope={scope} connection={{ rpc: { call }, isLoopback: true } as ClientConnectionHandle} componentChanges={changes} />)
-    await waitFor(() => expect(screen.getByTitle('/active/.dsh-plugin-memory')).toBeTruthy())
+    await waitFor(() => expect(screen.getByTitle('/active/.suveng-dsh-plugin-memory')).toBeTruthy())
     fireEvent.change(screen.getByLabelText('选择 Memory 备份 ZIP'), { target: { files: [new File(['pack'], 'backup.zip', { type: 'application/zip' })] } })
     fireEvent.click(await screen.findByRole('button', { name: '安全导入' }))
     expect(await screen.findByText(/memory spaces reload failed/u)).toBeTruthy()
@@ -1748,36 +1748,36 @@ describe('centralized workspace storage settings', () => {
   it('shows the one directory memory uses: the default under its title, a typed one in its field', async () => {
     const connection = (root: string, scope: string) => {
       const call = vi.fn(async (channel: string, endpoint: string) => {
-        if (channel === '/dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root, scope, defaultRoot: '/home/me/.dsh-plugin-memory' } }
+        if (channel === '/suveng-dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root, scope, defaultRoot: '/home/me/.suveng-dsh-plugin-memory' } }
         throw new Error(`unexpected ${channel} ${endpoint}`)
       })
       return { call, connection: { rpc: { call }, isLoopback: true } as unknown as ClientConnectionHandle }
     }
 
     // The default: its path under the title, with no empty field beside it.
-    const global = connection('/home/me/.dsh-plugin-memory', 'global')
+    const global = connection('/home/me/.suveng-dsh-plugin-memory', 'global')
     const first = render(<MemorySettingsCard scope={settings({ storageScope: 'global' }).scope} connection={global.connection} />)
-    expect(await screen.findByTitle('/home/me/.dsh-plugin-memory')).toBeTruthy()
+    expect(await screen.findByTitle('/home/me/.suveng-dsh-plugin-memory')).toBeTruthy()
     expect(directoryChoice('默认').checked).toBe(true)
     expect(screen.queryByRole('textbox', { name: '数据目录' })).toBeNull()
     first.unmount()
 
     // A central root: this workspace's own directory under it.
-    const central = connection('/home/me/.dsh-plugin-memory/workspaces/project-1a2b', 'workspaces')
+    const central = connection('/home/me/.suveng-dsh-plugin-memory/workspaces/project-1a2b', 'workspaces')
     const second = render(<MemorySettingsCard scope={settings({ storageScope: 'workspaces' }).scope} connection={central.connection} />)
-    expect(await screen.findByTitle('/home/me/.dsh-plugin-memory/workspaces/project-1a2b')).toBeTruthy()
+    expect(await screen.findByTitle('/home/me/.suveng-dsh-plugin-memory/workspaces/project-1a2b')).toBeTruthy()
     expect(screen.getByText('本工作区')).toBeTruthy()
     second.unmount()
 
     // A typed directory shows in its field only; choosing Default shows where memory would go.
     const custom = connection('/data/memory', 'custom')
     render(<MemorySettingsCard scope={settings({ storageScope: 'custom', dataDir: '/data/memory' }).scope} connection={custom.connection} />)
-    await waitFor(() => expect(custom.call).toHaveBeenCalledWith('/dsh-plugin-memory-pack', 'target', expect.anything()))
+    await waitFor(() => expect(custom.call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-pack', 'target', expect.anything()))
     await act(async () => {})
     expect((screen.getByRole('textbox', { name: '数据目录' }) as HTMLInputElement).value).toBe('/data/memory')
     expect(screen.queryByTitle('/data/memory')).toBeNull()
     fireEvent.click(directoryChoice('默认'))
-    expect(screen.getByTitle('/home/me/.dsh-plugin-memory')).toBeTruthy()
+    expect(screen.getByTitle('/home/me/.suveng-dsh-plugin-memory')).toBeTruthy()
     expect(screen.getByText('应用后读写新位置，已有数据不会迁移')).toBeTruthy()
   })
 })

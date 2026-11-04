@@ -1,15 +1,15 @@
 import { describe, expect, it, vi } from 'vitest'
 import type { Context } from '@deepseek-ai/cordis'
-import { ANY_MEMORY_STRATEGY, COMPOSABLE_MEMORY_API_VERSION, type MemoryStrategyDefinition } from 'dsh-plugin-memory/contracts'
-import { defineMemorySource, defineMemoryStrategy, defineMemoryStrategyExtension, defineMemoryViewExtension, installMemory, memoryViewExtensionValues, validateMemoryViewExtension } from 'dsh-plugin-memory/extension-sdk'
-import { MemoryCompositionRunner } from 'dsh-plugin-memory/testing'
+import { ANY_MEMORY_STRATEGY, COMPOSABLE_MEMORY_API_VERSION, type MemoryStrategyDefinition } from 'suveng-dsh-plugin-memory/contracts'
+import { defineMemorySource, defineMemoryStrategy, defineMemoryStrategyExtension, defineMemoryViewExtension, installMemory, memoryViewExtensionValues, validateMemoryViewExtension } from 'suveng-dsh-plugin-memory/extension-sdk'
+import { MemoryCompositionRunner } from 'suveng-dsh-plugin-memory/testing'
 
 function plugin(contribution: Parameters<typeof installMemory>[1]) {
   return { inject: ['memoryMemory'], apply(ctx: Context) { installMemory(ctx, contribution) } }
 }
 
 const notes = defineMemorySource({
-  manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'source', typeId: 'notes', packageName: 'dsh-plugin-memory-source-notes',
+  manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'source', typeId: 'notes', packageName: 'suveng-dsh-plugin-memory-source-notes',
     role: 'notes', capabilities: ['project'], consistency: 'exact-snapshot' },
   create: context => ({
     facts: () => ({ sourceInstanceKey: context.sourceInstanceKey, sourceTypeId: 'notes', role: 'notes', availability: 'ready',
@@ -22,7 +22,7 @@ const notes = defineMemorySource({
 /** A Strategy that accepts the standard projection slot through the public value contract. */
 function strategy(typeId: string, extensionSlots?: string[]): MemoryStrategyDefinition {
   return defineMemoryStrategy({
-    manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'strategy', typeId, packageName: `dsh-plugin-memory-strategy-${typeId}`,
+    manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'strategy', typeId, packageName: `suveng-dsh-plugin-memory-strategy-${typeId}`,
       deterministic: true, supportedSourceRoles: ['notes'], maxSources: 4, maxRoutes: 4, maxActions: 4,
       ...(extensionSlots === undefined ? {} : { extensionSlots }) },
     compose(request, sources, contributions = []) {
@@ -35,7 +35,7 @@ function strategy(typeId: string, extensionSlots?: string[]): MemoryStrategyDefi
 }
 
 const light = (maxProjectionCharacters: number, typeId = 'light') => defineMemoryViewExtension({
-  typeId, packageName: `dsh-plugin-memory-strategy-${typeId}`, slot: 'projection', contribute: () => ({ maxProjectionCharacters }),
+  typeId, packageName: `suveng-dsh-plugin-memory-strategy-${typeId}`, slot: 'projection', contribute: () => ({ maxProjectionCharacters }),
 })
 
 async function fixture(selected: string) {
@@ -72,7 +72,7 @@ describe('standard View extensions for any main Strategy', () => {
       // The any-Strategy extension would meet either one after a main Strategy switch.
       for (const strategyTypeId of ['first', 'second']) {
         const targeted = defineMemoryStrategyExtension({
-          manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'strategy-extension', typeId: 'narrow', packageName: 'dsh-plugin-memory-strategy-narrow',
+          manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'strategy-extension', typeId: 'narrow', packageName: 'suveng-dsh-plugin-memory-strategy-narrow',
             strategyTypeId, slot: 'projection', deterministic: true },
           contribute: () => ({ maxProjectionCharacters: 2 }),
         })
@@ -84,7 +84,7 @@ describe('standard View extensions for any main Strategy', () => {
 
   it('keeps any-Strategy extensions on standard slots and validates their values', () => {
     expect(() => defineMemoryStrategyExtension({
-      manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'strategy-extension', typeId: 'custom', packageName: 'dsh-plugin-memory-strategy-custom',
+      manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'strategy-extension', typeId: 'custom', packageName: 'suveng-dsh-plugin-memory-strategy-custom',
         strategyTypeId: ANY_MEMORY_STRATEGY, slot: 'guidance', deterministic: true },
       contribute: () => null,
     })).toThrow('must use a standard slot: guidance')
@@ -120,7 +120,7 @@ describe('standard View extensions for any main Strategy', () => {
     const contribute = vi.fn(() => ({ maxProjectionCharacters: 4 }))
     const runner = await fixture('second')
     try {
-      await runner.mount(plugin({ strategyExtensions: [defineMemoryViewExtension({ typeId: 'watched', packageName: 'dsh-plugin-memory-strategy-watched', slot: 'projection', contribute })] }), { instanceId: 'watched' })
+      await runner.mount(plugin({ strategyExtensions: [defineMemoryViewExtension({ typeId: 'watched', packageName: 'suveng-dsh-plugin-memory-strategy-watched', slot: 'projection', contribute })] }), { instanceId: 'watched' })
       const turn = await runner.beginTurn()
       expect(contribute).not.toHaveBeenCalled()
       turn.release()

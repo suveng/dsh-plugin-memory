@@ -10,9 +10,9 @@ afterEach(cleanup)
 
 /** The shipped enhancements, each named by its own declaration. */
 const FEATURES = [
-  ['capture', 'dsh-plugin-memory-strategy-auto-capture', 'Active capture', '主动记录'],
-  ['light', 'dsh-plugin-memory-strategy-light-context', 'Light context', '轻量上下文'],
-  ['scoped', 'dsh-plugin-memory-strategy-scoped', 'Scoped composition', '范围组合'],
+  ['capture', 'suveng-dsh-plugin-memory-strategy-auto-capture', 'Active capture', '主动记录'],
+  ['light', 'suveng-dsh-plugin-memory-strategy-light-context', 'Light context', '轻量上下文'],
+  ['scoped', 'suveng-dsh-plugin-memory-strategy-scoped', 'Scoped composition', '范围组合'],
 ] as const
 
 /** A profile that has switched Git sync on, which is what unfolds the repository block. */
@@ -39,7 +39,7 @@ function featureEntry([entryId, packageName, label, zh]: typeof FEATURES[number]
 
 /** The running main Strategy the enhancements extend. */
 const THREE_TIER: MemoryPluginEntryView = {
-  entryId: 'memory-strategy-default-three-tier', packageName: 'dsh-plugin-memory-strategy-default-three-tier', typeId: 'default-three-tier',
+  entryId: 'memory-strategy-default-three-tier', packageName: 'suveng-dsh-plugin-memory-strategy-default-three-tier', typeId: 'default-three-tier',
   roles: ['strategy'], label: { en: 'Layered strategy', 'zh-CN': '分层策略' }, description: { en: '', 'zh-CN': '' }, fields: [],
   provides: [{ id: 'strategy', exclusive: false }, { id: 'strategy.default-three-tier', exclusive: false }], requires: [], requiredBy: [],
   enabled: true, active: true, writable: true, config: {},
@@ -53,12 +53,12 @@ function fixture(options: { writable?: boolean; failApply?: boolean; failRefresh
     pluginInstallation: { supported: false, reason: 'loader-unavailable', suggestions: [] },
   }
   const call = vi.fn(async (channel: string, endpoint: string, payload: unknown) => {
-    if (channel === '/dsh-plugin-memory-view' && endpoint === 'dashboard') {
+    if (channel === '/suveng-dsh-plugin-memory-view' && endpoint === 'dashboard') {
       if (options.unavailable) return { ok: false as const, error: { code: 'internal' as const, message: 'dashboard failed', details: {} } }
       if (options.failRefreshAfterApply && applied) return { ok: false as const, error: { code: 'internal' as const, message: 'refresh failed', details: {} } }
       return { ok: true as const, value: structuredClone(dashboard) }
     }
-    if (channel === '/dsh-plugin-memory-view-settings' && endpoint === 'apply') {
+    if (channel === '/suveng-dsh-plugin-memory-view-settings' && endpoint === 'apply') {
       if (options.failApply) return { ok: false as const, error: { code: 'internal' as const, message: 'Memory plugin graph conflict', details: {} } }
       const request = (payload as { configuration: MemoryViewConfigurationRequest }).configuration
       dashboard = {
@@ -71,36 +71,36 @@ function fixture(options: { writable?: boolean; failApply?: boolean; failRefresh
       applied = true
       return { ok: true as const, value: { saved: true as const } }
     }
-    if (channel === '/dsh-plugin-memory-read' && endpoint === 'task-agent-models') return { ok: true as const, value: { groups: [], failures: [] } }
-    if (channel === '/dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [], items: [], generatedAt: '' } }
-    if (channel === '/dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/root/.dsh-plugin-memory', scope: 'global' as const } }
+    if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'task-agent-models') return { ok: true as const, value: { groups: [], failures: [] } }
+    if (channel === '/suveng-dsh-plugin-memory-read' && endpoint === 'provider-services') return { ok: true as const, value: { providers: [], items: [], generatedAt: '' } }
+    if (channel === '/suveng-dsh-plugin-memory-pack' && endpoint === 'target') return { ok: true as const, value: { root: '/root/.suveng-dsh-plugin-memory', scope: 'global' as const } }
     // The storage page reads the sync channel on mount; an unconfigured Host answers it.
-    if (channel === '/dsh-plugin-memory-sync' && endpoint === 'status') return {
+    if (channel === '/suveng-dsh-plugin-memory-sync' && endpoint === 'status') return {
       ok: true as const,
       value: {
         configured: false,
         config: {
           branch: 'memory-sync', subdir: 'memory/', hasToken: false, credentialSource: 'none' as const,
-          authorName: 'dsh-plugin-memory sync', authorEmail: 'memory@localhost',
+          authorName: 'suveng-dsh-plugin-memory sync', authorEmail: 'memory@localhost',
         },
-        configPath: '/root/.dsh-plugin-memory/state/sync-git.json', mirrorPath: '/root/.dsh-plugin-memory/state/sync/git',
+        configPath: '/root/.suveng-dsh-plugin-memory/state/sync-git.json', mirrorPath: '/root/.suveng-dsh-plugin-memory/state/sync/git',
         git: { available: true, required: '2.20' }, remote: { reachable: false, branchExists: false },
       },
     }
     // The sign-in block reads its own endpoint; a Host with no store reports it as unavailable.
-    if (channel === '/dsh-plugin-memory-sync' && endpoint === 'github-status') return {
+    if (channel === '/suveng-dsh-plugin-memory-sync' && endpoint === 'github-status') return {
       ok: true as const,
       value: options.github ?? { available: false, signedIn: false, writable: false },
     }
     // A signed-in account offers its repositories; the picker stays empty here.
-    if (channel === '/dsh-plugin-memory-sync' && endpoint === 'github-repositories') return {
+    if (channel === '/suveng-dsh-plugin-memory-sync' && endpoint === 'github-repositories') return {
       ok: true as const,
       value: { login: 'octocat', repositories: [] },
     }
     // The review card lives on the storage page and reads the ledger on mount.
-    if (channel === '/dsh-plugin-memory-review' && endpoint === 'view') return {
+    if (channel === '/suveng-dsh-plugin-memory-review' && endpoint === 'view') return {
       ok: true as const,
-      value: { path: '/root/.dsh-plugin-memory/state/review-ledger.json', entries: [], pending: 0 },
+      value: { path: '/root/.suveng-dsh-plugin-memory/state/review-ledger.json', entries: [], pending: 0 },
     }
     return { ok: false as const, error: { code: 'internal' as const, message: `unsupported ${channel} ${endpoint}`, details: {} } }
   })
@@ -117,7 +117,7 @@ describe('Memory enhancement settings', () => {
       expect(screen.getByRole('switch', { name: label }).getAttribute('aria-checked')).toBe('false')
     }
     // Shipped components go by their names; packages are named only for installed ones.
-    expect(screen.queryByText(/dsh-plugin-memory-strategy-/u)).toBeNull()
+    expect(screen.queryByText(/suveng-dsh-plugin-memory-strategy-/u)).toBeNull()
     expect(screen.queryByRole('button', { name: /安装|发现/u })).toBeNull()
   })
 
@@ -129,7 +129,7 @@ describe('Memory enhancement settings', () => {
     fireEvent.click(capture)
     expect(capture.getAttribute('aria-checked')).toBe('true')
 
-    await waitFor(() => expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-view-settings', 'apply', {
+    await waitFor(() => expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-view-settings', 'apply', {
       configuration: {
         expectedRevision: 'view-1', strategyTypeId: 'default-three-tier',
         entries: { capture: { enabled: true, config: {} } },
@@ -171,7 +171,7 @@ describe('Memory enhancement settings', () => {
     for (const label of FEATURES.map(([, , label]) => label)) {
       expect((screen.getByRole('switch', { name: label }) as HTMLButtonElement).disabled).toBe(true)
     }
-    expect(screen.queryByText(/dsh-plugin-memory-strategy-/u)).toBeNull()
+    expect(screen.queryByText(/suveng-dsh-plugin-memory-strategy-/u)).toBeNull()
   })
 
   it('stops showing a leftover device code once the account is signed in', async () => {
@@ -187,7 +187,7 @@ describe('Memory enhancement settings', () => {
     expect(await screen.findByText('已登录 @octocat')).toBeTruthy()
     expect(screen.queryByText('2654-9D74')).toBeNull()
     expect(screen.queryByText('在 GitHub 页面输入这个设备码：')).toBeNull()
-    await waitFor(() => expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-sync', 'github-repositories', {}))
+    await waitFor(() => expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-sync', 'github-repositories', {}))
   })
 
   it('offers a GitHub sign-in or an address first, and keeps the branch, directory and author under Advanced', async () => {
@@ -204,7 +204,7 @@ describe('Memory enhancement settings', () => {
     expect((screen.getByLabelText('分支') as HTMLInputElement).value).toBe('memory-sync')
     expect((screen.getByLabelText('仓库内目录') as HTMLInputElement).value).toBe('memory/')
     expect((within(screen.getByRole('radiogroup', { name: '提交者' })).getByRole('radio', { name: '默认' }) as HTMLInputElement).checked).toBe(true)
-    expect(screen.getByText('优先使用本机 Git 身份；没有配置时以 dsh-plugin-memory sync <memory@localhost> 提交')).toBeTruthy()
+    expect(screen.getByText('优先使用本机 Git 身份；没有配置时以 suveng-dsh-plugin-memory sync <memory@localhost> 提交')).toBeTruthy()
     cleanup()
 
     const signedIn = fixture({ github: { available: true, signedIn: true, writable: true, login: 'octocat' } })
@@ -228,7 +228,7 @@ describe('Memory enhancement settings', () => {
     expect(screen.queryByText('选择保存记忆的 Git 仓库')).toBeNull()
     expect(screen.queryByRole('button', { name: '使用 GitHub 登录' })).toBeNull()
     // Reading the channel is what would run Git, so a switched-off row asks it nothing.
-    expect(call.mock.calls.filter(([channel]) => channel === '/dsh-plugin-memory-sync')).toEqual([])
+    expect(call.mock.calls.filter(([channel]) => channel === '/suveng-dsh-plugin-memory-sync')).toEqual([])
 
     fireEvent.click(off)
     // The choice saves as it is made, and it is what the next read of the profile shows.
@@ -236,7 +236,7 @@ describe('Memory enhancement settings', () => {
     await waitFor(() => expect(screen.getByRole('switch', { name: 'Git 同步' }).getAttribute('aria-checked')).toBe('true'))
     // Switched on, the same row unfolds the repository block and reads the channel.
     expect(await screen.findByText('选择保存记忆的 Git 仓库')).toBeTruthy()
-    await waitFor(() => expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-sync', 'status', {}))
+    await waitFor(() => expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-sync', 'status', {}))
   })
 
   it('waits for the Host to take the switch before it reports Git and the remote', async () => {
@@ -247,12 +247,12 @@ describe('Memory enhancement settings', () => {
     let statusReads = 0
     // The first read lands before the Host's runtime has the saved switch: it answers as switched off.
     call.mockImplementation(async (channel: string, endpoint: string, payload: unknown) => {
-      if (channel === '/dsh-plugin-memory-sync' && endpoint === 'status' && statusReads++ === 0) return {
+      if (channel === '/suveng-dsh-plugin-memory-sync' && endpoint === 'status' && statusReads++ === 0) return {
         ok: true as const,
         value: {
           enabled: false, configured: false,
-          config: { branch: 'memory-sync', subdir: 'memory/', hasToken: false, credentialSource: 'none' as const, authorName: 'dsh-plugin-memory sync', authorEmail: 'memory@localhost' },
-          configPath: '/root/.dsh-plugin-memory/state/sync-git.json', mirrorPath: '/root/.dsh-plugin-memory/state/sync/git',
+          config: { branch: 'memory-sync', subdir: 'memory/', hasToken: false, credentialSource: 'none' as const, authorName: 'suveng-dsh-plugin-memory sync', authorEmail: 'memory@localhost' },
+          configPath: '/root/.suveng-dsh-plugin-memory/state/sync-git.json', mirrorPath: '/root/.suveng-dsh-plugin-memory/state/sync/git',
           git: { available: false, required: '2.20' }, remote: { reachable: false, branchExists: false },
         },
       }
@@ -270,7 +270,7 @@ describe('Memory enhancement settings', () => {
     const { connection, call } = fixture({ unavailable: true })
     render(<MemorySettingsCard scope={readyScope()} connection={connection} />)
 
-    await waitFor(() => expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-view', 'dashboard', {}))
+    await waitFor(() => expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-view', 'dashboard', {}))
     // Neither the components nor the saved layers can be read: the composition steps aside.
     await waitFor(() => expect(screen.queryByRole('heading', { name: '记忆组合' })).toBeNull())
     expect(screen.queryByText(/dashboard failed/u)).toBeNull()

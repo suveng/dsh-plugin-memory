@@ -7,7 +7,7 @@ import { MemoryReviewLedger } from "../src/host/review-ledger.ts"
 const directories: string[] = []
 
 function temporary(): string {
-  const directory = mkdtempSync(join(tmpdir(), 'dsh-plugin-memory-review-'))
+  const directory = mkdtempSync(join(tmpdir(), 'suveng-dsh-plugin-memory-review-'))
   directories.push(directory)
   return directory
 }

@@ -2,7 +2,7 @@ import { MEMORY_TOOLS, type JsonValue, type MemoryActivityItem, type MemoryActiv
 import { mutationResultCommitted } from './receipts.ts'
 import { truncate } from '../sdk/input.ts'
 
-export const MEMORY_ACTIVITY_SCHEMA = 'dsh-plugin-memory.activity/v1' as const
+export const MEMORY_ACTIVITY_SCHEMA = 'suveng-dsh-plugin-memory.activity/v1' as const
 
 interface ActivityMetaBase {
   schema: typeof MEMORY_ACTIVITY_SCHEMA

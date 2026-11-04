@@ -1,5 +1,5 @@
-import type { DocumentSnapshot } from 'dsh-plugin-memory-source-documents/contracts'
-import type { RuntimeMemoryEntry, RuntimeMemoryMutation, RuntimeMemorySnapshot } from 'dsh-plugin-memory-source-runtime/contracts'
+import type { DocumentSnapshot } from 'suveng-dsh-plugin-memory-source-documents/contracts'
+import type { RuntimeMemoryEntry, RuntimeMemoryMutation, RuntimeMemorySnapshot } from 'suveng-dsh-plugin-memory-source-runtime/contracts'
 import type { MemoryMachineIdentity, MemoryReconcileOperation, MemoryReviewEntry, MemorySyncDiffConflict, MemorySyncDiffEntry, MemoryTombstone } from './protocol.ts'
 
 /**

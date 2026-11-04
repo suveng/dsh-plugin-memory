@@ -8,7 +8,7 @@ import { parseSemver, resolveExecutable } from './version-updates.ts'
 import type { MemoryPluginInstallResult, MemoryPluginInstallationEnvironment, MemoryPluginInspection, MemoryPluginKind } from './view-protocol.ts'
 import { STARTER_ENHANCEMENT_PACKAGES } from './starter-components.ts'
 
-const PACKAGE = /^(?:@[a-z0-9._-]+\/)?dsh-plugin-memory-(source|strategy)-[a-z0-9][a-z0-9._-]*$/u
+const PACKAGE = /^(?:@[a-z0-9._-]+\/)?suveng-dsh-plugin-memory-(source|strategy)-[a-z0-9][a-z0-9._-]*$/u
 const FETCH_TIMEOUT_MS = 10_000
 const INSTALL_TIMEOUT_MS = 10 * 60_000
 
@@ -46,7 +46,7 @@ function manifest(path: string): PackageManifest | undefined {
 }
 
 const PACKAGE_MANIFEST = [new URL('../package.json', import.meta.url), new URL('../../package.json', import.meta.url)]
-  .map(url => fileURLToPath(url)).map(manifest).find(value => value?.name === 'dsh-plugin-memory')
+  .map(url => fileURLToPath(url)).map(manifest).find(value => value?.name === 'suveng-dsh-plugin-memory')
 function dshCommand(): DshCommand | undefined {
   const script = process.argv[1]
   if (script !== undefined && existsSync(script)) {
@@ -64,7 +64,7 @@ function dshCommand(): DshCommand | undefined {
 
 function packageKind(name: string): MemoryPluginKind {
   const match = PACKAGE.exec(name)
-  if (match === null) throw new Error('Use an exact dsh-plugin-memory-source-* or dsh-plugin-memory-strategy-* package name')
+  if (match === null) throw new Error('Use an exact suveng-dsh-plugin-memory-source-* or suveng-dsh-plugin-memory-strategy-* package name')
   return match[1] as MemoryPluginKind
 }
 
@@ -84,7 +84,7 @@ async function fetchPackage(packageName: string, tag: string): Promise<unknown> 
   try {
     const response = await fetch(`${registryBase()}/${encodeURIComponent(packageName)}/${encodeURIComponent(tag)}`, {
       signal: controller.signal,
-      headers: { accept: 'application/json', 'user-agent': 'dsh-plugin-memory-plugin-discovery' },
+      headers: { accept: 'application/json', 'user-agent': 'suveng-dsh-plugin-memory-plugin-discovery' },
     })
     if (!response.ok) throw new Error(response.status === 404 ? 'Package or compatible release channel was not found' : `Registry returned HTTP ${response.status}`)
     return await response.json()
@@ -147,8 +147,8 @@ export class MemoryPluginInstallation {
         const value = raw as PackageManifest
         if (value.name !== packageName || typeof value.version !== 'string' || parseSemver(value.version) === undefined) throw new Error('Registry returned a mismatched package identity or version')
         if (!safeBundlePatch(value.dsh?.bundle?.patch)) throw new Error('Package does not declare a safe DSH bundle patch')
-        const peer = value.peerDependencies?.['dsh-plugin-memory']
-        if (typeof peer !== 'string' || peer.trim() === '') throw new Error('Package does not declare its dsh-plugin-memory peer compatibility')
+        const peer = value.peerDependencies?.['suveng-dsh-plugin-memory']
+        if (typeof peer !== 'string' || peer.trim() === '') throw new Error('Package does not declare its suveng-dsh-plugin-memory peer compatibility')
         return { packageName, version: value.version, kind, memoryPeerRange: peer,
           ...(typeof value.description === 'string' && value.description.trim() !== '' ? { description: value.description.slice(0, 500) } : {}),
           installed: installed(profileFrom(this.ctx), packageName) }

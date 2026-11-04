@@ -1,5 +1,5 @@
 import { Component, createElement, type ComponentType, type ErrorInfo, type ReactNode } from 'react'
-import type { MemoryJsonValue } from 'dsh-plugin-memory/contracts'
+import type { MemoryJsonValue } from 'suveng-dsh-plugin-memory/contracts'
 
 /**
  * A component's own settings, on its page: keyed by the component's package
@@ -7,15 +7,15 @@ import type { MemoryJsonValue } from 'dsh-plugin-memory/contracts'
  */
 export const MEMORY_COMPONENT_SETTINGS_SLOT = 'memory.component.settings' as const
 /**
- * The priority at which dsh-plugin-memory keeps the settings of a shipped component
+ * The priority at which suveng-dsh-plugin-memory keeps the settings of a shipped component
  * that once had no settings of its own (today Memory Spaces). DSH renders, for
  * each key, the registration with the lowest priority, so the component's own
- * registration, at the default 0, replaces dsh-plugin-memory's while it lasts.
+ * registration, at the default 0, replaces suveng-dsh-plugin-memory's while it lasts.
  *
  * Exporting this is a promise to those components, and a component may rely on
- * it alone: dsh-plugin-memory keeps their settings at this priority, so registering
+ * it alone: suveng-dsh-plugin-memory keeps their settings at this priority, so registering
  * their own does not collide with it, and lends their settings `host` (see
- * {@link MemoryComponentSettingsProps.host}). dsh-plugin-memory 0.5.31 and earlier
+ * {@link MemoryComponentSettingsProps.host}). suveng-dsh-plugin-memory 0.5.31 and earlier
  * export neither and draw those settings at the default priority.
  */
 export const MEMORY_COMPONENT_FALLBACK_PRIORITY = 100
@@ -47,15 +47,15 @@ export interface MemoryComponentSettingsProps {
   workspace?: { id: string; label?: string }
   /**
    * What the page lends the settings registered under the key of a shipped
-   * component whose settings dsh-plugin-memory used to draw (today Memory Spaces):
-   * the configuration keys and Host operations dsh-plugin-memory serves it. It goes
+   * component whose settings suveng-dsh-plugin-memory used to draw (today Memory Spaces):
+   * the configuration keys and Host operations suveng-dsh-plugin-memory serves it. It goes
    * with the key, not with who registered: settings under any other key
    * receive none.
    */
   host?: MemoryComponentHost
 }
 
-/** dsh-plugin-memory's configuration as a component's settings read it. */
+/** suveng-dsh-plugin-memory's configuration as a component's settings read it. */
 export interface MemoryComponentConfigurationSnapshot {
   status: 'loading' | 'ready' | 'unavailable'
   /** The configuration keys the page shares with this component. */
@@ -67,7 +67,7 @@ export interface MemoryComponentConfigurationSnapshot {
 }
 
 /**
- * dsh-plugin-memory's configuration and Host operations, bound to one component and
+ * suveng-dsh-plugin-memory's configuration and Host operations, bound to one component and
  * to the page's conversation and workspace, as Source pages get a scoped
  * management client: never the settings service or the transport itself.
  */
@@ -78,7 +78,7 @@ export interface MemoryComponentHost {
     /** Save one key the component owns, fenced by the revision the page read like every settings write. */
     set(key: string, value: MemoryJsonValue): Promise<void>
   }
-  /** The Host operations dsh-plugin-memory serves this component; absent while the page has no Host connection. */
+  /** The Host operations suveng-dsh-plugin-memory serves this component; absent while the page has no Host connection. */
   operations?: {
     read(operation: string, input?: MemoryJsonValue): Promise<unknown>
     write(operation: string, input: MemoryJsonValue): Promise<unknown>
@@ -88,7 +88,7 @@ export interface MemoryComponentHost {
   /**
    * What the settings keep for as long as the page's client runs, one store per
    * component, conversation and workspace like the host itself. The settings
-   * can mount again under an open page: dsh-plugin-memory draws a shipped component's
+   * can mount again under an open page: suveng-dsh-plugin-memory draws a shipped component's
    * settings until the component's own client registers them, so turning the
    * component on swaps one for the other. What the first mount kept here lets
    * the next start where it was.
@@ -114,7 +114,7 @@ export interface MemoryComponentStatusProps {
 
 export type MemoryComponentStatusComponent = (props: MemoryComponentStatusProps) => ReactNode
 
-/** Everything one component adds to dsh-plugin-memory's interface beyond its declaration. */
+/** Everything one component adds to suveng-dsh-plugin-memory's interface beyond its declaration. */
 export interface MemoryComponentUIContribution {
   /** The npm package name the component's plugin declaration names. */
   packageName: string
@@ -134,7 +134,7 @@ export interface MemoryComponentUIContext {
 }
 
 /**
- * Register a component's interface into the regions dsh-plugin-memory declares, the
+ * Register a component's interface into the regions suveng-dsh-plugin-memory declares, the
  * way shipped components do. Registration waits for each region to exist and
  * is released by the returned function.
  */
@@ -143,10 +143,10 @@ export function installMemoryComponentUI(ctx: MemoryComponentUIContext, contribu
 }
 
 /**
- * dsh-plugin-memory's own registration of a shipped component's interface, kept for
+ * suveng-dsh-plugin-memory's own registration of a shipped component's interface, kept for
  * that component's versions that register none: at
  * MEMORY_COMPONENT_FALLBACK_PRIORITY, so the component's own replaces it. Not
- * part of `dsh-plugin-memory/client`.
+ * part of `suveng-dsh-plugin-memory/client`.
  */
 export function installMemoryComponentFallbackUI(ctx: MemoryComponentUIContext, contribution: MemoryComponentUIContribution): () => void {
   return installRegions(ctx, contribution, { priority: MEMORY_COMPONENT_FALLBACK_PRIORITY })
@@ -211,7 +211,7 @@ class ContributionBoundary extends Component<{ packageName: string; children: Re
   override state = { failed: false }
   static getDerivedStateFromError(): { failed: boolean } { return { failed: true } }
   override componentDidCatch(error: unknown, info: ErrorInfo): void {
-    console.error(`dsh-plugin-memory: the interface ${this.props.packageName} contributed failed`, error, info.componentStack)
+    console.error(`suveng-dsh-plugin-memory: the interface ${this.props.packageName} contributed failed`, error, info.componentStack)
   }
   override render(): ReactNode { return this.state.failed ? null : this.props.children }
 }

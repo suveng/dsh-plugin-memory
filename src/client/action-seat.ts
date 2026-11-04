@@ -1,6 +1,6 @@
 /**
  * One action a surface offers while its owner can perform it, such as opening
- * the dsh-plugin-memory page under DSH Plugins while that page provides navigation.
+ * the suveng-dsh-plugin-memory page under DSH Plugins while that page provides navigation.
  * Readers render the control only while an action is present.
  */
 export class MemoryActionSeat {

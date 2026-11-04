@@ -7,9 +7,9 @@ import { assertParticipation } from './access.ts'
 import { sourceFailure } from './source-session.ts'
 import { isVersionComponentId, VersionUpdateManager } from './version-updates.ts'
 import type { MemoryCapability, MemoryJsonValue, MemoryOperationScope, MemorySourceManagementInstance, MemorySourceManagementRequest } from '../core/contracts/index.ts'
-import type { CreateMemorySpaceRequest, Insight, MemorySpaceCatalog, PreparedMemoryPlacement, RememberRequest } from 'dsh-plugin-memory-source-memory-spaces/contracts'
-import type { RuntimeMemoryMutation } from 'dsh-plugin-memory-source-runtime/contracts'
-import type { DocumentMutation } from 'dsh-plugin-memory-source-documents/contracts'
+import type { CreateMemorySpaceRequest, Insight, MemorySpaceCatalog, PreparedMemoryPlacement, RememberRequest } from 'suveng-dsh-plugin-memory-source-memory-spaces/contracts'
+import type { RuntimeMemoryMutation } from 'suveng-dsh-plugin-memory-source-runtime/contracts'
+import type { DocumentMutation } from 'suveng-dsh-plugin-memory-source-documents/contracts'
 import { MEMORY_ACTIVATION_CHANNEL, MEMORY_PACK_CHANNEL, MEMORY_READ_CHANNEL, MEMORY_REVIEW_CHANNEL, MEMORY_SYNC_CHANNEL, MEMORY_WRITE_CHANNEL, type MemoryCompositionStatus, type MemoryPackComponent, type MemoryPackImportMode, type SkillsStatusSummary } from './protocol.ts'
 import { MEMORY_PACK_COMPONENTS } from './protocol.ts'
 import { applyReconcileOperations, selectReconcileOperations, sourceApplier, type MemoryReconcileSessions } from './reconcile.ts'
@@ -52,7 +52,7 @@ function requireAligned(runtime: ScopedRuntime): void {
   if (!runtime.aligned) throw new Error('the selected memory workspace differs from the current session; align the workbench before running an Agent-backed operation')
 }
 function requireWritable(runtime: ScopedRuntime): void {
-  if (!runtime.graph.config.writeEnabled) throw new Error('dsh-plugin-memory is configured read-only (writeEnabled: false)')
+  if (!runtime.graph.config.writeEnabled) throw new Error('suveng-dsh-plugin-memory is configured read-only (writeEnabled: false)')
 }
 function requireCapability(runtime: ScopedRuntime, typeId: string, capability: MemoryCapability): void {
   assertParticipation(runtime.graph.config, typeId, capability, 'manual')
@@ -437,7 +437,7 @@ export function createWriteHandler(input: LiveMemoryRuntime, lifecycle?: MemoryL
       const payload = object(rawPayload)
       if (endpoint === 'version-update') {
         if (versions === undefined) throw new Error('version updates are unavailable')
-        if (!input.config.writeEnabled) throw new Error('dsh-plugin-memory is configured read-only (writeEnabled: false)')
+        if (!input.config.writeEnabled) throw new Error('suveng-dsh-plugin-memory is configured read-only (writeEnabled: false)')
         if (!isVersionComponentId(payload.component)) return badRequest('unknown version component')
         return success(await versions.update(payload.component))
       }

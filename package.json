@@ -1,5 +1,5 @@
 {
-  "name": "dsh-plugin-memory",
+  "name": "suveng-dsh-plugin-memory",
   "version": "0.5.39",
   "description": "Composable, view-based context for DeepSeek Harness. Pluggable sources and strategies, with layered memory and self-evolving skills out of the box.",
   "keywords": [
@@ -36,16 +36,17 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/suveng/dsh-plugin-memory.git"
+    "url": "git+https://github.com/suveng/suveng-dsh-plugin-memory.git"
   },
-  "homepage": "https://github.com/suveng/dsh-plugin-memory#readme",
+  "homepage": "https://github.com/suveng/suveng-dsh-plugin-memory#readme",
   "bugs": {
-    "url": "https://github.com/suveng/dsh-plugin-memory/issues"
+    "url": "https://github.com/suveng/suveng-dsh-plugin-memory/issues"
   },
   "license": "MIT",
   "publishConfig": {
     "access": "public",
-    "tag": "latest"
+    "tag": "latest",
+    "registry": "https://registry.npmjs.org/"
   },
   "engines": {
     "node": ">=20",
@@ -155,24 +156,24 @@
   "dependencies": {
     "@deepseek-ai/cosmokit": "^1.8.5",
     "@deepseek-ai/schemastery": "^3.18.4",
-    "dsh-plugin-memory-provider-byterover": "0.5.6",
-    "dsh-plugin-memory-provider-hindsight": "0.5.7",
-    "dsh-plugin-memory-provider-holographic": "0.5.7",
-    "dsh-plugin-memory-provider-honcho": "0.5.5",
-    "dsh-plugin-memory-provider-mem0": "0.5.5",
-    "dsh-plugin-memory-provider-native": "0.5.10",
-    "dsh-plugin-memory-provider-openviking": "0.5.10",
-    "dsh-plugin-memory-provider-retaindb": "0.5.6",
-    "dsh-plugin-memory-provider-supermemory": "0.5.5",
-    "dsh-plugin-memory-source-documents": "0.5.12",
-    "dsh-plugin-memory-source-memory-spaces": "0.5.25",
-    "dsh-plugin-memory-source-runtime": "0.5.17",
-    "dsh-plugin-memory-source-skills": "0.5.6",
-    "dsh-plugin-memory-strategy-auto-capture": "0.5.5",
-    "dsh-plugin-memory-strategy-default-three-tier": "0.5.11",
-    "dsh-plugin-memory-strategy-general": "0.5.1",
-    "dsh-plugin-memory-strategy-light-context": "0.5.6",
-    "dsh-plugin-memory-strategy-scoped": "0.5.5",
+    "suveng-dsh-plugin-memory-provider-byterover": "0.5.6",
+    "suveng-dsh-plugin-memory-provider-hindsight": "0.5.7",
+    "suveng-dsh-plugin-memory-provider-holographic": "0.5.7",
+    "suveng-dsh-plugin-memory-provider-honcho": "0.5.5",
+    "suveng-dsh-plugin-memory-provider-mem0": "0.5.5",
+    "suveng-dsh-plugin-memory-provider-native": "0.5.10",
+    "suveng-dsh-plugin-memory-provider-openviking": "0.5.10",
+    "suveng-dsh-plugin-memory-provider-retaindb": "0.5.6",
+    "suveng-dsh-plugin-memory-provider-supermemory": "0.5.5",
+    "suveng-dsh-plugin-memory-source-documents": "0.5.12",
+    "suveng-dsh-plugin-memory-source-memory-spaces": "0.5.25",
+    "suveng-dsh-plugin-memory-source-runtime": "0.5.17",
+    "suveng-dsh-plugin-memory-source-skills": "0.5.6",
+    "suveng-dsh-plugin-memory-strategy-auto-capture": "0.5.5",
+    "suveng-dsh-plugin-memory-strategy-default-three-tier": "0.5.11",
+    "suveng-dsh-plugin-memory-strategy-general": "0.5.1",
+    "suveng-dsh-plugin-memory-strategy-light-context": "0.5.6",
+    "suveng-dsh-plugin-memory-strategy-scoped": "0.5.5",
     "fflate": "^0.8.3",
     "yaml": "^2.9.0",
     "zod": "^4.4.3"
@@ -256,7 +257,7 @@
     "zustand": "~4.4.7"
   },
   "bin": {
-    "dsh-plugin-memory-repair-session": "bin/repair-legacy-session.mjs"
+    "suveng-dsh-plugin-memory-repair-session": "bin/repair-legacy-session.mjs"
   },
   "peerDependenciesMeta": {
     "@deepseek-ai/dsh-app-boot": {

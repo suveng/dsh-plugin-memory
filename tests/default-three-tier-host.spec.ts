@@ -1,8 +1,8 @@
 import type { Context } from '@deepseek-ai/cordis'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { defineMemorySource, installMemory } from 'dsh-plugin-memory/extension-sdk'
-import { COMPOSABLE_MEMORY_API_VERSION } from 'dsh-plugin-memory/contracts'
-import type { DocumentMutationResult } from 'dsh-plugin-memory-source-documents/contracts'
+import { defineMemorySource, installMemory } from 'suveng-dsh-plugin-memory/extension-sdk'
+import { COMPOSABLE_MEMORY_API_VERSION } from 'suveng-dsh-plugin-memory/contracts'
+import type { DocumentMutationResult } from 'suveng-dsh-plugin-memory-source-documents/contracts'
 import type { HostAgent, HostContextShape, ToolDefinition } from '../src/host/dsh.ts'
 import { agentScope } from '../src/host/runtime.ts'
 import { MemorySubagentCoordinator } from '../src/host/subagent.ts'
@@ -40,7 +40,7 @@ describe('default three-tier Host presentation and shared execution', () => {
     const f = await fixture()
     await f.releases[1]!() // Replace only Documents with an independently authored narrative Source.
     const source = defineMemorySource({
-      manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'source', typeId: 'notes', packageName: 'dsh-plugin-memory-source-notes',
+      manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'source', typeId: 'notes', packageName: 'suveng-dsh-plugin-memory-source-notes',
         role: 'narrative', capabilities: ['project', 'search'], consistency: 'exact-snapshot',
         routes: [{ id: 'search', description: 'Search private notes.', capability: 'search', maxCalls: 1, inputSchema: { type: 'object', required: ['query'] } }] },
       create: context => ({
@@ -69,7 +69,7 @@ describe('default three-tier Host presentation and shared execution', () => {
     const f = await fixture()
     await f.releases[1]!() // Documents gives way to an independently authored Source, whose Route keeps its exact id.
     const source = defineMemorySource({
-      manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'source', typeId: 'notes', packageName: 'dsh-plugin-memory-source-notes',
+      manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'source', typeId: 'notes', packageName: 'suveng-dsh-plugin-memory-source-notes',
         role: 'narrative', capabilities: ['project', 'search'], consistency: 'exact-snapshot',
         routes: [{ id: 'search', description: 'Search notes.', capability: 'search', maxCalls: 1, inputSchema: { type: 'object' } }] },
       create: context => ({
@@ -167,7 +167,7 @@ describe('default three-tier Host presentation and shared execution', () => {
     const firstEntry = order === 'named-first' ? 'named' : 'generic'
     const firstArgs = firstEntry === 'named' ? { query: 'protocol-token' } : { routeId: route.id, input: { query: 'protocol-token' } }
     const meta = registered.get(firstEntry === 'named' ? 'memory_document_search' : 'memory_view_route')!.output.presentationMeta!(firstArgs, first)
-    expect(meta).toMatchObject({ schema: 'dsh-plugin-memory.activity/v1', kind: 'read', operationId: firstEntry === 'named' ? 'search' : 'view-route',
+    expect(meta).toMatchObject({ schema: 'suveng-dsh-plugin-memory.activity/v1', kind: 'read', operationId: firstEntry === 'named' ? 'search' : 'view-route',
       items: [{ id: expect.any(String), title: 'Protocol record', excerpt: expect.stringContaining('protocol-token') }] })
     if (firstEntry === 'generic') expect(meta).toMatchObject({ reference: route.id })
     const second = await execute(order === 'named-first' ? 'generic' : 'named')

@@ -28,11 +28,11 @@ export const MEMORY_GITHUB_DEFAULT_CLIENT_ID = 'Ov23liq4i7n8UsylGRfb'
 export const MEMORY_GITHUB_SCOPE = 'repo'
 /**
  * The one record this plugin keeps in DSH's credentials store, as
- * `credentialKey('dsh-plugin-memory', 'github')` builds it. Both segments satisfy the
+ * `credentialKey('suveng-dsh-plugin-memory', 'github')` builds it. Both segments satisfy the
  * store's `^[a-z][a-z0-9-]*$` rule, and the key is spelled here rather than
  * imported so the plugin keeps no dependency on the credentials package.
  */
-export const MEMORY_SYNC_GITHUB_CREDENTIAL_KEY = 'dsh-plugin-memory/github'
+export const MEMORY_SYNC_GITHUB_CREDENTIAL_KEY = 'suveng-dsh-plugin-memory/github'
 export const MEMORY_GITHUB_REQUEST_TIMEOUT_MS = 30_000
 export const MEMORY_GITHUB_DEFAULT_INTERVAL_MS = 5_000
 export const MEMORY_GITHUB_SLOW_DOWN_MS = 5_000
@@ -41,7 +41,7 @@ export const MEMORY_GITHUB_FLOW_LIMIT_MS = 3_600_000
 export const MEMORY_GITHUB_REPOSITORY_PAGE = 100
 /** How many pages of repositories the picker reads; the newest-updated come first. */
 export const MEMORY_GITHUB_REPOSITORY_PAGES = 5
-export const MEMORY_GITHUB_USER_AGENT = 'dsh-plugin-memory-sync'
+export const MEMORY_GITHUB_USER_AGENT = 'suveng-dsh-plugin-memory-sync'
 const DEVICE_GRANT = 'urn:ietf:params:oauth:grant-type:device_code'
 
 /** What one stored grant holds. The token is the only field the channel needs. */

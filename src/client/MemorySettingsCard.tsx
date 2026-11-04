@@ -64,7 +64,7 @@ const NO_CHANGE_SIGNAL: Pick<MemoryChangeSignal, 'subscribe' | 'getSnapshot' | '
 const NO_COMPONENT_LIST: Pick<MemoryComponentListSeat, 'subscribe' | 'getSnapshot'> = { subscribe: () => () => {}, getSnapshot: () => undefined }
 
 /**
- * The dsh-plugin-memory configuration, shown on its bundle page under DSH Plugins:
+ * The suveng-dsh-plugin-memory configuration, shown on its bundle page under DSH Plugins:
  * the memory composition, then only what belongs to no component — where
  * memory lives and how the interface shows it. Each component's own settings
  * live on its page, which a component's name opens anywhere on this page.

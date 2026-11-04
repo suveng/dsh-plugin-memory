@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { PluginPackageRef, PluginsSubject } from '@deepseek-ai/dsh-client-ui-plugin-manager/client'
 import type { StandardSourceBinding } from '@deepseek-ai/dsh-client-ui-slots'
 
-const RUNTIME = 'dsh-plugin-memory-source-runtime'
+const RUNTIME = 'suveng-dsh-plugin-memory-source-runtime'
 
 vi.mock('../src/client/MemorySettingsCard.tsx', () => ({
   // The card's composition board shows a component's gear and page from what it is given.
@@ -32,10 +32,10 @@ function store<T>(value: T) {
   return { getSnapshot: () => value, subscribe: () => () => {} }
 }
 
-const pkg: PluginPackageRef = { name: 'dsh-plugin-memory', installed: true, availability: 'profile', official: false, enabled: true, rows: [{ rowId: 'memory', moduleName: 'dsh-plugin-memory', enabled: true }] }
+const pkg: PluginPackageRef = { name: 'suveng-dsh-plugin-memory', installed: true, availability: 'profile', official: false, enabled: true, rows: [{ rowId: 'memory', moduleName: 'suveng-dsh-plugin-memory', enabled: true }] }
 const bundle = (overrides: Partial<PluginPackageRef> = {}): PluginsSubject => ({ kind: 'bundle', pkg: { ...pkg, ...overrides } })
 
-describe('dsh-plugin-memory page under DSH Plugins', () => {
+describe('suveng-dsh-plugin-memory page under DSH Plugins', () => {
   it('renders the configuration only for the page view the Plugins page asks for', () => {
     const props = {
       scope: settingsScope<Config>({ status: 'ready', value: {}, writable: true, mode: 'host' }),
@@ -79,7 +79,7 @@ describe('dsh-plugin-memory page under DSH Plugins', () => {
     expect(screen.getByText('No component settings')).toBeTruthy()
   })
 
-  it('offers the memory workspace from the dsh-plugin-memory page only while a placement can show it', () => {
+  it('offers the memory workspace from the suveng-dsh-plugin-memory page only while a placement can show it', () => {
     const workspace = new MemoryActionSeat()
     const { rerender } = render(<MemoryPluginActions subject={bundle()} workspace={workspace} t={translateEn} />)
     expect(screen.queryByRole('button')).toBeNull()
@@ -92,7 +92,7 @@ describe('dsh-plugin-memory page under DSH Plugins', () => {
 
     for (const subject of [
       bundle({ enabled: false }),
-      bundle({ name: 'dsh-plugin-memory-strategy-general' }),
+      bundle({ name: 'suveng-dsh-plugin-memory-strategy-general' }),
       { kind: 'row', pkg, row: pkg.rows[0]! },
       { kind: 'item', id: 'web-search' },
     ] satisfies PluginsSubject[]) {
@@ -110,7 +110,7 @@ describe('dsh-plugin-memory page under DSH Plugins', () => {
     const componentList = new MemoryComponentListSeat()
     const listener = vi.fn()
     componentList.subscribe(listener)
-    const groupRows = [{ rowId: 'memory-bundle', moduleName: 'dsh-plugin-memory/bundle', enabled: false }, ...pkg.rows]
+    const groupRows = [{ rowId: 'memory-bundle', moduleName: 'suveng-dsh-plugin-memory/bundle', enabled: false }, ...pkg.rows]
     const grouped = bundle({ rows: groupRows })
     // DSH 0.2.0 lists the grouping row, always off; DSH 0.2.1 lists only the components.
     const { rerender, unmount } = render(<MemoryPluginActions subject={grouped} workspace={workspace} componentList={componentList} t={translateEn} />)

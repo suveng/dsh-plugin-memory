@@ -1,5 +1,5 @@
 /** Declarative identity and graph relations shared by every Memory plugin. */
-export const MEMORY_PLUGIN_API_VERSION = 'dsh-plugin-memory/plugin/v1' as const
+export const MEMORY_PLUGIN_API_VERSION = 'suveng-dsh-plugin-memory/plugin/v1' as const
 
 export type MemoryPluginRole = 'source' | 'strategy' | 'strategy-extension'
 

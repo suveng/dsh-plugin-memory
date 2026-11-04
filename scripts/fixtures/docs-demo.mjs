@@ -3,12 +3,12 @@
 // with the real View tools. It holds no personal memory and needs the Memory
 // CLI for the native Memory Spaces. The skills half is in docs-demo-skills.mjs.
 import { realpathSync } from 'node:fs'
-import { MemoryCompositionRunner } from 'dsh-plugin-memory/testing'
-import * as runtimePlugin from 'dsh-plugin-memory-source-runtime'
-import * as documentsPlugin from 'dsh-plugin-memory-source-documents'
-import * as spacesPlugin from 'dsh-plugin-memory-source-memory-spaces'
-import * as strategyPlugin from 'dsh-plugin-memory-strategy-default-three-tier'
-import * as skillsPlugin from 'dsh-plugin-memory-source-skills'
+import { MemoryCompositionRunner } from 'suveng-dsh-plugin-memory/testing'
+import * as runtimePlugin from 'suveng-dsh-plugin-memory-source-runtime'
+import * as documentsPlugin from 'suveng-dsh-plugin-memory-source-documents'
+import * as spacesPlugin from 'suveng-dsh-plugin-memory-source-memory-spaces'
+import * as strategyPlugin from 'suveng-dsh-plugin-memory-strategy-default-three-tier'
+import * as skillsPlugin from 'suveng-dsh-plugin-memory-source-skills'
 import { seedDocsDemoSkills, skillsDemoModel } from './docs-demo-skills.mjs'
 import { delegatedCompletion } from './delegated-completion.mjs'
 
@@ -170,7 +170,7 @@ export async function seedDocsDemo({ dataDir, workspace, language, skills }) {
     await runner.mount(documentsPlugin, { instanceId: 'documents', config: { dataDir } })
     await runner.mount(spacesPlugin, { instanceId: 'memory-spaces', config: {
       dataDir, timeoutMs: 20_000, defaultRecallLimit: 20,
-      providers: [{ use: 'dsh-plugin-memory-provider-native', instanceId: 'memory-native' }],
+      providers: [{ use: 'suveng-dsh-plugin-memory-provider-native', instanceId: 'memory-native' }],
     } })
     if (skills !== undefined) await runner.mount(skillsPlugin, { instanceId: 'skills', config: { dataDir, dshHome: skills.dshHome, agentsHome: skills.agentsHome } })
     // The Host names a workspace by its resolved path, as DSH reports it.

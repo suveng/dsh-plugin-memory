@@ -13,7 +13,7 @@ function generation() {
   const directory = mkdtempSync(join(tmpdir(), 'memory-generation-import-'))
   const profile = join(directory, 'profiles/web')
   const installed = join(directory, 'profiles/.generations/live/memory/node_modules')
-  const packageRoot = join(installed, 'dsh-plugin-memory')
+  const packageRoot = join(installed, 'suveng-dsh-plugin-memory')
   mkdirSync(packageRoot, { recursive: true })
   cpSync(join(root, 'lib'), join(packageRoot, 'lib'), { recursive: true })
   writeFileSync(join(packageRoot, 'package.json'), JSON.stringify(manifest))
@@ -28,7 +28,7 @@ function generation() {
     symlinkSync(join(root, 'node_modules', name), target, 'junction')
   }
   mkdirSync(join(profile, 'node_modules'), { recursive: true })
-  symlinkSync(packageRoot, join(profile, 'node_modules/dsh-plugin-memory'), 'junction')
+  symlinkSync(packageRoot, join(profile, 'node_modules/suveng-dsh-plugin-memory'), 'junction')
   return { directory, profile }
 }
 
@@ -39,13 +39,13 @@ describe('profile generation imports against host-owned framework packages', () 
       const entry = join(fixture.profile, 'check.mjs')
       writeFileSync(entry, `
         import assert from 'node:assert/strict'
-        import * as memory from 'dsh-plugin-memory'
+        import * as memory from 'suveng-dsh-plugin-memory'
         const config = memory.Config({ displayMode: 'builtin', remoteAccess: 'read-only' })
         assert.equal(typeof config.displayMode?.get, 'function')
         assert.equal(config.displayMode.get(), 'builtin')
         assert.equal(config.remoteAccess, 'read-only')
         assert.equal(typeof memory.apply, 'function')
-        assert.equal(memory.name, 'dsh-plugin-memory')
+        assert.equal(memory.name, 'suveng-dsh-plugin-memory')
         console.log(JSON.stringify({ loaded: true }))
       `)
       const result = spawnSync(process.execPath, [entry], { encoding: 'utf8', timeout: 20_000 })

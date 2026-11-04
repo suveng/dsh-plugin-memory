@@ -1,9 +1,9 @@
 import type { Context } from '@deepseek-ai/cordis'
-import { defineMemoryStrategy, installMemory } from 'dsh-plugin-memory/extension-sdk'
-import { COMPOSABLE_MEMORY_API_VERSION } from 'dsh-plugin-memory/contracts'
-import { MemoryCompositionRunner } from 'dsh-plugin-memory/testing'
-import * as runtimePlugin from 'dsh-plugin-memory-source-runtime'
-import * as documentsPlugin from 'dsh-plugin-memory-source-documents'
+import { defineMemoryStrategy, installMemory } from 'suveng-dsh-plugin-memory/extension-sdk'
+import { COMPOSABLE_MEMORY_API_VERSION } from 'suveng-dsh-plugin-memory/contracts'
+import { MemoryCompositionRunner } from 'suveng-dsh-plugin-memory/testing'
+import * as runtimePlugin from 'suveng-dsh-plugin-memory-source-runtime'
+import * as documentsPlugin from 'suveng-dsh-plugin-memory-source-documents'
 
 /** Public plugins under a minimal test Strategy; no private controllers. */
 export async function sourceFixture(options: {

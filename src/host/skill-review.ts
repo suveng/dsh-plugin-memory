@@ -1,4 +1,4 @@
-import type { EvalCase, EvidencePack, EvolutionSignal, SkillDocument, SkillSuggestion, TrajectoryStep } from 'dsh-plugin-memory-source-skills/contracts'
+import type { EvalCase, EvidencePack, EvolutionSignal, SkillDocument, SkillSuggestion, TrajectoryStep } from 'suveng-dsh-plugin-memory-source-skills/contracts'
 
 const SIGNALS: readonly EvolutionSignal[] = ['correction', 'directive', 'tool-failure', 'approach-change', 'procedure', 'skill-gap', 'skill-misleading', 'success']
 

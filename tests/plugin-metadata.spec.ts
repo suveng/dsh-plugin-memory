@@ -1,15 +1,15 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { memoryPlugin as documents } from 'dsh-plugin-memory-source-documents'
-import { memoryPlugin as spaces } from 'dsh-plugin-memory-source-memory-spaces'
-import { NATIVE_PROVIDER_ID } from 'dsh-plugin-memory-source-memory-spaces/contracts'
-import { memoryPlugin as runtime } from 'dsh-plugin-memory-source-runtime'
-import { memoryPlugin as skills } from 'dsh-plugin-memory-source-skills'
-import { memoryPlugin as capture } from 'dsh-plugin-memory-strategy-auto-capture'
-import { memoryPlugin as threeTier } from 'dsh-plugin-memory-strategy-default-three-tier'
-import { memoryPlugin as general } from 'dsh-plugin-memory-strategy-general'
-import { memoryPlugin as light } from 'dsh-plugin-memory-strategy-light-context'
-import { memoryPlugin as scoped } from 'dsh-plugin-memory-strategy-scoped'
+import { memoryPlugin as documents } from 'suveng-dsh-plugin-memory-source-documents'
+import { memoryPlugin as spaces } from 'suveng-dsh-plugin-memory-source-memory-spaces'
+import { NATIVE_PROVIDER_ID } from 'suveng-dsh-plugin-memory-source-memory-spaces/contracts'
+import { memoryPlugin as runtime } from 'suveng-dsh-plugin-memory-source-runtime'
+import { memoryPlugin as skills } from 'suveng-dsh-plugin-memory-source-skills'
+import { memoryPlugin as capture } from 'suveng-dsh-plugin-memory-strategy-auto-capture'
+import { memoryPlugin as threeTier } from 'suveng-dsh-plugin-memory-strategy-default-three-tier'
+import { memoryPlugin as general } from 'suveng-dsh-plugin-memory-strategy-general'
+import { memoryPlugin as light } from 'suveng-dsh-plugin-memory-strategy-light-context'
+import { memoryPlugin as scoped } from 'suveng-dsh-plugin-memory-strategy-scoped'
 import { STARTER_COMPONENT_ROWS, STARTER_ENHANCEMENT_PACKAGES, STARTER_SELF_REGISTERING_PACKAGES } from '../src/host/starter-components.ts'
 import type { MemoryPluginEntryView } from '../src/host/view-protocol.ts'
 import { isShipped } from '../src/client/component-copy.ts'
@@ -31,14 +31,14 @@ describe('component package metadata', () => {
   it('gives every component row the Starter declares a page of its own', () => {
     // Row ids and module names in the bundle patch, for the rows that name a memory component.
     const patch = readFileSync(new URL('../cordis.patch.yml', import.meta.url), 'utf8')
-    const rows = [...patch.matchAll(/- id: ([\w-]+)\n\s+name: (dsh-plugin-memory-(?:source|strategy)-[\w-]+)/gu)]
+    const rows = [...patch.matchAll(/- id: ([\w-]+)\n\s+name: (suveng-dsh-plugin-memory-(?:source|strategy)-[\w-]+)/gu)]
     expect(rows.map(row => ({ rowId: row[1], packageName: row[2] }))).toEqual(STARTER_COMPONENT_ROWS)
     expect(rows.map(row => row[2]).sort()).toEqual(components.map(plugin => plugin.packageName).sort())
   })
 
   it('names exactly the components package.json pins', () => {
     const { dependencies } = read('package.json') as { dependencies: Record<string, string> }
-    const pinned = Object.entries(dependencies).filter(([name]) => /^dsh-plugin-memory-(?:source|strategy)-/u.test(name))
+    const pinned = Object.entries(dependencies).filter(([name]) => /^suveng-dsh-plugin-memory-(?:source|strategy)-/u.test(name))
     expect(pinned.map(([name]) => name).sort()).toEqual(STARTER_COMPONENT_ROWS.map(row => row.packageName).sort())
     // One exact version each, a release candidate's prerelease included, never a range.
     for (const [name, version] of pinned) expect(version, name).toMatch(/^\d+\.\d+\.\d+(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/u)
@@ -46,7 +46,7 @@ describe('component package metadata', () => {
 
   it('tells a shipped component from an installed one by the Starter rows', () => {
     for (const { packageName } of STARTER_COMPONENT_ROWS) expect(isShipped({ packageName } as MemoryPluginEntryView), packageName).toBe(true)
-    for (const packageName of ['dsh-plugin-memory-strategy-focus', 'dsh-plugin-memory-provider-mem0', 'dsh-plugin-memory']) {
+    for (const packageName of ['suveng-dsh-plugin-memory-strategy-focus', 'suveng-dsh-plugin-memory-provider-mem0', 'suveng-dsh-plugin-memory']) {
       expect(isShipped({ packageName } as MemoryPluginEntryView), packageName).toBe(false)
     }
   })
@@ -64,6 +64,6 @@ describe('component package metadata', () => {
 
   it('installs Mnemon Native under the id Memory Spaces knows it by', () => {
     const patch = readFileSync(new URL('../cordis.patch.yml', import.meta.url), 'utf8')
-    expect(patch).toMatch(new RegExp(`- use: dsh-plugin-memory-provider-native\n\\s+instanceId: ${NATIVE_PROVIDER_ID}\n`, 'u'))
+    expect(patch).toMatch(new RegExp(`- use: suveng-dsh-plugin-memory-provider-native\n\\s+instanceId: ${NATIVE_PROVIDER_ID}\n`, 'u'))
   })
 })

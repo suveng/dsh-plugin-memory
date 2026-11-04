@@ -83,7 +83,7 @@ function makeCtx(initialValue: unknown, coreValue: Record<string, unknown> = {})
     connection: {
       rpc: {
         call: vi.fn(async (channel: string, endpoint: string, rawPayload: unknown) => {
-          if (channel === '/dsh-plugin-memory-settings') {
+          if (channel === '/suveng-dsh-plugin-memory-settings') {
             const payload = rawPayload as { namespace?: string; ops?: Array<{ op: string; path: string[]; value?: unknown }> }
             const namespace = payload.namespace
             if (endpoint === 'mutate' && namespace === 'memory-ui') {
@@ -145,7 +145,7 @@ describe('interaction surfaces binding', () => {
     const peers = [...core.entriesOfSlot(slot)]
     const ids = () => core.entriesOfSlot(slot).map(entry => entry.options.id)
     // The memory line, then the skills line: each follows its own settings.
-    const tails = ['dsh-plugin-memory/turn-tail', 'dsh-plugin-memory/skill-tail']
+    const tails = ['suveng-dsh-plugin-memory/turn-tail', 'suveng-dsh-plugin-memory/skill-tail']
 
     apply(ctx)
     // The default-on entries must wait for the Host settings snapshot.
@@ -158,7 +158,7 @@ describe('interaction surfaces binding', () => {
       interactionScope: { mutate: (ops: unknown[]) => Promise<void> }
     }
     await settings.interactionScope.mutate([{ op: 'set', path: ['turnBar'], value: false }])
-    expect(ids()).toEqual(['dsh-plugin-memory/skill-tail', ...peerIds])
+    expect(ids()).toEqual(['suveng-dsh-plugin-memory/skill-tail', ...peerIds])
     await settings.interactionScope.mutate([{ op: 'set', path: ['turnBar'], value: true }])
     expect(ids()).toEqual([...tails, ...peerIds])
     expect(core.entries(slot)).toHaveLength(4)
@@ -178,14 +178,14 @@ describe('interaction surfaces binding', () => {
     // Sidebar has a DSH-owned seat even before any session exists.
     expect(injects).toContain('plugins.bundle.config')
     await waitFor(() => expect(injects).toContain('shell.overlay'))
-    await waitFor(() => expect(activeRegistrations()).toEqual(expect.arrayContaining(['dsh-plugin-memory/turn-tail', 'memory-save'])))
+    await waitFor(() => expect(activeRegistrations()).toEqual(expect.arrayContaining(['suveng-dsh-plugin-memory/turn-tail', 'memory-save'])))
   })
 
   it('registers explicitly enabled surfaces after settings load', async () => {
     const { ctx, activeRegistrations } = makeCtx({ toolviews: true, turnBar: true, saveAction: true })
     apply(ctx)
-    await waitFor(() => expect(activeRegistrations()).toEqual(expect.arrayContaining(['dsh-plugin-memory/turn-tail', 'memory-save'])))
-    expect(activeRegistrations()).toEqual(expect.arrayContaining(['dsh-plugin-memory/turn-tail', 'memory-save']))
+    await waitFor(() => expect(activeRegistrations()).toEqual(expect.arrayContaining(['suveng-dsh-plugin-memory/turn-tail', 'memory-save'])))
+    expect(activeRegistrations()).toEqual(expect.arrayContaining(['suveng-dsh-plugin-memory/turn-tail', 'memory-save']))
   })
 
   it('registers only the enabled surfaces when toggles are mixed', async () => {
@@ -193,7 +193,7 @@ describe('interaction surfaces binding', () => {
     apply(ctx)
     await waitFor(() => expect(activeRegistrations()).toEqual(expect.arrayContaining(['memory-save'])))
     expect(activeRegistrations()).toEqual(expect.arrayContaining(['memory-save']))
-    expect(activeRegistrations()).not.toContain('dsh-plugin-memory/turn-tail')
+    expect(activeRegistrations()).not.toContain('suveng-dsh-plugin-memory/turn-tail')
   })
 
   it('opens the default sidebar for a conversation anchor', async () => {
@@ -234,7 +234,7 @@ describe('interaction surfaces binding', () => {
     apply(ctx)
     await waitFor(() => expect(injects).toContain('conversation.view'))
     expect(activeRegistrations().filter(id => id === 'memory')).toHaveLength(1)
-    expect(activeRegistrations()).toContain('dsh-plugin-memory')
+    expect(activeRegistrations()).toContain('suveng-dsh-plugin-memory')
 
     dispatchMemoryAnchor({ page: 'documents/library', sessionId: 'session-b' })
     expect(clicked).not.toHaveBeenCalled()
@@ -260,7 +260,7 @@ describe('interaction surfaces binding', () => {
     setSessions({})
     apply(ctx)
     await waitFor(() => expect(injects).toContain('conversation.view'))
-    const actions = registeredOptions.find(options => options.id === 'dsh-plugin-memory/open-workspace')!
+    const actions = registeredOptions.find(options => options.id === 'suveng-dsh-plugin-memory/open-workspace')!
     const workspace = actions.inject!().workspace as { getSnapshot(): (() => void) | undefined }
     // An unsent draft has no conversation tabs to open.
     expect(workspace.getSnapshot()).toBeUndefined()
@@ -275,7 +275,7 @@ describe('interaction surfaces binding', () => {
     apply(ctx)
     await waitFor(() => expect(activeRegistrations()).toContain('memory-save'))
     expect(activeRegistrations().filter(id => id === 'memory')).toHaveLength(0)
-    expect(activeRegistrations()).toContain('dsh-plugin-memory') // the configuration page only
+    expect(activeRegistrations()).toContain('suveng-dsh-plugin-memory') // the configuration page only
     dispatchMemoryAnchor({ page: 'documents/library', sessionId: 'session-a' })
     expect(document.documentElement.hasAttribute('data-dsh-plugin-memory-active')).toBe(false)
     expect(consumeMemoryAnchor('session-a')).toMatchObject({ page: 'documents/library' })
@@ -290,9 +290,9 @@ describe('interaction surfaces binding', () => {
     if (injected?.interactionScope === undefined) throw new Error('memory-ui settings scope was not injected')
 
     await injected.interactionScope.mutate([{ op: 'set', path: ['turnBar'], value: true }])
-    await waitFor(() => expect(activeRegistrations()).toContain('dsh-plugin-memory/turn-tail'))
+    await waitFor(() => expect(activeRegistrations()).toContain('suveng-dsh-plugin-memory/turn-tail'))
 
     await injected.interactionScope.mutate([{ op: 'set', path: ['turnBar'], value: false }])
-    await waitFor(() => expect(activeRegistrations()).not.toContain('dsh-plugin-memory/turn-tail'))
+    await waitFor(() => expect(activeRegistrations()).not.toContain('suveng-dsh-plugin-memory/turn-tail'))
   })
 })

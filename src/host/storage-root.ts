@@ -18,7 +18,7 @@ function expandDirectory(value: string): string {
  * A workspace-scoped root needs a real workspace. DSH reports none for a
  * conversation that has not run yet, and for one opened from the list whose
  * Agent is not loaded, as an empty cwd; resolving that would place the data
- * under the filesystem root (its own `/.dsh-plugin-memory`), which a plugin never owns.
+ * under the filesystem root (its own `/.suveng-dsh-plugin-memory`), which a plugin never owns.
  */
 export const NO_WORKSPACE_MESSAGE = 'the current DSH session has no workspace for Memory'
 

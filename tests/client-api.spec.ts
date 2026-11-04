@@ -8,11 +8,11 @@ describe('MemoryClient product transport', () => {
     const call = vi.fn(async () => ({ ok: true as const, value: { revision: 'r2', value: {} } }))
     const client = new MemoryClient({ rpc: { call }, isLoopback: true } as ClientConnectionHandle, 'session-1', 'workspace-1')
     await client.readSourceManagement('source:spaces', 'body-reconnect', { memoryBodyId: 'project' })
-    expect(call).toHaveBeenLastCalledWith('/dsh-plugin-memory-read', 'source-management-read', {
+    expect(call).toHaveBeenLastCalledWith('/suveng-dsh-plugin-memory-read', 'source-management-read', {
       sourceInstanceKey: 'source:spaces', operation: 'body-reconnect', input: { memoryBodyId: 'project' }, sessionId: 'session-1', workspaceId: 'workspace-1',
     })
     await client.mutateSourceManagement('source:spaces', 'body-update', { memoryBodyId: 'project', name: 'Project' }, 'r2', true)
-    expect(call).toHaveBeenLastCalledWith('/dsh-plugin-memory-write', 'source-management-mutate', {
+    expect(call).toHaveBeenLastCalledWith('/suveng-dsh-plugin-memory-write', 'source-management-mutate', {
       sourceInstanceKey: 'source:spaces', operation: 'body-update', input: { memoryBodyId: 'project', name: 'Project' }, expectedRevision: 'r2', confirmed: true,
       sessionId: 'session-1', workspaceId: 'workspace-1',
     })
@@ -22,7 +22,7 @@ describe('MemoryClient product transport', () => {
     const call = vi.fn(async () => { throw new Error(`HTTP ${status}`) })
     const client = new MemoryClient({ rpc: { call }, isLoopback: true } as ClientConnectionHandle, 'session-1', 'workspace-1')
     await expect(client.assistSource('source:spaces', 'activation', { memoryBodyId: 'project', active: true }, 'r1', true)).rejects.toThrow(`HTTP ${status}`)
-    expect(call.mock.calls).toEqual([['/dsh-plugin-memory-activation', 'source-assistance', {
+    expect(call.mock.calls).toEqual([['/suveng-dsh-plugin-memory-activation', 'source-assistance', {
       sourceInstanceKey: 'source:spaces', operation: 'activation', input: { memoryBodyId: 'project', active: true }, expectedRevision: 'r1', confirmed: true,
       sessionId: 'session-1', workspaceId: 'workspace-1',
     }]])
@@ -131,7 +131,7 @@ describe('MemoryClient product transport', () => {
   })
 
   it('routes native backup operations to the selected workspace', async () => {
-    const call = vi.fn(async () => ({ ok: true as const, value: { root: '/workspace/.dsh-plugin-memory', scope: 'workspace' } }))
+    const call = vi.fn(async () => ({ ok: true as const, value: { root: '/workspace/.suveng-dsh-plugin-memory', scope: 'workspace' } }))
     const client = new MemoryClient({ rpc: { call }, isLoopback: true } as ClientConnectionHandle, 'session-1', 'workspace-1')
 
     await client.packTarget()
@@ -194,28 +194,28 @@ describe('MemoryClient product transport', () => {
     const client = new MemoryClient({ rpc: { call }, isLoopback: true } as ClientConnectionHandle, 'session-1', 'workspace-1')
 
     await client.reconcile()
-    expect(call).toHaveBeenLastCalledWith('/dsh-plugin-memory-review', 'reconcile', { sessionId: 'session-1', workspaceId: 'workspace-1' })
+    expect(call).toHaveBeenLastCalledWith('/suveng-dsh-plugin-memory-review', 'reconcile', { sessionId: 'session-1', workspaceId: 'workspace-1' })
 
     await client.reconcile('   ')
-    expect(call).toHaveBeenLastCalledWith('/dsh-plugin-memory-review', 'reconcile', { sessionId: 'session-1', workspaceId: 'workspace-1' })
+    expect(call).toHaveBeenLastCalledWith('/suveng-dsh-plugin-memory-review', 'reconcile', { sessionId: 'session-1', workspaceId: 'workspace-1' })
 
     await client.reconcile('  Merge the two duplicates.  ')
-    expect(call).toHaveBeenLastCalledWith('/dsh-plugin-memory-review', 'reconcile', {
+    expect(call).toHaveBeenLastCalledWith('/suveng-dsh-plugin-memory-review', 'reconcile', {
       guidance: 'Merge the two duplicates.', sessionId: 'session-1', workspaceId: 'workspace-1',
     })
 
     // Applying nothing named is the whole plan; naming positions applies exactly those.
     await client.applyReview('review-1')
-    expect(call).toHaveBeenLastCalledWith('/dsh-plugin-memory-review', 'apply', { id: 'review-1', sessionId: 'session-1', workspaceId: 'workspace-1' })
+    expect(call).toHaveBeenLastCalledWith('/suveng-dsh-plugin-memory-review', 'apply', { id: 'review-1', sessionId: 'session-1', workspaceId: 'workspace-1' })
 
     await client.applyReview('review-1', [2, 0])
-    expect(call).toHaveBeenLastCalledWith('/dsh-plugin-memory-review', 'apply', {
+    expect(call).toHaveBeenLastCalledWith('/suveng-dsh-plugin-memory-review', 'apply', {
       id: 'review-1', operations: [2, 0], sessionId: 'session-1', workspaceId: 'workspace-1',
     })
 
     // An empty selection is still a selection: the Host answers with nothing applied.
     await client.applyReview('review-1', [])
-    expect(call).toHaveBeenLastCalledWith('/dsh-plugin-memory-review', 'apply', {
+    expect(call).toHaveBeenLastCalledWith('/suveng-dsh-plugin-memory-review', 'apply', {
       id: 'review-1', operations: [], sessionId: 'session-1', workspaceId: 'workspace-1',
     })
   })

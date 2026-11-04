@@ -30,7 +30,7 @@ describe('DSH host compatibility', () => {
   // The components install with the Starter, so the Starter alone states which DSH it runs on.
   it('refuses the Starter on hosts it no longer supports', () => {
     for (const runtime of UNSUPPORTED_DSH_RUNTIMES) {
-      expect(evaluatePluginCompatibility(starter, {}, runtime), `dsh-plugin-memory on DSH ${runtime}`).toMatchObject({ name: 'dsh-plugin-memory', runtimeVersion: runtime })
+      expect(evaluatePluginCompatibility(starter, {}, runtime), `suveng-dsh-plugin-memory on DSH ${runtime}`).toMatchObject({ name: 'suveng-dsh-plugin-memory', runtimeVersion: runtime })
     }
   })
 })

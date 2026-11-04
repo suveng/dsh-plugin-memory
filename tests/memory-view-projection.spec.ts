@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { writeFileSync } from 'node:fs'
-import type { RuntimeMemorySnapshot } from 'dsh-plugin-memory-source-runtime/contracts'
-import * as scoped from 'dsh-plugin-memory-strategy-scoped'
-import * as light from 'dsh-plugin-memory-strategy-light-context'
-import * as capture from 'dsh-plugin-memory-strategy-auto-capture'
+import type { RuntimeMemorySnapshot } from 'suveng-dsh-plugin-memory-source-runtime/contracts'
+import * as scoped from 'suveng-dsh-plugin-memory-strategy-scoped'
+import * as light from 'suveng-dsh-plugin-memory-strategy-light-context'
+import * as capture from 'suveng-dsh-plugin-memory-strategy-auto-capture'
 import { modelMemoryWake } from '../src/host/view-presentation.ts'
 import { compositionFixture } from './fixtures/composition.ts'
 const fixtures: Awaited<ReturnType<typeof compositionFixture>>[] = []

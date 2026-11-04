@@ -1,5 +1,5 @@
 import type { CommandDefinition, CommandInvocation, CommandResult, CommandService } from "./dsh.ts"
-import type { Insight, MemorySpacesStatus } from 'dsh-plugin-memory-source-memory-spaces/contracts'
+import type { Insight, MemorySpacesStatus } from 'suveng-dsh-plugin-memory-source-memory-spaces/contracts'
 import { agentScope, type MemoryAgentRuntimeSource } from './runtime.ts'
 import { mutationResultCommitted } from './receipts.ts'
 import type { MemorySubagentCoordinator } from './subagent.ts'

@@ -2,8 +2,8 @@ import type { MemoryJsonValue, MemoryPluginLocalizedText, MemoryPluginRole, Memo
 import type { TurnMemoryActivity } from './protocol.ts'
 import type { MemoryStrategyConfigurationField } from '../sdk/strategy-configuration.ts'
 
-export const MEMORY_VIEW_CHANNEL = '/dsh-plugin-memory-view'
-export const MEMORY_VIEW_WRITE_CHANNEL = '/dsh-plugin-memory-view-settings'
+export const MEMORY_VIEW_CHANNEL = '/suveng-dsh-plugin-memory-view'
+export const MEMORY_VIEW_WRITE_CHANNEL = '/suveng-dsh-plugin-memory-view-settings'
 export const MEMORY_VIEW_SETTINGS_NAMESPACE = 'memory-view'
 
 export interface MemoryPluginPreference { enabled: boolean; config: Record<string, MemoryJsonValue> }

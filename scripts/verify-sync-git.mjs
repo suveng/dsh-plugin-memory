@@ -2,8 +2,8 @@
 // Real end-to-end verification for the Memory Git sync channel.
 //
 // It launches two independent DSH Web instances over disposable DSH_HOME and
-// storage roots, drives /dsh-plugin-memory-sync, /dsh-plugin-memory-settings, /dsh-plugin-memory-review
-// and /dsh-plugin-memory-pack over real loopback HTTP with the same envelopes the browser
+// storage roots, drives /suveng-dsh-plugin-memory-sync, /suveng-dsh-plugin-memory-settings, /suveng-dsh-plugin-memory-review
+// and /suveng-dsh-plugin-memory-pack over real loopback HTTP with the same envelopes the browser
 // sends, and publishes to a real bare repository. The only stand-in is the model
 // endpoint, which never answers a memory request.
 // The payload carries memory content only: the profile and the keys that
@@ -101,7 +101,7 @@ async function call(instance, channel, endpoint, payload) {
 }
 
 function sync(instance, endpoint, payload = {}) {
-  return call(instance, '/dsh-plugin-memory-sync', endpoint, payload)
+  return call(instance, '/suveng-dsh-plugin-memory-sync', endpoint, payload)
 }
 
 function expectOk(result, label) {
@@ -174,7 +174,7 @@ function reconcileReply(instructions) {
 async function install(home, workspace, env) {
   const manifest = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
   const selfRegistering = new Set(STARTER_SELF_REGISTERING_PACKAGES)
-  const plugins = Object.keys(manifest.dependencies).filter(name => name.startsWith('dsh-plugin-memory-') && !selfRegistering.has(name))
+  const plugins = Object.keys(manifest.dependencies).filter(name => name.startsWith('suveng-dsh-plugin-memory-') && !selfRegistering.has(name))
   const result = await run(process.execPath, [dshBin, 'plugin', '--profile', 'web', 'add',
     'link:' + root, ...plugins.map(name => 'link:' + join(root, 'plugins', name)),
   ], { cwd: workspace, env })
@@ -267,7 +267,7 @@ try {
     off.enabled === false && off.configured === false && off.git.available === false
     && off.git.required === '2.20' && off.remote.reachable === false && off.remote.branchExists === false
     && off.machine === undefined && off.lastCommit === undefined, JSON.stringify(off))
-  const switchedOn = expectOk(await call(a, '/dsh-plugin-memory-settings', 'mutate', { ops: [{ op: 'set', path: ['syncEnabled'], value: true }] }), 'settings mutate')
+  const switchedOn = expectOk(await call(a, '/suveng-dsh-plugin-memory-settings', 'mutate', { ops: [{ op: 'set', path: ['syncEnabled'], value: true }] }), 'settings mutate')
   check('switching Git sync on is one committed profile write', switchedOn.value.syncEnabled === true && switchedOn.revision > 0,
     JSON.stringify({ revision: switchedOn.revision, syncEnabled: switchedOn.value.syncEnabled }))
   const fresh = expectOk(await sync(a, 'status'), 'status')
@@ -281,7 +281,7 @@ try {
   const defaults = expectOk(await sync(a, 'configure', { repoUrl: origin }), 'configure')
   check('a repository alone is enough: branch, directory and author keep their defaults',
     defaults.repoUrl === origin && defaults.branch === 'memory-sync' && defaults.subdir === 'memory/'
-    && defaults.authorName === 'dsh-plugin-memory sync' && defaults.authorEmail === 'memory@localhost'
+    && defaults.authorName === 'suveng-dsh-plugin-memory sync' && defaults.authorEmail === 'memory@localhost'
     && defaults.hasToken === false && defaults.credentialSource === 'none', JSON.stringify(defaults))
   const configured = expectOk(await sync(a, 'configure', { authorName: '', authorEmail: '' }), 'configure')
   check('an empty author clears the identity so Git uses the one on this machine',
@@ -300,9 +300,9 @@ try {
   expectFailure(twoLines, /machine name/u, 'a two-line machine name')
   check('a refused name changes nothing else the same request carried',
     expectOk(await sync(a, 'status'), 'status').config.branch === 'memory-sync')
-  const added = expectOk(await call(a, '/dsh-plugin-memory-write', 'runtime-memory', { action: 'add', target: 'memory', content: MARKER }), 'runtime-memory')
+  const added = expectOk(await call(a, '/suveng-dsh-plugin-memory-write', 'runtime-memory', { action: 'add', target: 'memory', content: MARKER }), 'runtime-memory')
   check('the working memory accepted one entry through the write channel', added.success === true && added.entryCount === 1, JSON.stringify(added))
-  expectOk(await call(a, '/dsh-plugin-memory-write', 'runtime-memory', { action: 'add', target: 'user', content: PROFILE }), 'runtime-memory user')
+  expectOk(await call(a, '/suveng-dsh-plugin-memory-write', 'runtime-memory', { action: 'add', target: 'user', content: PROFILE }), 'runtime-memory user')
   const beforePush = expectOk(await sync(a, 'status'), 'status')
   check('the configured remote is reachable and still has no branch',
     beforePush.configured === true && beforePush.remote.reachable === true && beforePush.remote.branchExists === false, JSON.stringify(beforePush.remote))
@@ -351,7 +351,7 @@ try {
   const offB = expectOk(await sync(b, 'status'), 'status')
   check('the second machine also starts with the switch off',
     offB.enabled === false && offB.git.available === false && offB.machine === undefined, JSON.stringify(offB.enabled))
-  expectOk(await call(b, '/dsh-plugin-memory-settings', 'mutate', { ops: [{ op: 'set', path: ['syncEnabled'], value: true }] }), 'settings mutate')
+  expectOk(await call(b, '/suveng-dsh-plugin-memory-settings', 'mutate', { ops: [{ op: 'set', path: ['syncEnabled'], value: true }] }), 'settings mutate')
   const defaultsB = expectOk(await sync(b, 'configure', { repoUrl: origin }), 'configure')
   check('the second instance reaches the same defaults from a repository alone',
     defaultsB.branch === 'memory-sync' && defaultsB.subdir === 'memory/', JSON.stringify(defaultsB))
@@ -380,7 +380,7 @@ try {
     secondMemory.includes(MARKER) && secondProfile.includes(PROFILE))
 
   console.log('\n3. A settings edit stays on the machine that made it')
-  const settingsA = expectOk(await call(a, '/dsh-plugin-memory-settings', 'get', {}), 'settings get')
+  const settingsA = expectOk(await call(a, '/suveng-dsh-plugin-memory-settings', 'get', {}), 'settings get')
   check('the settings channel reports the profile value, revision and writer',
     settingsA.mode === 'host' && settingsA.writable === true && typeof settingsA.revision === 'number'
     && settingsA.value.defaultRecallLimit === 10 && settingsA.value.syncEnabled === true,
@@ -389,10 +389,10 @@ try {
   // committed value, so the switch is what turns Git on rather than a restart.
   check('the switch itself travelled to the running Host and not just to the profile file',
     settingsA.value.syncEnabled === true, JSON.stringify(settingsA.value.syncEnabled))
-  const refusedField = await call(a, '/dsh-plugin-memory-settings', 'mutate', { ops: [{ op: 'set', path: ['remoteAccess'], value: 'trusted-host' }] })
+  const refusedField = await call(a, '/suveng-dsh-plugin-memory-settings', 'mutate', { ops: [{ op: 'set', path: ['remoteAccess'], value: 'trusted-host' }] })
   expectFailure(refusedField, /unsupported memory settings field: remoteAccess/u, 'an unsupported settings field')
   check('a refused settings edit reports its own error code', refusedField.error.code === 'settings-rejected', JSON.stringify(refusedField.error))
-  const edited = expectOk(await call(a, '/dsh-plugin-memory-settings', 'mutate', { ops: [
+  const edited = expectOk(await call(a, '/suveng-dsh-plugin-memory-settings', 'mutate', { ops: [
     { op: 'set', path: ['defaultRecallLimit'], value: 7 },
     { op: 'set', path: ['cliPath'], value: join(data.a, 'bin', 'memory') },
   ] }), 'settings mutate')
@@ -408,7 +408,7 @@ try {
   const settingsPull = expectOk(await sync(b, 'pull', { confirmed: true }), 'pull')
   check('the second machine still imports the published commit',
     settingsPull.imported === true && settingsPull.commit === pushed.commit, JSON.stringify(settingsPull.commit))
-  const settingsB = expectOk(await call(b, '/dsh-plugin-memory-settings', 'get', {}), 'settings get')
+  const settingsB = expectOk(await call(b, '/suveng-dsh-plugin-memory-settings', 'get', {}), 'settings get')
   check('the second machine keeps its own profile: the edit did not travel',
     settingsB.value.defaultRecallLimit === 10, JSON.stringify(settingsB.value.defaultRecallLimit))
   check('the key that only describes machine A never crossed to machine B',
@@ -454,39 +454,39 @@ try {
 
 
   console.log('\n6. A reconciliation is proposed, reviewed with opinions, and only then applied')
-  const idleReview = expectOk(await call(a, '/dsh-plugin-memory-review', 'view', {}), 'review view')
+  const idleReview = expectOk(await call(a, '/suveng-dsh-plugin-memory-review', 'view', {}), 'review view')
   check('an installation that never reconciled has an empty ledger',
     idleReview.pending === 0 && idleReview.entries.length === 0
     && idleReview.path === join(data.a, 'state', 'review-ledger.json'), JSON.stringify(idleReview.path))
-  const emptyOpinion = await call(a, '/dsh-plugin-memory-review', 'opinion', { id: 'missing-entry', text: '   ' })
+  const emptyOpinion = await call(a, '/suveng-dsh-plugin-memory-review', 'opinion', { id: 'missing-entry', text: '   ' })
   expectFailure(emptyOpinion, /a review opinion must not be empty/u, 'an empty opinion')
-  const unknownReview = await call(a, '/dsh-plugin-memory-review', 'nope', {})
+  const unknownReview = await call(a, '/suveng-dsh-plugin-memory-review', 'nope', {})
   expectFailure(unknownReview, /unknown review endpoint: nope/u, 'an unknown review endpoint')
   check('an unknown review endpoint is a bad request', unknownReview.error.code === 'bad-request', JSON.stringify(unknownReview.error))
-  const phantomApply = await call(a, '/dsh-plugin-memory-review', 'apply', { id: 'missing-entry' })
+  const phantomApply = await call(a, '/suveng-dsh-plugin-memory-review', 'apply', { id: 'missing-entry' })
   expectFailure(phantomApply, /unknown review entry: missing-entry/u, 'applying an entry that does not exist')
   // No workspace is named: the review channel must run on its own, the way the
   // settings page does when a session has no workbench directory yet.
-  const reconciled = expectOk(await call(a, '/dsh-plugin-memory-review', 'reconcile', {}), 'review reconcile')
+  const reconciled = expectOk(await call(a, '/suveng-dsh-plugin-memory-review', 'reconcile', {}), 'review reconcile')
   check('a reconciliation stages one pending review and writes nothing',
     reconciled.action === 'planned' && reconciled.operations === 1
     && reconciled.entry?.status === 'pending' && reconciled.entry?.opinions.length === 0, JSON.stringify(reconciled))
-  const staged = expectOk(await call(a, '/dsh-plugin-memory-review', 'view', {}), 'review view')
+  const staged = expectOk(await call(a, '/suveng-dsh-plugin-memory-review', 'view', {}), 'review view')
   check('the staged review waits in the ledger with its proposal',
     staged.pending === 1 && staged.entries.length === 1 && staged.entries[0]?.id === reconciled.entry.id
     && staged.entries[0]?.operations.length === 1, JSON.stringify({ pending: staged.pending, entries: staged.entries.length }))
   const untouched = await readFile(join(data.a, 'runtime', 'MEMORY.md'), 'utf8')
   check('a pending review changes no memory', untouched.includes(RECONCILE_MARKER) === false)
-  const opinion = expectOk(await call(a, '/dsh-plugin-memory-review', 'opinion', { id: reconciled.entry.id, text: 'Keep it, the entry is still useful.' }), 'review opinion')
+  const opinion = expectOk(await call(a, '/suveng-dsh-plugin-memory-review', 'opinion', { id: reconciled.entry.id, text: 'Keep it, the entry is still useful.' }), 'review opinion')
   check('an opinion is recorded against the review',
     opinion.status === 'pending' && opinion.opinions.length === 1 && opinion.opinions[0]?.author === 'user'
     && opinion.opinions[0]?.text === 'Keep it, the entry is still useful.', JSON.stringify(opinion.opinions))
-  const refusedApply = await call(a, '/dsh-plugin-memory-review', 'apply', { id: reconciled.entry.id })
+  const refusedApply = await call(a, '/suveng-dsh-plugin-memory-review', 'apply', { id: reconciled.entry.id })
   expectFailure(refusedApply, /accept the review before applying it/u, 'applying a review that is still pending')
-  const decided = expectOk(await call(a, '/dsh-plugin-memory-review', 'decide', { id: reconciled.entry.id, status: 'accepted' }), 'review decide')
+  const decided = expectOk(await call(a, '/suveng-dsh-plugin-memory-review', 'decide', { id: reconciled.entry.id, status: 'accepted' }), 'review decide')
   check('accepting the review leaves its opinions in place',
     decided.status === 'accepted' && decided.opinions.length === 1 && typeof decided.decidedAt === 'string', JSON.stringify({ status: decided.status, decidedAt: decided.decidedAt }))
-  const applied = expectOk(await call(a, '/dsh-plugin-memory-review', 'apply', { id: reconciled.entry.id }), 'review apply')
+  const applied = expectOk(await call(a, '/suveng-dsh-plugin-memory-review', 'apply', { id: reconciled.entry.id }), 'review apply')
   check('the accepted review applied every operation',
     applied.applied === 1 && applied.failures.length === 0 && applied.entry.status === 'accepted'
     && typeof applied.entry.appliedAt === 'string' && JSON.stringify(applied.entry.appliedOperations) === '[0]',
@@ -495,11 +495,11 @@ try {
   check('the applied operation reached the working memory', written.includes(RECONCILE_MARKER))
   // The ledger records the positions that ran, so the plan is never replayed against text
   // the first run replaced.
-  const replayed = await call(a, '/dsh-plugin-memory-review', 'apply', { id: reconciled.entry.id })
+  const replayed = await call(a, '/suveng-dsh-plugin-memory-review', 'apply', { id: reconciled.entry.id })
   expectFailure(replayed, /every operation in this review has already run/u, 'applying a plan with nothing left')
   check('a plan whose operations all ran is refused rather than replayed',
     replayed.error.code === 'internal' && written.includes(RECONCILE_MARKER), JSON.stringify(replayed.error))
-  const reopened = expectOk(await call(a, '/dsh-plugin-memory-review', 'reopen', { id: reconciled.entry.id }), 'review reopen')
+  const reopened = expectOk(await call(a, '/suveng-dsh-plugin-memory-review', 'reopen', { id: reconciled.entry.id }), 'review reopen')
   check('reopening clears the decision and the application',
     reopened.status === 'pending' && reopened.decidedAt === undefined && reopened.appliedAt === undefined
     && reopened.appliedOperations === undefined, JSON.stringify({ status: reopened.status, appliedOperations: reopened.appliedOperations }))

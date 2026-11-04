@@ -164,7 +164,7 @@ describe('Starting a delegated child on the running DSH (#356)', () => {
   it('says why no memory subagent can start on a DSH with neither API', async () => {
     const subagents = { list: () => ['spawn'], getProvider: () => undefined } as unknown as HostSubagentsService
 
-    await expect(startSubagent(subagents, undefined, 'spawn', request())).rejects.toThrow('This DSH has neither subagents.startActivation nor subagents.start, so dsh-plugin-memory cannot start its memory subagent')
+    await expect(startSubagent(subagents, undefined, 'spawn', request())).rejects.toThrow('This DSH has neither subagents.startActivation nor subagents.start, so suveng-dsh-plugin-memory cannot start its memory subagent')
   })
 })
 
@@ -310,7 +310,7 @@ describe('Composing a delegated child where DSH no longer takes its persona and 
     const host = composingHost({ publish: false })
 
     await expect(startSubagent(host.subagents, host.agents, 'spawn', request(), host.publications))
-      .rejects.toThrow('dsh-plugin-memory did not see memory subagent child-1 created')
+      .rejects.toThrow('suveng-dsh-plugin-memory did not see memory subagent child-1 created')
     expect(host.dispose).toHaveBeenCalledOnce()
     expect(host.listeners.size).toBe(0)
   })

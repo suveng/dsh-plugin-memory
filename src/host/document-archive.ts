@@ -6,8 +6,8 @@
 import { randomUUID } from 'node:crypto'
 import { dataDirPrefixes, MEMORY_DATA_DIRECTORY } from './data-directory.ts'
 import type { HostAgent, HostSubagentResult } from "./dsh.ts"
-import type { DocumentCapacityPlan, DocumentMutation, DocumentMutationResult, DocumentRecord, DocumentView } from 'dsh-plugin-memory-source-documents/contracts'
-import type { Insight, MemorySpaceCatalog } from 'dsh-plugin-memory-source-memory-spaces/contracts'
+import type { DocumentCapacityPlan, DocumentMutation, DocumentMutationResult, DocumentRecord, DocumentView } from 'suveng-dsh-plugin-memory-source-documents/contracts'
+import type { Insight, MemorySpaceCatalog } from 'suveng-dsh-plugin-memory-source-memory-spaces/contracts'
 import { mutationResultCommitted } from './receipts.ts'
 import { sourceFailure, type SourceSession } from './source-session.ts'
 import { allowsParticipation, assertParticipation } from './access.ts'
@@ -133,7 +133,7 @@ export async function archiveDocumentLocked(host: DocumentWorkflowHost, parent: 
     // even if the caller's View ends or a later configuration replaces it.
     const cleanup = graph.source('memory-spaces', agentScope(parent, graph.config))
       .forInstance(identity.sourceInstanceKey).forGeneration(lease.generation)
-    const grant = authority?.context.view.readGrants.find(grant => grant.sourceInstanceKey === identity.sourceInstanceKey && grant.schema === 'dsh-plugin-memory.memory-spaces/v1')
+    const grant = authority?.context.view.readGrants.find(grant => grant.sourceInstanceKey === identity.sourceInstanceKey && grant.schema === 'suveng-dsh-plugin-memory.memory-spaces/v1')
     if (authority !== undefined && grant === undefined) throw new Error('document archive requires a Memory Space namespace grant')
     const allowed = grant === undefined ? undefined : new Set(strings(object(grant.value).memoryBodyIds))
     const directory = await memoryService.read<MemorySpaceCatalog>('body-directory', null, signal)
@@ -250,7 +250,7 @@ async function documentCommit(host: DocumentWorkflowHost, parent: HostAgent, req
  */
 async function documentIndexSpaces(host: DocumentWorkflowHost, parent: HostAgent, generation: MemoryCompositionGeneration, signal: AbortSignal): Promise<SourceSession | undefined> {
   const graph = host.runtimeSource.forAgent(parent)
-  if (!graph.config.writeEnabled || !host.runtimeSource.config.writeEnabled) throw new Error('dsh-plugin-memory is configured read-only')
+  if (!graph.config.writeEnabled || !host.runtimeSource.config.writeEnabled) throw new Error('suveng-dsh-plugin-memory is configured read-only')
   if (!allowsParticipation(graph.config, 'memory-spaces', 'write', 'automatic')) return undefined
   const installed = generation.sourceInstances().filter(source => source.sourceTypeId === 'memory-spaces')
   if (installed.length === 0) return undefined
@@ -261,7 +261,7 @@ async function documentIndexSpaces(host: DocumentWorkflowHost, parent: HostAgent
   return host.writableSourceFor(parent, 'memory-spaces', 'remember')
 }
 
-/** A Project Document archived without a Memory index keeps its original under .dsh-plugin-memory/documents/archived. */
+/** A Project Document archived without a Memory index keeps its original under .suveng-dsh-plugin-memory/documents/archived. */
 async function archiveDocumentLocally(counters: SubagentCounters, controller: SourceSession, document: DocumentView, reason: string, signal: AbortSignal): Promise<CoordinatedDocumentResult> {
   signal.throwIfAborted()
   const summary = `Archived locally without a Memory index, since ${reason}.`
@@ -276,7 +276,7 @@ async function archiveDocumentLocally(counters: SubagentCounters, controller: So
 
 async function assertAutomaticMemoryWrite(host: DocumentWorkflowHost, parent: HostAgent): Promise<SourceSession> {
   const graph = host.runtimeSource.forAgent(parent)
-  if (!graph.config.writeEnabled || !host.runtimeSource.config.writeEnabled) throw new Error('dsh-plugin-memory is configured read-only')
+  if (!graph.config.writeEnabled || !host.runtimeSource.config.writeEnabled) throw new Error('suveng-dsh-plugin-memory is configured read-only')
   assertParticipation(graph.config, 'memory-spaces', 'write', 'automatic')
   return host.writableSourceFor(parent, 'memory-spaces', 'remember')
 }

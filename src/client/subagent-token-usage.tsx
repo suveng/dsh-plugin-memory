@@ -119,7 +119,7 @@ export function mountSubagentTokenUsageOverride(ctx: MemoryClientContext): () =>
       priority: MEMORY_SHADOW_PRIORITY,
       locale: official.locale,
       inject: official.inject,
-      registrant: 'dsh-plugin-memory/subagent-token-usage',
+      registrant: 'suveng-dsh-plugin-memory/subagent-token-usage',
     }, lineageShadow(official.component as LineageComponent))
   }
   const unsubscribe = slots.subscribe(SUBAGENT_LINEAGE_SLOT, reconcile)

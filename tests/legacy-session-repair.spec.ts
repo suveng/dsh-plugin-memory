@@ -122,7 +122,7 @@ describe('legacy Session copy repair', () => {
     expect(after).toHaveLength(before.length)
     for (const [index, row] of before.entries()) {
       if (row.type.startsWith('tool/ptc-dispatch')) {
-        expect(after[index]).toEqual({ type: 'dsh-plugin-memory/recovered-idle-probe', seq: row.seq, time: row.time, ignorable: true,
+        expect(after[index]).toEqual({ type: 'suveng-dsh-plugin-memory/recovered-idle-probe', seq: row.seq, time: row.time, ignorable: true,
           data: { originalType: row.type, originalData: row.data } })
       } else expect(after[index]).toEqual(row)
     }
@@ -928,7 +928,7 @@ describe('legacy Session copy repair', () => {
     const root = await directory()
     const input = join(root, 'input')
     const output = join(root, 'output')
-    const keys = ['"kind": "plugin"', '"plugin":"dsh-plugin-memory"', '"form":"recall"']
+    const keys = ['"kind": "plugin"', '"plugin":"suveng-dsh-plugin-memory"', '"form":"recall"']
     keys.splice(position === 'first' ? 0 : position === 'middle' ? 1 : 3, 0, '"summary" : "Memory View snapshot"')
     const row = '  { "type":"user/message", "seq":9007199254740993, "data":{"source":{ ' + keys.join(',  ') + ' }, "content":[{"text":"\\\"summary\\\": {} [] \\u4e2d", "n":1.2300e+42}]}}\r\n'
     const text = fixture.split('\n')[0] + '\r\n' + row
@@ -1001,11 +1001,11 @@ describe('legacy Session copy repair', () => {
 
   it.runIf(process.platform !== 'win32')('runs through the executable symlink used by npm global installs', async () => {
     const root = await directory()
-    const executable = join(root, 'dsh-plugin-memory-repair-session')
+    const executable = join(root, 'suveng-dsh-plugin-memory-repair-session')
     await symlink(command, executable)
     const help = spawnSync(executable, ['--help'], { encoding: 'utf8' })
     expect(help.status).toBe(0)
-    expect(help.stdout).toContain('Usage: dsh-plugin-memory-repair-session')
+    expect(help.stdout).toContain('Usage: suveng-dsh-plugin-memory-repair-session')
     const input = join(root, 'session.jsonl')
     await writeFile(input, fixture)
     const preview = spawnSync(executable, ['--input', input], { encoding: 'utf8' })

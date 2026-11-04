@@ -16,7 +16,7 @@ const now = () => new Date('2026-10-14T01:49:04.859Z')
 const DECLARED_VERSION = (JSON.parse(readFileSync(fileURLToPath(new URL('../package.json', import.meta.url)), 'utf8')) as { version: string }).version
 
 function temporary(label: string): string {
-  const directory = mkdtempSync(join(tmpdir(), `dsh-plugin-memory-${label}-`))
+  const directory = mkdtempSync(join(tmpdir(), `suveng-dsh-plugin-memory-${label}-`))
   directories.push(directory)
   return directory
 }

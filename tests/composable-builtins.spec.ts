@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import type { DocumentMutationResult, DocumentSearchResult } from 'dsh-plugin-memory-source-documents/contracts'
-import * as runtimePlugin from 'dsh-plugin-memory-source-runtime'
+import type { DocumentMutationResult, DocumentSearchResult } from 'suveng-dsh-plugin-memory-source-documents/contracts'
+import * as runtimePlugin from 'suveng-dsh-plugin-memory-source-runtime'
 import { DEFAULT_MEMORY_VIEW_BUDGET } from '../src/core/index.ts'
 import { compositionFixture } from './fixtures/composition.ts'
 
@@ -29,7 +29,7 @@ describe('public Source plugin composition', () => {
     ])
     expect(view.projection[0]?.text).toContain('Pinned runtime context')
     expect(view.routes.map(route => route.sourceRouteId)).toEqual(expect.arrayContaining(['search', 'recall', 'inspect']))
-    expect(view.readGrants.map(grant => grant.schema)).toEqual(['dsh-plugin-memory.documents/v1', 'dsh-plugin-memory.memory-spaces/v1'])
+    expect(view.readGrants.map(grant => grant.schema)).toEqual(['suveng-dsh-plugin-memory.documents/v1', 'suveng-dsh-plugin-memory.memory-spaces/v1'])
     expect(JSON.stringify(view)).not.toContain('apiKey')
   })
 

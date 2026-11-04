@@ -11,7 +11,7 @@ import { apply, inject } from '../src/index.ts'
 import { MemorySubagentCoordinator } from "../src/host/subagent.ts"
 import { registerTools } from "../src/host/tools.ts"
 import { MemoryRuntime } from '../src/core/runtime.ts'
-import type { MemoryMemoryService } from 'dsh-plugin-memory/extension-sdk'
+import type { MemoryMemoryService } from 'suveng-dsh-plugin-memory/extension-sdk'
 import { compositionFixture } from './fixtures/composition.ts'
 import { agentScope } from '../src/host/runtime.ts'
 import { sessionLog } from './fixtures/session-log.ts'
@@ -35,9 +35,9 @@ afterEach(async () => {
   for (const directory of directories.splice(0)) rmSync(directory, { recursive: true, force: true })
 })
 
-/** A throwaway data directory, named by an explicit custom scope so nothing is read or written in ~/.dsh-plugin-memory. */
+/** A throwaway data directory, named by an explicit custom scope so nothing is read or written in ~/.suveng-dsh-plugin-memory. */
 function customRoot(): { storageScope: 'custom'; dataDir: string } {
-  const directory = mkdtempSync(join(tmpdir(), 'dsh-plugin-memory-plugin-'))
+  const directory = mkdtempSync(join(tmpdir(), 'suveng-dsh-plugin-memory-plugin-'))
   directories.push(directory)
   return { storageScope: 'custom', dataDir: directory }
 }
@@ -145,7 +145,7 @@ async function installStarter(target: ReturnType<typeof context>) {
   return core
 }
 
-describe('dsh-plugin-memory plugin composition', () => {
+describe('suveng-dsh-plugin-memory plugin composition', () => {
   it('registers and disposes Web RPC routes after the official Connection is already running', async () => {
     const root = new Context()
     releases.push(() => root.fiber.dispose())
@@ -168,8 +168,8 @@ describe('dsh-plugin-memory plugin composition', () => {
     expect(connectionFiber).toBeDefined()
     await connectionFiber!.await()
     expect(routes.size).toBe(9)
-    expect(routes.has('/dsh-plugin-memory-read')).toBe(true)
-    expect(routes.has('/dsh-plugin-memory-sync')).toBe(true)
+    expect(routes.has('/suveng-dsh-plugin-memory-read')).toBe(true)
+    expect(routes.has('/suveng-dsh-plugin-memory-sync')).toBe(true)
     await host.dispose()
     expect(routes.size).toBe(0)
   })
@@ -284,12 +284,12 @@ describe('dsh-plugin-memory plugin composition', () => {
     apply(fixture.ctx as never, { cliPath: '/fake/memory', storageScope: 'workspace', dataDir: globalRoot.dataDir })
     await installStarter(fixture)
 
-    const readRegistration = fixture.channels.find(channel => (channel as unknown[])[0] === '/dsh-plugin-memory-read') as [
+    const readRegistration = fixture.channels.find(channel => (channel as unknown[])[0] === '/suveng-dsh-plugin-memory-read') as [
       string,
       (endpoint: string, payload: unknown) => Promise<{ ok: boolean; value?: { directory: string } }>,
     ]
 
-    await expect(readRegistration[1]('runtime-memory', { workspaceId: 'late-workspace' })).resolves.toMatchObject({ ok: true, value: { directory: join(workspace, '.dsh-plugin-memory', 'runtime') } })
+    await expect(readRegistration[1]('runtime-memory', { workspaceId: 'late-workspace' })).resolves.toMatchObject({ ok: true, value: { directory: join(workspace, '.suveng-dsh-plugin-memory', 'runtime') } })
   })
 
   it('exports a DSH Web client with its ordering dependencies', () => {
@@ -309,9 +309,9 @@ describe('dsh-plugin-memory plugin composition', () => {
   })
 
   it('anchors client discovery on the Host Entry while the Starter declares every plugin', () => {
-    expect(bundlePatch).toMatch(/- id: memory\n(?:\s+#.*\n)*\s+name: dsh-plugin-memory\n/u)
+    expect(bundlePatch).toMatch(/- id: memory\n(?:\s+#.*\n)*\s+name: suveng-dsh-plugin-memory\n/u)
     expect(bundlePatch).not.toContain('bundledContributions')
-    expect(bundlePatch).not.toContain('name: dsh-plugin-memory/core')
+    expect(bundlePatch).not.toContain('name: suveng-dsh-plugin-memory/core')
   })
 
   it('registers the full tool surface, guidance, and split RPC channels', async () => {
@@ -356,11 +356,11 @@ describe('dsh-plugin-memory plugin composition', () => {
     expect(guidance.length).toBeLessThan(360)
     expect(guidance).not.toContain('RECALL RESULT')
     expect(fixture.commands).toEqual([expect.objectContaining({ name: 'memory' })])
-    expect(fixture.channels.map(([channel]) => channel)).toEqual(expect.arrayContaining(['/dsh-plugin-memory-activation', '/dsh-plugin-memory-pack', '/dsh-plugin-memory-sync']))
+    expect(fixture.channels.map(([channel]) => channel)).toEqual(expect.arrayContaining(['/suveng-dsh-plugin-memory-activation', '/suveng-dsh-plugin-memory-pack', '/suveng-dsh-plugin-memory-sync']))
     expect(fixture.channels).toHaveLength(9)
     // The settings bridge serves each Memory namespace from the owning profile Entry.
     fixture.forms.describe.mockReturnValue([{ ns: 'memory', value: { conversationInteraction: { turnBar: true, saveAction: false } }, base: {}, user: {}, revision: 3, applies: 'live' }])
-    const settingsChannel = fixture.channels.find(([channel]) => channel === '/dsh-plugin-memory-settings')![1] as (endpoint: string, payload: unknown) => Promise<unknown>
+    const settingsChannel = fixture.channels.find(([channel]) => channel === '/suveng-dsh-plugin-memory-settings')![1] as (endpoint: string, payload: unknown) => Promise<unknown>
     await expect(settingsChannel('get', { namespace: 'memory-ui' })).resolves.toMatchObject({
       ok: true, value: { status: 'ready', revision: 3, writable: true, value: { turnBar: true, saveAction: false } },
     })
@@ -379,7 +379,7 @@ describe('dsh-plugin-memory plugin composition', () => {
     const agent = { id: 'read-only', session: { header: { cwd: mounted } }, status: 'idle' } as unknown as HostAgent
     expect(() => runtimeTool.execute({ action: 'add', target: 'memory', content: 'blocked' }, { agent, signal: new AbortController().signal })).toThrow(/read-only/iu)
     expect(fixture.channels).toHaveLength(9)
-    expect(fixture.channels.map(([channel]) => channel)).toEqual(expect.arrayContaining(['/dsh-plugin-memory-activation', '/dsh-plugin-memory-pack', '/dsh-plugin-memory-sync']))
+    expect(fixture.channels.map(([channel]) => channel)).toEqual(expect.arrayContaining(['/suveng-dsh-plugin-memory-activation', '/suveng-dsh-plugin-memory-pack', '/suveng-dsh-plugin-memory-sync']))
     expect(fixture.contexts).toEqual([])
   })
 
@@ -462,7 +462,7 @@ describe('dsh-plugin-memory plugin composition', () => {
     const next = { ...initial, dataDir: customRoot().dataDir }
     fixture.fiber.config = initial
     apply(fixture.ctx as never, initial)
-    const packRegistration = fixture.channels.find(channel => (channel as unknown[])[0] === '/dsh-plugin-memory-pack') as [string, (endpoint: string, payload: unknown) => Promise<{ ok: boolean; value?: { root: string } }>]
+    const packRegistration = fixture.channels.find(channel => (channel as unknown[])[0] === '/suveng-dsh-plugin-memory-pack') as [string, (endpoint: string, payload: unknown) => Promise<{ ok: boolean; value?: { root: string } }>]
     await expect(packRegistration[1]('target', {})).resolves.toMatchObject({ ok: true, value: { root: initial.dataDir } })
 
     expect(fixture.preflight(next)).toBe(next)
@@ -528,7 +528,7 @@ describe('dsh-plugin-memory plugin composition', () => {
     writeFileSync(invalidRoot, 'occupied')
     apply(fixture.ctx as never, { cliPath: '/fake/memory', storageScope: 'custom', dataDir: initialRoot })
     await installStarter(fixture)
-    const packRegistration = fixture.channels.find(channel => (channel as unknown[])[0] === '/dsh-plugin-memory-pack') as [string, (endpoint: string, payload: unknown) => Promise<{ ok: boolean; value?: { root: string } }>]
+    const packRegistration = fixture.channels.find(channel => (channel as unknown[])[0] === '/suveng-dsh-plugin-memory-pack') as [string, (endpoint: string, payload: unknown) => Promise<{ ok: boolean; value?: { root: string } }>]
 
     expect(() => fixture.preflight({ cliPath: '/fake/memory', storageScope: 'custom', dataDir: invalidRoot })).toThrow(/ENOTDIR|EEXIST|not a directory/iu)
     await expect(packRegistration[1]('target', {})).resolves.toMatchObject({ ok: true, value: { root: initialRoot } })

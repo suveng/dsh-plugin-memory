@@ -2,7 +2,7 @@
 
 **简体中文** | [English](./ISSUE_TRIAGE.md)
 
-本文件定义 dsh-plugin-memory 的 Issue 标签体系、分类、补充信息和关闭流程。目标是让每个 Open Issue 可检索、可验证、可认领、可追溯。
+本文件定义 suveng-dsh-plugin-memory 的 Issue 标签体系、分类、补充信息和关闭流程。目标是让每个 Open Issue 可检索、可验证、可认领、可追溯。
 
 ## 标签体系
 
@@ -58,12 +58,12 @@
 ## 维护者操作速查
 
 ```sh
-gh issue edit <n> -R suveng/dsh-plugin-memory --add-label "bug,good first issue"
-gh issue comment <n> -R suveng/dsh-plugin-memory --body "说明"
+gh issue edit <n> -R suveng/suveng-dsh-plugin-memory --add-label "bug,good first issue"
+gh issue comment <n> -R suveng/suveng-dsh-plugin-memory --body "说明"
 gh api -X PATCH repos/omdsh-dev/dsh-mnemon/issues/<n> \
   -f state=closed -f state_reason=completed
 
-gh issue list -R suveng/dsh-plugin-memory --state open \
+gh issue list -R suveng/suveng-dsh-plugin-memory --state open \
   --json number,title,labels --jq '.[] | select(.labels|length==0)'
 ```
 

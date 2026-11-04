@@ -28,7 +28,7 @@ process.chdir(workspace)
 let ctx
 try {
   const manifest = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
-  const plugins = Object.keys(manifest.dependencies).filter(name => name.startsWith('dsh-plugin-memory-') && !/strategy-(general|scoped|light-context|auto-capture)$/.test(name))
+  const plugins = Object.keys(manifest.dependencies).filter(name => name.startsWith('suveng-dsh-plugin-memory-') && !/strategy-(general|scoped|light-context|auto-capture)$/.test(name))
   await new Promise((resolveInstall, reject) => {
     const packages = packedStarter ? [packedStarter, '--registry', registry] : [`link:${root}`, ...plugins.map(name => `link:${join(root, 'plugins', name)}`)]
     const child = spawn(process.execPath, [join(dsh, 'lib/bin.js'), 'plugin', '--profile', 'web', 'add', ...packages],

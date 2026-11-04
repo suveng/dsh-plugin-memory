@@ -1,7 +1,7 @@
 import type { Context } from '@deepseek-ai/cordis'
 import { provideMemoryRuntime } from './runtime.ts'
 
-export const name = 'dsh-plugin-memory-core'
+export const name = 'suveng-dsh-plugin-memory-core'
 export const provide = ['memoryMemory']
 export const inject: string[] = []
 

@@ -1,4 +1,4 @@
-import type { MemoryJsonValue, MemorySourceManagementInstance, MemorySourceManagementResult, TaskAgentModelCatalog } from 'dsh-plugin-memory/contracts'
+import type { MemoryJsonValue, MemorySourceManagementInstance, MemorySourceManagementResult, TaskAgentModelCatalog } from 'suveng-dsh-plugin-memory/contracts'
 
 /** Instance- and scope-bound capability; never the Host's raw transport. */
 export interface MemorySourceManagementClient {

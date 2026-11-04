@@ -1,8 +1,8 @@
 import type { Context } from '@deepseek-ai/cordis'
 import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
-import { COMPOSABLE_MEMORY_API_VERSION, type MemorySourceRuntime, type MemorySourceRuntimeContext } from 'dsh-plugin-memory/contracts'
-import { defineMemorySource, defineMemoryStrategy, installMemory } from 'dsh-plugin-memory/extension-sdk'
-import { DEFAULT_MEMORY_VIEW_BUDGET, MemoryCompositionRunner, type MemoryTestOptions, type MemoryTestTurn } from 'dsh-plugin-memory/testing'
+import { COMPOSABLE_MEMORY_API_VERSION, type MemorySourceRuntime, type MemorySourceRuntimeContext } from 'suveng-dsh-plugin-memory/contracts'
+import { defineMemorySource, defineMemoryStrategy, installMemory } from 'suveng-dsh-plugin-memory/extension-sdk'
+import { DEFAULT_MEMORY_VIEW_BUDGET, MemoryCompositionRunner, type MemoryTestOptions, type MemoryTestTurn } from 'suveng-dsh-plugin-memory/testing'
 
 const runners: MemoryCompositionRunner[] = []
 afterEach(async () => { for (const runner of runners.splice(0)) await runner.dispose() })
@@ -65,7 +65,7 @@ describe('independent plugin testing SDK', () => {
       })
       installMemory(ctx, {
         sources: [defineMemorySource({
-          manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'source', typeId: 'private-tree', packageName: 'dsh-plugin-memory-paired',
+          manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'source', typeId: 'private-tree', packageName: 'suveng-dsh-plugin-memory-paired',
             role: 'tree', capabilities: ['read'], consistency: 'exact-snapshot',
             routes: [{ id: 'open-node', description: 'Read the pinned private representation', capability: 'read', inputSchema: { type: 'object' }, maxCalls: 3,
             }],
@@ -82,7 +82,7 @@ describe('independent plugin testing SDK', () => {
           }),
         })],
         strategies: [defineMemoryStrategy({
-          manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'strategy', typeId: 'paired', packageName: 'dsh-plugin-memory-paired',
+          manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'strategy', typeId: 'paired', packageName: 'suveng-dsh-plugin-memory-paired',
             deterministic: true, supportedSourceRoles: ['tree'], maxSources: 1, maxRoutes: 1, maxActions: 1 },
           compose: (_request, sources) => ({ strategyTypeId: 'paired', explanation: 'Use my own Source or a compatible replacement.',
             sources: sources.map(source => ({ sourceInstanceKey: source.sourceInstanceKey,

@@ -6,7 +6,7 @@ import { MemoryCompositionRunner, defineMemoryPlugin, defineMemorySource, define
 function source(entryId: string, role: string): InstalledMemorySource {
   const definition = defineMemorySource({
     manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'source', typeId: entryId,
-      packageName: `dsh-plugin-memory-source-${entryId}`, role, capabilities: ['project'], consistency: 'exact-snapshot' },
+      packageName: `suveng-dsh-plugin-memory-source-${entryId}`, role, capabilities: ['project'], consistency: 'exact-snapshot' },
     create: context => ({
       facts: () => ({ sourceInstanceKey: context.sourceInstanceKey, sourceTypeId: entryId, role, availability: 'ready', revision: 'r1', capabilities: ['project'], routeIds: [], actionIds: [] }),
       project: () => ({ fragments: [] }),
@@ -18,7 +18,7 @@ function source(entryId: string, role: string): InstalledMemorySource {
 function strategy(entryId = 'base'): InstalledMemoryStrategy {
   const definition = defineMemoryStrategy({
     manifest: { apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'strategy', typeId: entryId,
-      packageName: `dsh-plugin-memory-strategy-${entryId}`, deterministic: true, supportedSourceRoles: ['working-context', 'durable-evidence'], maxSources: 4, maxRoutes: 4, maxActions: 4 },
+      packageName: `suveng-dsh-plugin-memory-strategy-${entryId}`, deterministic: true, supportedSourceRoles: ['working-context', 'durable-evidence'], maxSources: 4, maxRoutes: 4, maxActions: 4 },
     compose: () => ({ strategyTypeId: entryId, sources: [], explanation: 'Fixture.' }),
   })
   return { kind: 'strategy', instanceKey: `strategy:${entryId}`, provenance: { packageName: definition.manifest.packageName, entryId }, definition }
@@ -38,7 +38,7 @@ describe('memory plugin graph contract', () => {
     const work = source('work', 'working-context')
     const result = await new MemoryCompositionRunner().run({ contributions: snapshot([work], [
       plugin('work', { packageName: work.provenance.packageName, label: { en: 'Work', 'zh-CN': '工作' }, description: { en: 'Work.', 'zh-CN': '工作。' }, roles: ['source'], provides: [{ id: 'source.working-context' }] }),
-      plugin('base', { packageName: 'dsh-plugin-memory-strategy-base', label: { en: 'Base', 'zh-CN': '基础' }, description: { en: 'Base.', 'zh-CN': '基础。' }, roles: ['strategy'], provides: [{ id: 'strategy.base' }], requires: ['source.durable-evidence'] }),
+      plugin('base', { packageName: 'suveng-dsh-plugin-memory-strategy-base', label: { en: 'Base', 'zh-CN': '基础' }, description: { en: 'Base.', 'zh-CN': '基础。' }, roles: ['strategy'], provides: [{ id: 'strategy.base' }], requires: ['source.durable-evidence'] }),
     ]) })
     expect(result.report).toMatchObject({ state: 'rejected', diagnostics: [{ message: expect.stringContaining('source.durable-evidence') }] })
   })
@@ -55,7 +55,7 @@ describe('memory plugin graph contract', () => {
   it('lets a legacy Source satisfy a semantic dependency from its runtime role', async () => {
     const durable = source('legacy', 'durable-evidence')
     const result = await new MemoryCompositionRunner().run({ contributions: snapshot([durable], [
-      plugin('base', { packageName: 'dsh-plugin-memory-strategy-base', label: { en: 'Base', 'zh-CN': '基础' }, description: { en: 'Base.', 'zh-CN': '基础。' }, roles: ['strategy'], provides: [{ id: 'strategy.base' }], requires: ['source.durable-evidence'] }),
+      plugin('base', { packageName: 'suveng-dsh-plugin-memory-strategy-base', label: { en: 'Base', 'zh-CN': '基础' }, description: { en: 'Base.', 'zh-CN': '基础。' }, roles: ['strategy'], provides: [{ id: 'strategy.base' }], requires: ['source.durable-evidence'] }),
     ]) })
     expect(result.report.state).toBe('ready')
     await result.generation?.dispose()

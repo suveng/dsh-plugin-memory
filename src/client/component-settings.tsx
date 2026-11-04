@@ -1,6 +1,6 @@
 import { type ComponentProps, type JSX } from 'react'
 import { IconChevronDownOutlineRegular } from '@deepseek-ai/dsh-client-ui-primitives'
-import { RUNTIME_MEMORY_LIMIT_MAX_BYTES, RUNTIME_MEMORY_LIMITS } from 'dsh-plugin-memory-source-runtime/contracts'
+import { RUNTIME_MEMORY_LIMIT_MAX_BYTES, RUNTIME_MEMORY_LIMITS } from 'suveng-dsh-plugin-memory-source-runtime/contracts'
 import {
   DEFAULT_IDLE_REVIEW,
   type ClientConnectionHandle,
@@ -19,12 +19,12 @@ import { PanelActions, useLive, useScope, useStaged, WriteFailure } from './sett
 import { SKILLS_PACKAGE, SkillsSettings } from './skills-settings.tsx'
 import { TaskAgentModelRows, useTaskAgentModel } from './task-agent-model.tsx'
 
-/** The packages whose own settings dsh-plugin-memory supplies, through the same region an installed component uses. */
-export const RUNTIME_PACKAGE = 'dsh-plugin-memory-source-runtime'
-export const MEMORY_SPACES_PACKAGE = 'dsh-plugin-memory-source-memory-spaces'
-export const THREE_TIER_PACKAGE = 'dsh-plugin-memory-strategy-default-three-tier'
+/** The packages whose own settings suveng-dsh-plugin-memory supplies, through the same region an installed component uses. */
+export const RUNTIME_PACKAGE = 'suveng-dsh-plugin-memory-source-runtime'
+export const MEMORY_SPACES_PACKAGE = 'suveng-dsh-plugin-memory-source-memory-spaces'
+export const THREE_TIER_PACKAGE = 'suveng-dsh-plugin-memory-strategy-default-three-tier'
 
-/** What a shipped component's settings read and write: dsh-plugin-memory's own settings and Host connection. */
+/** What a shipped component's settings read and write: suveng-dsh-plugin-memory's own settings and Host connection. */
 export interface ShippedSettingsServices {
   scope: ClientSettingsScope<Config>
   /** 技能管理's own group of settings. */
@@ -34,7 +34,7 @@ export interface ShippedSettingsServices {
 }
 
 /**
- * Register the settings dsh-plugin-memory keeps for its shipped components, the way
+ * Register the settings suveng-dsh-plugin-memory keeps for its shipped components, the way
  * an installed component registers its own: Runtime Memory carries where its
  * user profile lives and its capacities, the Layered strategy the background tasks it drives.
  * Memory Spaces brings its Providers and embedding itself. Its settings show

@@ -5,9 +5,9 @@ import { existsSync, mkdirSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { MemoryCompositionRunner } from 'dsh-plugin-memory/testing'
-import * as spaces from 'dsh-plugin-memory-source-memory-spaces'
-import * as strategy from 'dsh-plugin-memory-strategy-default-three-tier'
+import { MemoryCompositionRunner } from 'suveng-dsh-plugin-memory/testing'
+import * as spaces from 'suveng-dsh-plugin-memory-source-memory-spaces'
+import * as strategy from 'suveng-dsh-plugin-memory-strategy-default-three-tier'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
 const stateRoot = process.env.MNEMON_DATA_DIR === undefined ? join(root, 'provider-lab', '.state') : join(process.env.MNEMON_DATA_DIR, 'provider-lab')
@@ -98,7 +98,7 @@ const memories = [
   { category: 'preference', importance: 4, tags: ['routing', 'policy'], entities: ['LLM', 'Provider'], content: '自动创建记忆空间时，用户可以用规则与 Prompt 描述数据边界、共享倾向和能力要求，再由 LLM 在允许的 Provider 候选中作出可解释选择。' },
   { category: 'fact', importance: 5, tags: ['contract', 'webui'], entities: ['WebUI', 'Provider'], content: 'WebUI 不把所有 Provider 伪装成相同数据库：概览区分真实关系图与内容投影，内容区分可枚举与仅查询，实体页只展示真实实体索引。' },
   { category: 'context', importance: 4, tags: ['privacy', 'docker'], entities: ['Docker', 'Ollama'], content: 'Provider Lab 的私有化服务全部由 Docker Compose 启动并只绑定 127.0.0.1；模型与向量计算通过本机 Ollama 完成，测试内容不需要离开机器。' },
-  { category: 'insight', importance: 4, tags: ['product', 'compatibility'], entities: ['Provider', 'DSH'], content: '多 Provider 的价值在于兼容成熟记忆实现与社区生态，但 dsh-plugin-memory 仍以既有记忆空间心智为主，并保留 Mnemon Native 的官方优先级。' },
+  { category: 'insight', importance: 4, tags: ['product', 'compatibility'], entities: ['Provider', 'DSH'], content: '多 Provider 的价值在于兼容成熟记忆实现与社区生态，但 suveng-dsh-plugin-memory 仍以既有记忆空间心智为主，并保留 Mnemon Native 的官方优先级。' },
 ]
 
 async function postJson(url, body) {
@@ -114,9 +114,9 @@ async function postJson(url, body) {
 }
 
 async function ensureHonchoScope() {
-  await postJson('http://127.0.0.1:18000/v3/workspaces', { id: 'dsh-lab', metadata: { source: 'dsh-plugin-memory-provider-lab' } })
+  await postJson('http://127.0.0.1:18000/v3/workspaces', { id: 'dsh-lab', metadata: { source: 'suveng-dsh-plugin-memory-provider-lab' } })
   for (const id of ['dsh', 'demo-user']) {
-    await postJson('http://127.0.0.1:18000/v3/workspaces/dsh-lab/peers', { id, metadata: { source: 'dsh-plugin-memory-provider-lab' } })
+    await postJson('http://127.0.0.1:18000/v3/workspaces/dsh-lab/peers', { id, metadata: { source: 'suveng-dsh-plugin-memory-provider-lab' } })
   }
 }
 
@@ -150,7 +150,7 @@ try {
   await runner.mount(strategy, { instanceId: 'lab-strategy' })
   await runner.mount(spaces, { instanceId: 'lab-spaces', config: {
     dataDir, timeoutMs: 10_000, defaultRecallLimit: 20,
-    providers: selectedProviders.map(provider => ({ use: 'dsh-plugin-memory-provider-' + provider.id, instanceId: provider.id })),
+    providers: selectedProviders.map(provider => ({ use: 'suveng-dsh-plugin-memory-provider-' + provider.id, instanceId: provider.id })),
   } })
   const management = await runner.managementClient('source:lab-spaces')
   const read = async (operation, input = null) => (await management.read(operation, input)).value

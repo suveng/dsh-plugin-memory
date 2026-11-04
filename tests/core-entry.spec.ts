@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 import * as core from "../src/core/plugin.ts"
 import { COMPOSABLE_MEMORY_API_VERSION } from "../src/core/contracts/index.ts"
 import { defineMemorySource, defineMemoryStrategy, installMemory } from "../src/sdk/index.ts"
-import { MemoryCompositionRunner } from 'dsh-plugin-memory/testing'
+import { MemoryCompositionRunner } from 'suveng-dsh-plugin-memory/testing'
 
 describe('Source-neutral Core entry', () => {
   it('mounts on plain Cordis without a DSH default service or built-in contribution', async () => {
@@ -26,7 +26,7 @@ describe('Source-neutral Core entry', () => {
     const source = defineMemorySource({
       manifest: {
         apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'source', typeId: 'external-notes',
-        packageName: 'dsh-plugin-memory-external-notes', role: 'notes', capabilities: ['project'], consistency: 'exact-snapshot',
+        packageName: 'suveng-dsh-plugin-memory-external-notes', role: 'notes', capabilities: ['project'], consistency: 'exact-snapshot',
       },
       create: context => ({
         facts: () => ({
@@ -42,7 +42,7 @@ describe('Source-neutral Core entry', () => {
     })
     const strategy = defineMemoryStrategy({
       manifest: {
-        apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'strategy', typeId: 'notes-view', packageName: 'dsh-plugin-memory-external-notes-view',
+        apiVersion: COMPOSABLE_MEMORY_API_VERSION, kind: 'strategy', typeId: 'notes-view', packageName: 'suveng-dsh-plugin-memory-external-notes-view',
         deterministic: true, supportedSourceRoles: ['notes'], maxSources: 1, maxRoutes: 1, maxActions: 1,
       },
       compose: (_request, facts) => ({ strategyTypeId: 'notes-view', explanation: 'Only selected notes', sources: facts.map(fact => ({

@@ -20,5 +20,5 @@ coverage/
 /.cache/
 
 # Memory workspace-local data (the legacy directory stays ignored for old checkouts)
-/.dsh-plugin-memory/
+/.suveng-dsh-plugin-memory/
 /.mnemon/

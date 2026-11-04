@@ -113,7 +113,7 @@ describe('conversation interaction surfaces', () => {
 
     expect(await screen.findByRole('button', { name: /turnTail\.label/ })).toBeTruthy()
     expect(rpcCall).toHaveBeenCalledTimes(1)
-    expect(rpcCall).toHaveBeenCalledWith('/dsh-plugin-memory-read', 'turn-activities', { sessionId: 'session-a' })
+    expect(rpcCall).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-read', 'turn-activities', { sessionId: 'session-a' })
   })
 
   it('hides a completed turn with no memory activity', async () => {

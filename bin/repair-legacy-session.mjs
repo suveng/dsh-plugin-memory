@@ -14,7 +14,7 @@ const summaries = {
 }
 // Sessions recorded before the rename name the plugin, its subagent tool and its
 // recovered-probe events differently; a repair has to read either generation.
-const pluginNames = ['dsh-mnemon', 'dsh-plugin-memory']
+const pluginNames = ['dsh-mnemon', 'suveng-dsh-plugin-memory']
 const subagentResultNames = ['mnemon_subagent_result', 'memory_subagent_result']
 const subagentResultTexts = ['Mnemon subagent result recorded.', 'Memory subagent result recorded.']
 const sha256 = value => createHash('sha256').update(value).digest('hex')
@@ -689,7 +689,7 @@ async function repairIdleProbeSession(entries, original, compressed, input, outp
     }
   }
   const text = entries.map(entry => recovered.has(entry)
-    ? JSON.stringify({ type: 'dsh-plugin-memory/recovered-idle-probe', seq: entry.row.seq, time: entry.row.time, ignorable: true,
+    ? JSON.stringify({ type: 'suveng-dsh-plugin-memory/recovered-idle-probe', seq: entry.row.seq, time: entry.row.time, ignorable: true,
       data: { originalType: entry.row.type, originalData: entry.row.data } }) + '\n'
     : entry.line).join('')
   const plain = Buffer.from(text)
@@ -793,7 +793,7 @@ export async function repairLegacySession(input, output) {
 }
 
 async function main(args) {
-  const usage = 'Usage: dsh-plugin-memory-repair-session --input FILE [--output NEW_FILE]\nWithout --output, preview recognized v4 idle-review probe audit recovery or the three known Memory v0 summary repairs, exact compatible v2 subagent descriptors, packed deltas with empty IDs/names, property-preserving null-to-empty delta names and proven DeepSeek chains with a previously recorded provider ID. Unsupported descriptor/tool shapes are reported with exit status 1 and prevent output. DSH must still validate the repaired copy. Stop DSH and work on a backup copy. The input and existing output files are never overwritten.'
+  const usage = 'Usage: suveng-dsh-plugin-memory-repair-session --input FILE [--output NEW_FILE]\nWithout --output, preview recognized v4 idle-review probe audit recovery or the three known Memory v0 summary repairs, exact compatible v2 subagent descriptors, packed deltas with empty IDs/names, property-preserving null-to-empty delta names and proven DeepSeek chains with a previously recorded provider ID. Unsupported descriptor/tool shapes are reported with exit status 1 and prevent output. DSH must still validate the repaired copy. Stop DSH and work on a backup copy. The input and existing output files are never overwritten.'
   if (args.length === 1 && args[0] === '--help') { console.log(usage); return }
   const options = new Map()
   for (let index = 0; index < args.length; index += 2) {

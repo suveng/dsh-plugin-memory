@@ -1,5 +1,5 @@
 ---
-"dsh-plugin-memory": minor
+"suveng-dsh-plugin-memory": minor
 ---
 
 Carry a skill suggestion to adoption without a person

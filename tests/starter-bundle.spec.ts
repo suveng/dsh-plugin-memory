@@ -14,7 +14,7 @@ class NativeGroup {
   stop() { events.push('stop') }
 }
 type Bundle = { [init]: () => AsyncGenerator<() => void, void, unknown> }
-const children = [{ id: 'memory', name: 'dsh-plugin-memory' }]
+const children = [{ id: 'memory', name: 'suveng-dsh-plugin-memory' }]
 
 beforeEach(() => { events.length = 0 })
 
@@ -43,7 +43,7 @@ describe('the Starter component group', () => {
     const lifecycle = (new MemoryBundle({ loader: { builtins: {} } } as never, children) as unknown as Bundle)[init]()
     const first = lifecycle.next()
     preparation.release()
-    await expect(first).rejects.toThrow('dsh-plugin-memory/bundle needs the Loader\'s cordis:group builtin')
+    await expect(first).rejects.toThrow('suveng-dsh-plugin-memory/bundle needs the Loader\'s cordis:group builtin')
     expect(events).toEqual([])
   })
 })

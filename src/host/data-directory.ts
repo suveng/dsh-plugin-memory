@@ -3,11 +3,11 @@ import { dirname, join } from 'node:path'
 
 /**
  * The directory this plugin owns, and the one it owned before the rename to
- * `dsh-plugin-memory`. A profile that already holds data keeps using its old
+ * `suveng-dsh-plugin-memory`. A profile that already holds data keeps using its old
  * directory until the person moves it, so every root resolves through
  * `resolveDataDir` rather than assuming the new name exists on disk.
  */
-export const MEMORY_DATA_DIRECTORY = '.dsh-plugin-memory'
+export const MEMORY_DATA_DIRECTORY = '.suveng-dsh-plugin-memory'
 export const LEGACY_MEMORY_DATA_DIRECTORY = '.mnemon'
 
 /**

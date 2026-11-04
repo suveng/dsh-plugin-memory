@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { HostAgent, HostContextShape, ToolDefinition } from '../src/host/dsh.ts'
-import type { DocumentMutationResult, DocumentSnapshot, DocumentView } from 'dsh-plugin-memory-source-documents/contracts'
+import type { DocumentMutationResult, DocumentSnapshot, DocumentView } from 'suveng-dsh-plugin-memory-source-documents/contracts'
 import type { Config } from '../src/host/config.ts'
 import { registerTools } from '../src/host/tools.ts'
 import { MemorySubagentCoordinator } from '../src/host/subagent.ts'

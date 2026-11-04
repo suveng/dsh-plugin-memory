@@ -4,9 +4,9 @@ import { tmpdir } from 'node:os'
 import { join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import type { RuntimeMemorySnapshot } from 'dsh-plugin-memory-source-runtime/contracts'
-import type { DocumentSnapshot } from 'dsh-plugin-memory-source-documents/contracts'
-import type { MemorySpaceCatalog } from 'dsh-plugin-memory-source-memory-spaces/contracts'
+import type { RuntimeMemorySnapshot } from 'suveng-dsh-plugin-memory-source-runtime/contracts'
+import type { DocumentSnapshot } from 'suveng-dsh-plugin-memory-source-documents/contracts'
+import type { MemorySpaceCatalog } from 'suveng-dsh-plugin-memory-source-memory-spaces/contracts'
 import { compositionFixture } from './fixtures/composition.ts'
 
 const original = fileURLToPath(new URL('./fixtures/upgrade/v0.3.6/', import.meta.url))

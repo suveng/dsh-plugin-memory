@@ -1,12 +1,12 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { join, resolve } from 'node:path'
-import { DOCUMENTS_DIRECTORY, DOCUMENTS_INDEX_FILE, summarizeDocumentIndex } from 'dsh-plugin-memory-source-documents/contracts'
+import { DOCUMENTS_DIRECTORY, DOCUMENTS_INDEX_FILE, summarizeDocumentIndex } from 'suveng-dsh-plugin-memory-source-documents/contracts'
 import {
   MEMORY_PROVIDER_REGISTRY_FILE, MEMORY_SPACE_DATABASE_FILE, MEMORY_SPACE_REGISTRY_FILE, MEMORY_SPACES_DIRECTORY,
   summarizeMemoryProviderRegistry, summarizeMemorySpaceRegistry,
-} from 'dsh-plugin-memory-source-memory-spaces/contracts'
-import { RUNTIME_DIRECTORY, RUNTIME_MEMORIES_FILE, RUNTIME_PROJECTION_FILES, summarizeRuntimeMemories } from 'dsh-plugin-memory-source-runtime/contracts'
+} from 'suveng-dsh-plugin-memory-source-memory-spaces/contracts'
+import { RUNTIME_DIRECTORY, RUNTIME_MEMORIES_FILE, RUNTIME_PROJECTION_FILES, summarizeRuntimeMemories } from 'suveng-dsh-plugin-memory-source-runtime/contracts'
 import type { ResolvedConfig } from './config.ts'
 import { MEMORY_DATA_DIRECTORY, resolveDataDir } from './data-directory.ts'
 import type { StorageRoot } from './storage-root.ts'

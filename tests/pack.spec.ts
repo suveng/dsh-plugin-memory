@@ -9,17 +9,17 @@ import { resolveConfig } from "../src/host/config.ts"
 import { MemoryPackManager, MEMORY_PACK_FORMAT, MEMORY_PACK_MIME, documentVersion } from "../src/host/pack.ts"
 import { createStorageRoot } from '../src/host/storage-root.ts'
 import { sourceFixture } from './fixtures/sources.ts'
-import { withMemoryStorageLock } from 'dsh-plugin-memory/extension-sdk'
-import { DOCUMENTS_DIRECTORY, DOCUMENTS_LOCK_FILE, DOCUMENTS_LOCK_STALE_MS } from 'dsh-plugin-memory-source-documents/contracts'
-import { RUNTIME_DIRECTORY, RUNTIME_ENTRY_DELIMITER, RUNTIME_LOCK_FILE, RUNTIME_LOCK_STALE_MS, RUNTIME_PROJECTION_FILES, runtimeProjection } from 'dsh-plugin-memory-source-runtime/contracts'
-import { sqlite as nodeSqlite, writeSpace, type SpaceInsight } from '../plugins/dsh-plugin-memory-source-memory-spaces/tests/memory-space-db.ts'
+import { withMemoryStorageLock } from 'suveng-dsh-plugin-memory/extension-sdk'
+import { DOCUMENTS_DIRECTORY, DOCUMENTS_LOCK_FILE, DOCUMENTS_LOCK_STALE_MS } from 'suveng-dsh-plugin-memory-source-documents/contracts'
+import { RUNTIME_DIRECTORY, RUNTIME_ENTRY_DELIMITER, RUNTIME_LOCK_FILE, RUNTIME_LOCK_STALE_MS, RUNTIME_PROJECTION_FILES, runtimeProjection } from 'suveng-dsh-plugin-memory-source-runtime/contracts'
+import { sqlite as nodeSqlite, writeSpace, type SpaceInsight } from '../plugins/suveng-dsh-plugin-memory-source-memory-spaces/tests/memory-space-db.ts'
 
 const directories: string[] = []
 const releases: Array<() => Promise<void>> = []
 const now = () => new Date('2026-08-14T12:00:00.000Z')
 
 function temporary(label: string): string {
-  const directory = mkdtempSync(join(tmpdir(), `dsh-plugin-memory-${label}-`))
+  const directory = mkdtempSync(join(tmpdir(), `suveng-dsh-plugin-memory-${label}-`))
   directories.push(directory)
   return directory
 }
@@ -636,7 +636,7 @@ describe('Memory Pack', () => {
       expect(textOf(here.root, first!.id)).toContain('Version 1')
     })
 
-    it('never replaces a document with a lower revision from the branch, as an older dsh-plugin-memory republishes', async () => {
+    it('never replaces a document with a lower revision from the branch, as an older suveng-dsh-plugin-memory republishes', async () => {
       const here = await documents('pack-revision-here')
       await here.sources.documents.mutate('mutate', { action: 'create', title: 'Release plan', content: '# Release plan\n\nVersion 1' }, { confirmed: true })
       const older = (await here.manager.exportPack('documents')).base64

@@ -25,7 +25,7 @@ describe('what the configuration lends a shipped component\'s settings', () => {
     expect(mutate).toHaveBeenCalledTimes(1)
   })
 
-  it('lends nothing to a component whose settings dsh-plugin-memory never drew', () => {
+  it('lends nothing to a component whose settings suveng-dsh-plugin-memory never drew', () => {
     const hosts = createComponentHosts({ scope: settingsScope<Config>(ready({})) })
     expect(hosts(RUNTIME_PACKAGE)).toBeUndefined()
     expect(hosts('@acme/memory-notes')).toBeUndefined()
@@ -57,25 +57,25 @@ describe('what the configuration lends a shipped component\'s settings', () => {
 
     await host.operations!.write('provider-service-update', { providerId: 'mem0', settings: { endpoint: 'http://127.0.0.1:8888', mode: 'self-hosted' }, enabled: true })
 
-    expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-write', 'provider-service-update', {
+    expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-write', 'provider-service-update', {
       providerId: 'mem0', settings: { endpoint: 'http://127.0.0.1:8888', mode: 'self-hosted' }, enabled: true, sessionId: 'session-1', workspaceId: 'workspace-1',
     })
     await host.operations!.write('embedding-fill', { memoryBodyId: 'tools' })
-    expect(call).toHaveBeenLastCalledWith('/dsh-plugin-memory-write', 'embedding-fill', { memoryBodyId: 'tools', sessionId: 'session-1', workspaceId: 'workspace-1' })
+    expect(call).toHaveBeenLastCalledWith('/suveng-dsh-plugin-memory-write', 'embedding-fill', { memoryBodyId: 'tools', sessionId: 'session-1', workspaceId: 'workspace-1' })
   })
 
   it('loads redacted Provider settings through the read channel and never masks an authentication rejection', async () => {
     const call = vi.fn(async (channel: string) => {
-      if (channel === '/dsh-plugin-memory-read') return { ok: true as const, value: { providers: [], items: [], generatedAt: 'now' } }
+      if (channel === '/suveng-dsh-plugin-memory-read') return { ok: true as const, value: { providers: [], items: [], generatedAt: 'now' } }
       throw new Error(`unexpected channel: ${channel}`)
     })
     const host = createComponentHosts({ scope: settingsScope<Config>(ready({})), connection: { rpc: { call }, isLoopback: true } as ClientConnectionHandle })(MEMORY_SPACES_PACKAGE, 'session-1')!
 
     await host.operations!.read('provider-services')
-    expect(call).toHaveBeenLastCalledWith('/dsh-plugin-memory-read', 'provider-services', { sessionId: 'session-1' })
+    expect(call).toHaveBeenLastCalledWith('/suveng-dsh-plugin-memory-read', 'provider-services', { sessionId: 'session-1' })
 
     call.mockReset()
-    call.mockRejectedValue(new Error('transport failure for /dsh-plugin-memory-write/provider-services: HTTP 403'))
+    call.mockRejectedValue(new Error('transport failure for /suveng-dsh-plugin-memory-write/provider-services: HTTP 403'))
     await expect(host.operations!.read('provider-services')).rejects.toThrow('HTTP 403')
     expect(call).toHaveBeenCalledTimes(1)
   })
@@ -84,7 +84,7 @@ describe('what the configuration lends a shipped component\'s settings', () => {
     const call = vi.fn(async () => ({ ok: false as const, error: { code: 'bad-request' as const, message: 'unknown read endpoint: provider-services', details: { issues: [] } } }))
     const host = createComponentHosts({ scope: settingsScope<Config>(ready({})), connection: { rpc: { call }, isLoopback: true } as ClientConnectionHandle })(MEMORY_SPACES_PACKAGE)!
     await expect(host.operations!.read('provider-services')).rejects.toThrow('unknown read endpoint')
-    expect(call.mock.calls).toEqual([['/dsh-plugin-memory-read', 'provider-services', {}]])
+    expect(call.mock.calls).toEqual([['/suveng-dsh-plugin-memory-read', 'provider-services', {}]])
   })
 
   it('checks Memory embedding status in the selected runtime scope', async () => {
@@ -93,7 +93,7 @@ describe('what the configuration lends a shipped component\'s settings', () => {
     const host = createComponentHosts({ scope: settingsScope<Config>(ready({})), connection: { rpc: { call }, isLoopback: true } as ClientConnectionHandle })(MEMORY_SPACES_PACKAGE, 'session-1', 'workspace-1')!
 
     await expect(host.operations!.read('embedding-status')).resolves.toEqual(status)
-    expect(call).toHaveBeenCalledWith('/dsh-plugin-memory-read', 'embedding-status', {
+    expect(call).toHaveBeenCalledWith('/suveng-dsh-plugin-memory-read', 'embedding-status', {
       sessionId: 'session-1', workspaceId: 'workspace-1',
     })
   })
@@ -114,7 +114,7 @@ describe('what the configuration lends a shipped component\'s settings', () => {
     // A page opened outside any conversation, as the Plugins page is: nothing scopes the payload, as before.
     const unscoped = hosts(MEMORY_SPACES_PACKAGE)!
     await unscoped.operations!.write('provider-service-update', { providerId: 'mem0', settings: {}, enabled: true })
-    expect(call).toHaveBeenLastCalledWith('/dsh-plugin-memory-write', 'provider-service-update', { providerId: 'mem0', settings: {}, enabled: true })
+    expect(call).toHaveBeenLastCalledWith('/suveng-dsh-plugin-memory-write', 'provider-service-update', { providerId: 'mem0', settings: {}, enabled: true })
     for (const host of [unscoped, hosts(MEMORY_SPACES_PACKAGE, 'session-1', 'workspace-1')!]) {
       await expect(host.operations!.write('provider-service-update', { providerId: 'mem0', settings: {}, enabled: true, sessionId: 'other' })).rejects.toThrow('takes no sessionId')
       await expect(host.operations!.read('provider-services', { workspaceId: 'other' })).rejects.toThrow('takes no workspaceId')

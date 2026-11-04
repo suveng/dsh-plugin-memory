@@ -67,7 +67,7 @@ const INTERACTION_UNITS: Record<'turnBar' | 'saveAction', InteractionUnit> = {
     register(ctx: MemoryClientContext, namespace: MemoryNamespace, translate: (key: MemoryKey, params?: Record<string, unknown>) => string): () => void {
       return ctx.slots.register({
         name: 'conversation.chat.turnTail',
-        id: 'dsh-plugin-memory/turn-tail',
+        id: 'suveng-dsh-plugin-memory/turn-tail',
         locale: namespace,
         inject: (sessionId: unknown): { sessionId?: string; connection: ClientConnectionHandle; localeRuntime: MemoryClientContext['locale']; t: (key: MemoryKey, params?: Record<string, unknown>) => string } => ({
           ...(typeof sessionId === 'string' && sessionId !== '' ? { sessionId } : {}),
@@ -321,12 +321,12 @@ export function apply(rawContext: unknown): void {
     skills: { scope: skillsSettings, panel: new SkillsPanelSeat() },
   }
   const namespace: MemoryNamespace = 'memory'
-  ctx.effect(() => ctx.locale.register(namespace, { zh, en }), 'dsh-plugin-memory: locale dictionaries')
+  ctx.effect(() => ctx.locale.register(namespace, { zh, en }), 'suveng-dsh-plugin-memory: locale dictionaries')
   const translate = ctx.locale.bind(namespace)
   // The Plugins page provides its navigation while it lives; the memory
   // workspace links to its configuration only then.
   ctx.inject(['pluginNavigation'], inner => {
-    inner.effect(() => seats.configuration.provide(() => { inner.pluginNavigation.openBundle(MEMORY_PACKAGE_NAME) }), 'dsh-plugin-memory: configuration entry')
+    inner.effect(() => seats.configuration.provide(() => { inner.pluginNavigation.openBundle(MEMORY_PACKAGE_NAME) }), 'suveng-dsh-plugin-memory: configuration entry')
   })
   // DSH's plugin manager announces every component switch it applies, from its
   // Plugins page or Memory's own controls; a reconnect may have missed some.
@@ -336,12 +336,12 @@ export function apply(rawContext: unknown): void {
       const remote = inner.remote as unknown as { $on(event: 'plugin-manager/changed', listener: () => void): () => void }
       const disposers = [remote.$on('plugin-manager/changed', seats.components.bump), inner.on('connection/reset', seats.components.bump)]
       return () => { for (const dispose of disposers) dispose() }
-    }, 'dsh-plugin-memory: component changes')
+    }, 'suveng-dsh-plugin-memory: component changes')
   })
   // DSH mirrors the Host settings document on loopback pages; follow its
   // revision of the `memory` entry so edits made elsewhere show up live.
   ctx.inject(['configForms'], inner => {
-    inner.effect(() => followHostSettings(inner.configForms.get(MEMORY_SETTINGS_NAMESPACE), [settings, interactionSettings, skillsSettings]), 'dsh-plugin-memory: DSH settings revisions')
+    inner.effect(() => followHostSettings(inner.configForms.get(MEMORY_SETTINGS_NAMESPACE), [settings, interactionSettings, skillsSettings]), 'suveng-dsh-plugin-memory: DSH settings revisions')
   })
   ctx.slots.inject(
     'conversation.session.header.lineage',
@@ -370,18 +370,18 @@ export function apply(rawContext: unknown): void {
       activeMemoryWorkspace?.dispose()
       activeMemoryWorkspace = undefined
     }
-  }, 'dsh-plugin-memory: memory workspace entry')
+  }, 'suveng-dsh-plugin-memory: memory workspace entry')
   // DSH swaps this client in once a Starter update replaces its files, which
   // closed the Memory System the update ran from; reopen it, and Status
   // reopens the version dialog.
-  ctx.effect(() => reopenAfterStarterUpdate(seats.workspace), 'dsh-plugin-memory: reopen after a Starter update')
+  ctx.effect(() => reopenAfterStarterUpdate(seats.workspace), 'suveng-dsh-plugin-memory: reopen after a Starter update')
   // DSH edits a plugin's configuration on its own page under Plugins;
   // Settings keeps only the read-only plugin inventory. The whole Memory
-  // configuration is the dsh-plugin-memory bundle's page, between its description
+  // configuration is the suveng-dsh-plugin-memory bundle's page, between its description
   // and its components.
   // Components contribute their own settings to their pages there, keyed by package name.
   const componentSettingsDirectory = createComponentSettingsDirectory(ctx)
-  // A shipped component whose settings dsh-plugin-memory used to draw reads its configuration and Host operations through these.
+  // A shipped component whose settings suveng-dsh-plugin-memory used to draw reads its configuration and Host operations through these.
   const componentHost = createComponentHosts({ scope: settings, connection: ctx.connection, componentChanges: seats.components })
   const configurationServices = () => ({
     componentSettingsDirectory,
@@ -424,11 +424,11 @@ export function apply(rawContext: unknown): void {
     }, MemoryComponentRowHost))
   }
   // The shipped components' own settings and Status cards arrive the way an installed component's do.
-  ctx.effect(() => installShippedComponentSettings(ctx, { scope: settings, skillsScope: skillsSettings, connection: ctx.connection, t: translate }), 'dsh-plugin-memory: shipped component settings')
-  ctx.effect(() => installShippedComponentStatus(ctx), 'dsh-plugin-memory: shipped component status')
+  ctx.effect(() => installShippedComponentSettings(ctx, { scope: settings, skillsScope: skillsSettings, connection: ctx.connection, t: translate }), 'suveng-dsh-plugin-memory: shipped component settings')
+  ctx.effect(() => installShippedComponentStatus(ctx), 'suveng-dsh-plugin-memory: shipped component status')
   ctx.slots.inject('plugins.detail.actions', () => ctx.slots.register({
     name: 'plugins.detail.actions',
-    id: 'dsh-plugin-memory/open-workspace',
+    id: 'suveng-dsh-plugin-memory/open-workspace',
     locale: namespace,
     inject: () => ({ workspace: seats.workspace, componentList: seats.componentList, t: translate }),
   }, MemoryPluginActions))
@@ -458,7 +458,7 @@ export function apply(rawContext: unknown): void {
       for (const dispose of [...active.values()].reverse()) dispose()
       active.clear()
     }
-  }, 'dsh-plugin-memory: interaction surfaces')
+  }, 'suveng-dsh-plugin-memory: interaction surfaces')
 
   // 技能管理's own surfaces follow its settings live, as the interaction surfaces do:
   // the turn's skills line (on unless switched off) and its own sidebar entry (off unless switched on).
@@ -473,7 +473,7 @@ export function apply(rawContext: unknown): void {
     if (hints && skillTail === undefined) {
       skillTail = ctx.slots.inject('conversation.chat.turnTail', () => ctx.slots.register({
         name: 'conversation.chat.turnTail',
-        id: 'dsh-plugin-memory/skill-tail',
+        id: 'suveng-dsh-plugin-memory/skill-tail',
         order: 100,
         locale: namespace,
         inject: (sessionId: unknown) => ({
@@ -509,5 +509,5 @@ export function apply(rawContext: unknown): void {
       skillsPanel = undefined
       skillTail = undefined
     }
-  }, 'dsh-plugin-memory: skills surfaces')
+  }, 'suveng-dsh-plugin-memory: skills surfaces')
 }

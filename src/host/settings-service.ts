@@ -119,7 +119,7 @@ export class ProfileMemorySettings implements HostSettingsService {
         const value = this.resolve(registration)
         for (const listener of this.listeners) {
           try { listener(registration.namespace, value) }
-          catch (error) { console.warn('dsh-plugin-memory: committed settings listener failed', error) }
+          catch (error) { console.warn('suveng-dsh-plugin-memory: committed settings listener failed', error) }
         }
       }
     }) as never)
@@ -131,7 +131,7 @@ export class ProfileMemorySettings implements HostSettingsService {
         this.revisions.clear()
         disposePresentation?.()
       }
-    }, 'dsh-plugin-memory: profile settings')
+    }, 'suveng-dsh-plugin-memory: profile settings')
   }
 
   get writable(): boolean {
@@ -275,7 +275,7 @@ export class ProfileMemorySettings implements HostSettingsService {
     // DSH exposes no completion event for its asynchronous import of the removed settings.yaml.
     // Never race that writer: recover its retained backup on the next startup.
     if (this.nativeImportPending) {
-      console.warn('dsh-plugin-memory: DSH is importing settings.yaml; restart once to recover retained Memory UI and plugin preferences')
+      console.warn('suveng-dsh-plugin-memory: DSH is importing settings.yaml; restart once to recover retained Memory UI and plugin preferences')
       return
     }
     if (plainHostConfig(this.owner?.config ?? this.input).legacySettingsImported) return
@@ -308,7 +308,7 @@ export class ProfileMemorySettings implements HostSettingsService {
     }
     const preview = plan()
     if (Object.keys(preview.patch).length === 0) {
-      if (preview.diagnostics.length > 0) console.warn('dsh-plugin-memory: legacy settings were not imported; retained backup requires review')
+      if (preview.diagnostics.length > 0) console.warn('suveng-dsh-plugin-memory: legacy settings were not imported; retained backup requires review')
       return
     }
     if (this.closed) return

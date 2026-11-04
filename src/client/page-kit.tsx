@@ -6,12 +6,12 @@ import { MemoryDialog, type MemoryDialogProps } from './MemoryDialog.tsx'
 import { appearanceClass } from './view-styles.ts'
 import sidebarCss from './MemorySidebarView.module.css'
 import css from './MemoryView.module.css'
-import runtimeCss from 'dsh-plugin-memory-source-runtime/presentation/page.module.css'
-import runtimeSidebarCss from 'dsh-plugin-memory-source-runtime/presentation/sidebar.module.css'
-import documentsCss from 'dsh-plugin-memory-source-documents/presentation/page.module.css'
-import documentsSidebarCss from 'dsh-plugin-memory-source-documents/presentation/sidebar.module.css'
-import spacesCss from 'dsh-plugin-memory-source-memory-spaces/presentation/page.module.css'
-import spacesSidebarCss from 'dsh-plugin-memory-source-memory-spaces/presentation/sidebar.module.css'
+import runtimeCss from 'suveng-dsh-plugin-memory-source-runtime/presentation/page.module.css'
+import runtimeSidebarCss from 'suveng-dsh-plugin-memory-source-runtime/presentation/sidebar.module.css'
+import documentsCss from 'suveng-dsh-plugin-memory-source-documents/presentation/page.module.css'
+import documentsSidebarCss from 'suveng-dsh-plugin-memory-source-documents/presentation/sidebar.module.css'
+import spacesCss from 'suveng-dsh-plugin-memory-source-memory-spaces/presentation/page.module.css'
+import spacesSidebarCss from 'suveng-dsh-plugin-memory-source-memory-spaces/presentation/sidebar.module.css'
 
 export const I18nContext = createContext<MemoryTranslate>(translateZh)
 

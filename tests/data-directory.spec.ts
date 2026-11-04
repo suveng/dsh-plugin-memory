@@ -7,14 +7,14 @@ import { dataDirPrefixes, LEGACY_MEMORY_DATA_DIRECTORY, legacyDataDir, MEMORY_DA
 const roots: string[] = []
 afterEach(async () => { for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true }) })
 async function directory() {
-  const root = await mkdtemp(join(tmpdir(), 'dsh-plugin-memory-directory-'))
+  const root = await mkdtemp(join(tmpdir(), 'suveng-dsh-plugin-memory-directory-'))
   roots.push(root)
   return root
 }
 
 describe('data directory names', () => {
   it('names the plugin directory and its pre-rename sibling', () => {
-    expect(MEMORY_DATA_DIRECTORY).toBe('.dsh-plugin-memory')
+    expect(MEMORY_DATA_DIRECTORY).toBe('.suveng-dsh-plugin-memory')
     expect(LEGACY_MEMORY_DATA_DIRECTORY).toBe('.mnemon')
     expect(legacyDataDir(join('/synthetic', 'work', MEMORY_DATA_DIRECTORY))).toBe(join('/synthetic', 'work', LEGACY_MEMORY_DATA_DIRECTORY))
     expect(dataDirPrefixes()).toEqual([MEMORY_DATA_DIRECTORY, LEGACY_MEMORY_DATA_DIRECTORY])

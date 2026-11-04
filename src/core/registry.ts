@@ -20,7 +20,7 @@ export type MemoryContributionListener = (snapshot: MemoryContributionSnapshot) 
  * Scope-local definition registry behind ctx.memoryMemory.
  *
  * It owns definitions only. Runtime objects are created and drained by a
- * generation host attached by dsh-plugin-memory core.
+ * generation host attached by suveng-dsh-plugin-memory core.
  */
 export class MemoryContributionRegistry {
   private readonly sources = new Map<string, InstalledMemorySource>()

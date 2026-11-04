@@ -3,7 +3,7 @@
  * Install this checkout into a DSH profile.
  *
  * This repository is a self-maintained fork whose packages are renamed to the
- * `dsh-plugin-memory-*` convention, so they are not on npm. A profile install
+ * `suveng-dsh-plugin-memory-*` convention, so they are not on npm. A profile install
  * therefore has to resolve every workspace package from this checkout:
  *
  *   1. `pnpm -r build` (the profile loads `lib/`, not `src/`)
@@ -11,7 +11,7 @@
  *      dependency, so pnpm installs its dependencies like any published package
  *   3. `overrides:` in the profile's `pnpm-workspace.yaml` redirects the
  *      sub-package ranges the root package declares to `link:` paths in this
- *      checkout, so pnpm never asks the registry for `dsh-plugin-memory-*`
+ *      checkout, so pnpm never asks the registry for `suveng-dsh-plugin-memory-*`
  *   4. the root package is appended to `dsh.profile.bundles`
  *
  * Sub-packages must stay *transitive* dependencies of the root tarball: a direct
@@ -192,6 +192,6 @@ for (const name of managed) {
 console.log(`install-profile: done.
 Next:
   1. make sure ${join(profileDir, 'cordis.patch.yml')} targets the new Entry ids
-     (- id: memory / name: dsh-plugin-memory, memory-strategy-* rows)
-  2. move legacy data: ~/.mnemon -> ~/.dsh-plugin-memory (the plugin also reads the old path)
+     (- id: memory / name: suveng-dsh-plugin-memory, memory-strategy-* rows)
+  2. move legacy data: ~/.mnemon -> ~/.suveng-dsh-plugin-memory (the plugin also reads the old path)
   3. restart the host`)

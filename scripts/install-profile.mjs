@@ -23,7 +23,7 @@
  */
 
 import { spawnSync } from 'node:child_process'
-import { existsSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { basename, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -88,6 +88,25 @@ if (!dryRun) {
     .sort()
     .slice(0, -4)
   for (const name of packs) rmSync(join(buildDir, name), { force: true })
+
+  // pnpm 12 resolves `link:` overrides for the *dependencies* of a tarball-installed
+  // package in the lockfile but never materializes them in node_modules, so the
+  // root would install without any of its sub-packages. Point the packed manifest
+  // at this checkout instead: `file:` dependencies of a tarball are installed.
+  const stage = join(buildDir, `.repack-${stamp}`)
+  rmSync(stage, { recursive: true, force: true })
+  mkdirSync(stage, { recursive: true })
+  const extract = spawnSync('tar', ['-xzf', tarball, '-C', stage], { stdio: 'inherit' })
+  if (extract.status !== 0) process.exit(extract.status ?? 1)
+  const manifestPath = join(stage, 'package', 'package.json')
+  const manifest = readJson(manifestPath)
+  for (const name of linked.keys()) {
+    if (manifest.dependencies?.[name] !== undefined) manifest.dependencies[name] = `file:${join(repo, 'plugins', name)}`
+  }
+  writeJson(manifestPath, manifest)
+  const repack = spawnSync('tar', ['--exclude', '._*', '--exclude', '.DS_Store', '-czf', tarball, 'package'], { cwd: stage, stdio: 'inherit' })
+  if (repack.status !== 0) process.exit(repack.status ?? 1)
+  rmSync(stage, { recursive: true, force: true })
 }
 
 // 1. profile dependencies + bundles
@@ -138,24 +157,37 @@ if (stray !== undefined) {
   console.error(`install-profile: ${workspacePath} has a stray link outside overrides:\n  ${stray.trim()}\nRemove it (use \`${stray.trim().split(':')[0]}: true\` under allowBuilds) and rerun.`)
   process.exit(1)
 }
-const overrides = [...linked].map(([name, spec]) => `  ${name}: ${spec}`)
-const workspaceOut = `${kept.join('\n').replace(/\s*$/, '')}\noverrides:\n${overrides.join('\n')}\n`
+const workspaceOut = `${kept.join('\n').replace(/\s*$/, '')}\n`
 
 if (dryRun) {
   console.log(`install-profile: would install ${rootPackage.name} from file:${tarball}`)
-  for (const [name, spec] of linked) console.log(`  override ${name} -> ${spec}`)
+  for (const [name] of linked) console.log(`  ${name} -> file:${join(repo, 'plugins', name)}`)
   console.log(`install-profile: would write ${profilePackagePath} and ${workspacePath}`)
   process.exit(0)
 }
 
 writeJson(profilePackagePath, profilePackage)
 writeFileSync(workspacePath, workspaceOut)
-console.log(`install-profile: installed ${rootPackage.name} (${tarball}) with ${linked.size} linked sub-packages`)
+console.log(`install-profile: installed ${rootPackage.name} (${tarball}) with ${linked.size} file: sub-packages`)
 
 // The root package ships a prebuilt `lib/`, so its install scripts never need to
 // run; pnpm 11 fails the whole install on "ignored build scripts" otherwise.
 const install = spawnSync('pnpm', ['install', '--no-frozen-lockfile', '--config.dangerouslyAllowAllBuilds=true'], { cwd: profileDir, stdio: 'inherit' })
 if (install.status !== 0) process.exit(install.status ?? 1)
+
+// macOS leaves AppleDouble sidecars (`._name`) when a tree is copied through a
+// filesystem without xattr support. dsh refuses to load a package whose locale
+// directory holds one ("locale/._en.json must use a language id as its
+// filename"), so sweep them out of every package this script manages.
+for (const name of managed) {
+  const pkgDir = join(profileDir, 'node_modules', name)
+  if (!existsSync(pkgDir)) continue
+  for (const found of readdirSync(pkgDir, { recursive: true, encoding: 'utf8' })) {
+    if (found.split('/').some(part => part.startsWith('._') || part === '.DS_Store')) {
+      rmSync(join(pkgDir, found), { force: true })
+    }
+  }
+}
 
 console.log(`install-profile: done.
 Next:

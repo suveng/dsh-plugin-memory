@@ -16,3 +16,6 @@ allowBuilds:
   node-pty: true
   protobufjs: true
 
+# Deliberate dev-only cycles (author packages depend on each other for types);
+# `pnpm -r build` must run their tasks in an arbitrary order.
+ignoreWorkspaceCycles: true
